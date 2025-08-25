@@ -14,7 +14,6 @@ const SwissImpact = (props) => {
   const [swissImpactData, setSwissImpactData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  console.log("SwissImpact props:", props.preloadedData);
   useEffect(() => {
     // If preloaded data is available, use it instead of fetching
     if (props.preloadedData) {
