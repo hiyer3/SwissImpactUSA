@@ -1,0 +1,31 @@
+{
+    "state":"New Mexico",
+    "resident":"3,213",
+    "percent": "6",
+    "jobs_created":"18,800",
+    "export_amount":"6.4 M",
+    "import_amount": "61 M",
+    "employment" : [3400, 3100, 1400, 1300, 1200],
+    "employment_label" :["2. Canada","3. Germany","4. Japan","5. France","6. Switzerland"],
+    "employment_label_short" :["CA","DE","JP","FR","CH"],
+    "index_color" : 4,
+    "jobs":[1200, 1119, 15],
+    "export":[3.7,1.9,0.4,0.2,0.06],
+    "export_label":["Chemicals","Computer & Electronic Products","Machinery","Transportation Equipment","Used Merchandise"],
+    "import":[45,6.5,2.9,2.4,0.2],
+    "import_label":["Chemicals","Fabricated Metal Products","Machinery","Computer & Electronic Products","Electrical Equipment, Appliances & Components"],
+    "companies":[
+        "ABB",
+        "Adecco",
+        "Brugg",
+        "Clariant",
+        "Dufry",
+        "LafargeHolcim",
+        "Northwire (Lemo)",
+        "SICPA",
+        "Sulzer",
+        "Swissport",
+        "UBS",
+        "Zurich"
+    ]
+}

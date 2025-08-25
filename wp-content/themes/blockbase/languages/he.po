@@ -1,0 +1,139 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WordPress.com - Themes - Blockbase\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2024-04-11T01:19:23+00:00\n"
+"PO-Revision-Date: 2022-10-06 18:49:44+0000\n"
+"Language: he_IL\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: GlotPress/2.4.0-alpha\n"
+
+#. Theme URI of the theme
+#: style.css
+msgid "https://wordpress.com/theme/blockbase"
+msgstr "https://wordpress.com/theme/blockbase"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Extra Large"
+msgstr "גדול מאוד"
+
+#: inc/patterns/footer-columns.php:33
+msgid "More info"
+msgstr "מידע נוסף"
+
+#: inc/patterns/footer-columns.php:41
+msgid "Search"
+msgstr "לחפש"
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Header and Footer Only"
+msgstr "רק כותרת עליונה וכותרת תחתונה"
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Blank"
+msgstr "ללא תוכן"
+
+#: styles/charcoal.json
+#: styles/rainforest.json
+#: styles/ruby-wine.json
+#: theme.json
+msgctxt "Color name"
+msgid "Background"
+msgstr "רקע"
+
+#: styles/charcoal.json
+#: styles/rainforest.json
+#: styles/ruby-wine.json
+#: theme.json
+msgctxt "Color name"
+msgid "Tertiary"
+msgstr "שלישוני"
+
+#: styles/charcoal.json
+#: styles/rainforest.json
+#: styles/ruby-wine.json
+#: theme.json
+msgctxt "Color name"
+msgid "Primary"
+msgstr "ראשי"
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Footer Only"
+msgstr "רק כותרת תחתונה"
+
+#: styles/charcoal.json
+#: styles/rainforest.json
+#: styles/ruby-wine.json
+#: theme.json
+msgctxt "Color name"
+msgid "Foreground"
+msgstr "קדמה"
+
+#: styles/charcoal.json
+#: styles/rainforest.json
+#: styles/ruby-wine.json
+#: theme.json
+msgctxt "Color name"
+msgid "Secondary"
+msgstr "משני"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Medium"
+msgstr "בינוני"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Large"
+msgstr "גדול"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Small"
+msgstr "קטן"
+
+#: inc/patterns/404.php:9
+msgid "404"
+msgstr "404"
+
+#: functions.php:41
+msgid "Social Navigation"
+msgstr "תפריט מדיה חברתית"
+
+#: inc/customizer/wp-customize-fonts.php:22
+msgid "Fonts"
+msgstr "גופנים"
+
+#. Description of the theme
+#: style.css
+msgid "Blockbase is a simple theme that supports full-site editing. It comes with a set of minimal templates and design settings that can be manipulated through Global Styles. Use it to build something beautiful."
+msgstr "ערכת העיצוב Blockbase היא ערכת עיצוב פשוטה שתומכת בעריכת אתר מלאה. הערכה מגיעה עם כמה תבניות מינימליסטיות ועם הגדרות עיצוב שניתן לערוך באמצעות סגנונות גלובליים. זאת ערכה לבנות איתה דברים יפים."
+
+#: inc/customizer/wp-customize-colors.php:18
+msgid "Colors"
+msgstr "צבעים"
+
+#: inc/customizer/wp-customize-colors.php:17
+msgid "Color Customization for %1$s"
+msgstr "התאמה אישית של צבעים עבור %1$s"
+
+#: inc/patterns/404.php:17
+msgid "It looks like nothing was found at this location. Maybe try a search?"
+msgstr "נראה כי אין כאן כלום. אולי כדאי לנסות את אפשרות החיפוש."
+
+#: functions.php:40
+msgid "Primary Navigation"
+msgstr "ניווט ראשי"
+
+#: inc/patterns/404.php:13
+msgid "Oops! That page can&rsquo;t be found."
+msgstr "אופס. העמוד שביקשת לא נמצא."

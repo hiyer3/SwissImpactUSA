@@ -1,0 +1,50 @@
+.post-content h1,
+.post-content h2,
+.post-content h3,
+.post-content h4,
+.post-content h5,
+.post-content h6 {
+  margin-bottom: 0.8rem;
+}
+
+.post-content p {
+  margin-bottom: 0.8rem;
+  line-height: 1.5;
+  @apply pb-0;
+}
+
+.post-content p.mb-0 {
+  margin-bottom: 0;
+}
+
+.post-content a {
+  border-bottom: 2px solid red;
+  position: relative;
+  transition: color 0.1s linear;
+  display: inline-block;
+  max-width: 100%;
+}
+
+.post-content a:not(.social-icon):hover {
+  color: #fff;
+}
+
+.post-content a:not(.social-icon)::after {
+  content: "";
+  height: 0%;
+  transition: height 0.1s linear;
+}
+
+.post-content a:not(.social-icon, .wp-block-social-link-anchor):hover::after {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  bottom: 0;
+  left: 0;
+  background-color: red;
+}
+
+.post-content .wp-block-gallery{
+  clear: both;
+}

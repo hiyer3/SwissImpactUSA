@@ -1,0 +1,348 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WordPress.com - Themes - Blockbase\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2024-11-27T01:46:09+00:00\n"
+"PO-Revision-Date: 2022-07-25 14:20:24+0000\n"
+"Language: pt_BR\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: GlotPress/2.4.0-alpha\n"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Work Sans"
+msgstr "Work Sans"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Space Mono"
+msgstr "Space Mono"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Source Serif Pro"
+msgstr "Source Serif Pro"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Source Sans Pro"
+msgstr "Source Sans Pro"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Rubik"
+msgstr "Rubik"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Roboto Slab"
+msgstr "Roboto Slab"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Roboto"
+msgstr "Roboto"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Red Hat Display"
+msgstr "Red Hat Display"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Raleway"
+msgstr "Raleway"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Poppins"
+msgstr "Poppins"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Playfair Display"
+msgstr "Playfair Display"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Overpass"
+msgstr "Overpass"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Open Sans"
+msgstr "Open Sans"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Nunito"
+msgstr "Nunito"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Montserrat"
+msgstr "Montserrat"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Merriweather"
+msgstr "Merriweather"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Lora"
+msgstr "Lora"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Libre Franklin"
+msgstr "Libre Franklin"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Libre Baskerville"
+msgstr "Libre Baskerville"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Josefin Sans"
+msgstr "Josefin Sans"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Inter"
+msgstr "Inter"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "IBM Plex Mono"
+msgstr "IBM Plex Mono"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Helvetica Neue"
+msgstr "Helvetica Neue"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Fira Sans"
+msgstr "Fira Sans"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "EB Garamond"
+msgstr "EB Garamond"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Domine"
+msgstr "Domine"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "DM Sans"
+msgstr "DM Sans"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Courier Prime"
+msgstr "Courier Prime"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Chivo"
+msgstr "Chivo"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Cabin"
+msgstr "Cabin"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Bodoni Moda"
+msgstr "Bodoni Moda"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Arvo"
+msgstr "Arvo"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "System Font"
+msgstr "System Font"
+
+#: inc/customizer/wp-customize-fonts.php:13
+msgid "Updating fonts for this theme is now even easier! Use the site editor to select and preview different font families. <a href=\"%s\">More information.</a>"
+msgstr "Atualizar fontes para este tema agora é ainda mais fácil! Use o editor do site para selecionar e visualizar diferentes famílias de fontes. <a href=\"%s\">Mais informações.</a>"
+
+#: inc/customizer/wp-customize-colors.php:28
+msgid "Color customization for this theme is now available exclusively in the Full Site Editor Global Styles panel.<br><br>Featured Palettes can now be found in the Full Site Editor as Theme Variations."
+msgstr "A personalização de cores para este tema agora está disponível exclusivamente no painel Estilos globais do Editor de site completo.<br><br>Paletas em destaque agora podem ser encontradas no Editor de site completo como Variações de tema."
+
+#. Theme URI of the theme
+#: style.css
+msgid "https://wordpress.com/theme/blockbase"
+msgstr "https://wordpress.com/theme/blockbase"
+
+#: inc/patterns/footer-with-site-title.php:10
+msgid "Footer with site title"
+msgstr "Rodapé com título do site"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Extra Large"
+msgstr "Extra grande"
+
+#: inc/patterns/footer-small.php:10
+msgid "Small footer"
+msgstr "Rodapé pequeno"
+
+#: inc/patterns/footer-simple.php:10
+msgid "Simple footer"
+msgstr "Rodapé simples"
+
+#: inc/patterns/footer-separator.php:10
+msgid "Footer with menu and separator"
+msgstr "Rodapé com menu e separador"
+
+#: inc/patterns/footer-search.php:10
+msgid "Footer with Search Block"
+msgstr "Rodapé com bloco de pesquisa"
+
+#: inc/patterns/footer-primary.php:10
+msgid "Footer with menu"
+msgstr "Rodapé com cardápio"
+
+#: inc/patterns/footer-left.php:10
+msgid "Left aligned footer"
+msgstr "Rodapé alinhado à esquerda"
+
+#: inc/patterns/footer-columns.php:34
+msgid "More info"
+msgstr "Mais informações"
+
+#: inc/patterns/footer-columns.php:42
+msgid "Search"
+msgstr "Pesquisar"
+
+#: inc/patterns/footer-columns.php:10
+msgid "Footer with 3 columns"
+msgstr "Rodapé com 3 colunas"
+
+#: inc/block-patterns.php:53
+msgid "Blockbase Header ("
+msgstr "Cabeçalho Blockbase ("
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Footer Only"
+msgstr "Somente rodapé"
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Header and Footer Only"
+msgstr "Apenas cabeçalho e rodapé"
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Blank"
+msgstr "Em branco"
+
+#: styles/charcoal.json
+#: styles/rainforest.json
+#: styles/ruby-wine.json
+#: theme.json
+msgctxt "Color name"
+msgid "Tertiary"
+msgstr "Terciária"
+
+#: styles/charcoal.json
+#: styles/rainforest.json
+#: styles/ruby-wine.json
+#: theme.json
+msgctxt "Color name"
+msgid "Background"
+msgstr "Plano de fundo"
+
+#: styles/charcoal.json
+#: styles/rainforest.json
+#: styles/ruby-wine.json
+#: theme.json
+msgctxt "Color name"
+msgid "Foreground"
+msgstr "Primeiro plano"
+
+#: styles/charcoal.json
+#: styles/rainforest.json
+#: styles/ruby-wine.json
+#: theme.json
+msgctxt "Color name"
+msgid "Secondary"
+msgstr "Secundária"
+
+#: styles/charcoal.json
+#: styles/rainforest.json
+#: styles/ruby-wine.json
+#: theme.json
+msgctxt "Color name"
+msgid "Primary"
+msgstr "Primária"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Medium"
+msgstr "Médio"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Large"
+msgstr "Grande"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Small"
+msgstr "Pequeno"
+
+#: inc/patterns/404.php:10
+msgid "404"
+msgstr "404"
+
+#: functions.php:42
+msgid "Social Navigation"
+msgstr "Menu de redes sociais"
+
+#: inc/customizer/wp-customize-fonts.php:23
+msgid "Fonts"
+msgstr "Fontes"
+
+#. Description of the theme
+#: style.css
+msgid "Blockbase is a simple theme that supports full-site editing. It comes with a set of minimal templates and design settings that can be manipulated through Global Styles. Use it to build something beautiful."
+msgstr "Blockbase é um tema simples que suporta a edição de site completo. Ele vem com um conjunto mínimo de modelos e configurações de design que podem ser manipulados por meio de Estilos Globais. Use-o para construir algo bonito."
+
+#: inc/customizer/wp-customize-colors.php:19
+msgid "Colors"
+msgstr "Cores"
+
+#: inc/customizer/wp-customize-colors.php:18
+msgid "Color Customization for %1$s"
+msgstr "Personalização de cores para %1$s"
+
+#: inc/patterns/404.php:18
+msgid "It looks like nothing was found at this location. Maybe try a search?"
+msgstr "Parece que nada foi encontrado por aqui. Tente uma busca talvez?"
+
+#: functions.php:41
+msgid "Primary Navigation"
+msgstr "Menu principal"
+
+#: inc/patterns/404.php:14
+msgid "Oops! That page can&rsquo;t be found."
+msgstr "Ops! Essa página não pode ser encontrada."

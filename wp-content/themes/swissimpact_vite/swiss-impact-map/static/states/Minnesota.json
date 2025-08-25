@@ -1,0 +1,93 @@
+{
+    "state": "Minnesota",
+    "resident": "20,575",
+    "percent": 4,
+    "jobs_created": "159,400",
+    "export_amount": "246 M",
+    "import_amount": "328 M",
+    "employment": [
+        15500,
+        13400,
+        10200,
+        6900,
+        6400
+    ],
+    "employment_label": [
+        "3. Germany",
+        "4. Japan",
+        "5. France",
+        "6. Netherlands",
+        "7. Switzerland"
+    ],
+    "employment_label_short": [
+        "DE",
+        "JP",
+        "FR",
+        "NL",
+        "CH"
+    ],
+    "index_color": 4,
+    "jobs": [6400, 4070, 537],
+    "export": [
+        87,
+        78,
+        15,
+        6.8,
+        6.8
+    ],
+    "export_label": [
+        "Computer & Electronic Products",
+        "Electrical Equipment, Appliances, & Components",
+        "Nonmetallic Mineral Products",
+        "Fabricated Metal Products",
+        "Chemicals"
+    ],
+    "import": [
+        179,
+        61,
+        16,
+        11,
+        5.4
+    ],
+    "import_label": [
+        "Computer & Electronic Products",
+        "Machinery",
+        "Electrical Equipment, Appliances, & Components",
+        "Chemicals",
+        "Fabricated Metal Products"
+    ],
+    "companies": [
+        "Adecco",
+        "Asyril",
+        "Avella",
+        "Buhler",
+        "CEDES",
+        "Chubb (ACE)",
+        "Ferring",
+        "Firmenich",
+        "FRAISA",
+        "Holcim",
+        "Ionbond",
+        "Kuehne+Nagel",
+        "Landis+Gyr",
+        "Lindt & Sprungli",
+        "Lonza",
+        "Nagra",
+        "Nespresso",
+        "Nestle",
+        "Schaffner EMC",
+        "Schindler",
+        "Sonova",
+        "Sportradar",
+        "STMicroelectronics",
+        "Swatch",
+        "Swiss Steel Group",
+        "Swissport",
+        "Syngenta",
+        "TE Connectivity",
+        "Tenthpin",
+        "Trikora",
+        "UBS",
+        "Zurich"
+    ]
+}

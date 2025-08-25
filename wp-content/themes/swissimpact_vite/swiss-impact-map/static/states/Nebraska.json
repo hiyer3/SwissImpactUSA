@@ -1,0 +1,74 @@
+{
+    "state": "Nebraska",
+    "resident": "6,313",
+    "percent": 4,
+    "jobs_created": "39,000",
+    "export_amount": "12 M",
+    "import_amount": "521 M",
+    "employment": [
+        4700,
+        4100,
+        3800,
+        2600,
+        1600
+    ],
+    "employment_label": [
+        "2. UK",
+        "3. France",
+        "4. Canada",
+        "5. Germany",
+        "6. Switzerland"
+    ],
+    "employment_label_short": [
+        "UK",
+        "FR",
+        "CA",
+        "DE",
+        "CH"
+    ],
+    "index_color": 4,
+    "jobs": [1600,1327,27],
+    "export": [
+        5.7,
+        1.9,
+        1.1,
+        1.1,
+        0.8
+    ],
+    "export_label": [
+        "Food",
+        "Transportation Equipment",
+        "Computer & Electronic Products",
+        "Chemicals",
+        "Machinery"
+    ],
+    "import": [
+        509,
+        5.4,
+        3.8,
+        1.1,
+        0.4
+    ],
+    "import_label": [
+        "Chemicals",
+        "Machinery",
+        "Plastics & Rubber Products",
+        "Computer & Electronic Products",
+        "Electrical Equipment, Appliances, & Components"
+    ],
+    "companies": [
+        "Adecco",
+        "Avolta",
+        "Chubb (ACE)",
+        "Givaudan",
+        "Hallmark Aviation Services",
+        "Holcim",
+        "Lindt & Sprungli",
+        "Nestle",
+        "Schindler",
+        "Swissport",
+        "Syngenta",
+        "UBS",
+        "Zurich"
+    ]
+}

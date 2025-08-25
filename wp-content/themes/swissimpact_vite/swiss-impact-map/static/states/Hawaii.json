@@ -1,0 +1,80 @@
+{
+    "state": "Hawaii",
+    "resident": "2,342",
+    "percent": 1,
+    "jobs_created": "38,100",
+    "export_amount": "0.6 M",
+    "import_amount": "17 M",
+    "employment": [
+        2600,
+        2500,
+        1900,
+        1300,
+        300
+    ],
+    "employment_label": [
+        "2. France",
+        "3. UK",
+        "4. Germany",
+        "5. Canada",
+        "6. Switzerland"
+    ],
+    "employment_label_short": [
+        "FR",
+        "UK",
+        "DE",
+        "CA",
+        "CH"
+    ],
+    "index_color": 4,
+    "jobs": [300,915,1],
+    "export": [
+        0.2,
+        0.1,
+        0.1,
+        0.06,
+        0.01
+    ],
+    "export_label": [
+        "Computer & Electronic Products",
+        "Electrical Equipment, Appliances, & Components",
+        "Transportation Equipment",
+        "Used Merchandise",
+        "Food"
+    ],
+    "import": [
+        8.7,
+        3.5,
+        1.5,
+        1.1,
+        0.5
+    ],
+    "import_label": [
+        "Computer & Electronic Products",
+        "Electrical Equipment, Appliances, & Components",
+        "Machinery",
+        "Furniture & Fixtures",
+        "Fabricated Metal Products"
+    ],
+    "companies": [
+        "Adecco",
+        "Bally",
+        "Bucherer Group",
+        "Chubb (ACE)",
+        "Gategroup",
+        "Nestle",
+        "Publicitas",
+        "Richemont",
+        "Schindler",
+        "Swatch",
+        "Swissport",
+        "Syngenta",
+        "Vacheron Constantin",
+        "Wahine Brand",
+        "Hallmark Aviation Services",
+        "Jucker Hawaii",
+        "Zurich",
+        "Temenos",
+        "UBS"
+    ]
+}

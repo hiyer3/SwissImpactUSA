@@ -1,0 +1,92 @@
+{
+    "state": "Indiana",
+    "resident": "38,430",
+    "percent": 5,
+    "jobs_created": "218,300",
+    "export_amount": "1.2 B",
+    "import_amount": "7.6 B",
+    "employment": [
+        27300,
+        19100,
+        15400,
+        12000,
+        10500
+    ],
+    "employment_label": [
+        "3. UK",
+        "4. Germany",
+        "5. Canada",
+        "6. Netherlands",
+        "7. Switzerland"
+    ],
+    "employment_label_short": [
+        "UK",
+        "DE",
+        "CA",
+        "NL",
+        "CH"
+    ],
+    "index_color": 4,
+    "jobs": [10500,4102,2526],
+    "export": [
+        984,
+        35,
+        24,
+        10,
+        8.8
+    ],
+    "export_label": [
+        "Chemicals",
+        "Transportation Equipment",
+        "Primary Metals",
+        "Machinery",
+        "Computer & Electronic Products"
+    ],
+    "import": [
+        6900,
+        208,
+        120,
+        22,
+        12
+    ],
+    "import_label": [
+        "Chemicals",
+        "Computer & Electronic Products",
+        "Machinery",
+        "Electrical Equipment, Appliances, & Components",
+        "Plastics & Rubber Products"
+    ],
+    "companies": [
+        "Adecco",
+        "Agta Record",
+        "Autoneum",
+        "Chubb (ACE)",
+        "Comlux",
+        "Dormakaba",
+        "Endress+Hauser",
+        "Gategroup",
+        "Georg Utz",
+        "ILAG",
+        "Kuehne+Nagel",
+        "Holcim",
+        "Landis+Gyr",
+        "Lindt & Sprungli",
+        "Medartis",
+        "Mercuria",
+        "Nestle",
+        "Novartis",
+        "Oerlikon",
+        "Quadrant",
+        "REGO-FIX",
+        "Roche Diagnostics",
+        "Schindler",
+        "SGS",
+        "STMicroelectronics",
+        "Swatch",
+        "UBS",
+        "Weidmann",
+        "Zurich",
+        "Swiss Re",
+        "Syngenta"
+    ]
+}

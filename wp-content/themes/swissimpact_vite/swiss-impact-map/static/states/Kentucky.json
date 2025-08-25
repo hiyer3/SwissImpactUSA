@@ -1,0 +1,83 @@
+{
+    "state": "Kentucky",
+    "resident": "10,440",
+    "percent": 4,
+    "jobs_created": "149,500",
+    "export_amount": "96 M",
+    "import_amount": "2.1 B",
+    "employment": [
+        16800,
+        11400,
+        11100,
+        9700,
+        5700
+    ],
+    "employment_label": [
+        "2. Germany",
+        "3. Canada",
+        "4. France",
+        "5. UK",
+        "6. Switzerland"
+    ],
+    "employment_label_short": [
+        "DE",
+        "CA",
+        "FR",
+        "UK",
+        "CH"
+    ],
+    "index_color": 4,
+    "jobs": [5700,2633,210],
+    "export": [
+        76,
+        10,
+        4.2,
+        2.8,
+        0.8
+    ],
+    "export_label": [
+        "Chemicals",
+        "Transportation Equipment",
+        "Machinery",
+        "Computer & Electronic Products",
+        "Beverages & Tobacco Products"
+    ],
+    "import": [
+        533,
+        41,
+        38,
+        27,
+        11
+    ],
+    "import_label": [
+        "Chemicals",
+        "Fabricated Metal Products",
+        "Machinery",
+        "Computer & Electronic Products",
+        "Transportation Equipment"
+    ],
+    "companies": [
+        "3A Composites (Schweiter)",
+        "Adecco",
+        "Autoneum",
+        "Avolta",
+        "Chubb (ACE)",
+        "Clariant",
+        "Dormakaba",
+        "Evolva",
+        "Gategroup",
+        "Ghirardelli (Lindt & Sprungli)",
+        "Givaudan",
+        "Kuehne+Nagel",
+        "Lazar Anode Technologies",
+        "Nestle",
+        "Netstal Machinery",
+        "Omya",
+        "SGS",
+        "Starrag-Heckert",
+        "Syngenta",
+        "UBS",
+        "Zeochem",
+        "Zurich"
+    ]
+}

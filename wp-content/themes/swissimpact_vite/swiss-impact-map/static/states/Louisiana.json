@@ -1,0 +1,83 @@
+{
+    "state": "Louisiana",
+    "resident": "2,928",
+    "percent": 3,
+    "jobs_created": "80,400",
+    "export_amount": "61 M",
+    "import_amount": "601 M",
+    "employment": [
+        9200,
+        7800,
+        5600,
+        3300,
+        2500
+    ],
+    "employment_label": [
+        "3. France",
+        "4. Germany",
+        "5. Netherlands",
+        "6. Japan",
+        "7. Switzerland"
+    ],
+    "employment_label_short": [
+        "FR",
+        "DE",
+        "NL",
+        "JP",
+        "CH"
+    ],
+    "index_color": 4,
+    "jobs": [2500,2573,133],
+    "export": [
+        21,
+        19,
+        7.4,
+        6.6,
+        2.8
+    ],
+    "export_label": [
+        "Minerals & Ores",
+        "Chemicals",
+        "Fabricated Metal Products",
+        "Used Merchandise",
+        "Electrical Equipment, Appliances, & Components"
+    ],
+    "import": [
+        581,
+        6.6,
+        3.6,
+        2.8,
+        2.4
+    ],
+    "import_label": [
+        "Chemicals",
+        "Machinery",
+        "Electrical Equipment, Appliances, & Components",
+        "Computer & Electronic Products",
+        "Fabricated Metal Products"
+    ],
+    "companies": [
+        "Adecco",
+        "Burckhardt Compression",
+        "Chubb (ACE)",
+        "Clariant",
+        "Datwyler",
+        "Franke",
+        "Gategroup",
+        "Hoerbiger",
+        "Holcim",
+        "Kopter",
+        "MSC",
+        "Nestle",
+        "Schindler",
+        "SGS",
+        "Sulzer",
+        "Swissport",
+        "Syngenta",
+        "Transocean",
+        "UBS",
+        "Viking Cruises",
+        "Weatherford",
+        "Zurich"
+    ]
+}

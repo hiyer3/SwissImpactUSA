@@ -1,0 +1,67 @@
+{
+    "state": "Wyoming",
+    "resident": "2,453",
+    "percent": 2,
+    "jobs_created": "11,400",
+    "export_amount": "1.1 M",
+    "import_amount": "3.2 M",
+    "employment": [
+        3100,
+        1000,
+        500,
+        200,
+        200
+    ],
+    "employment_label": [
+        "1. UK",
+        "2. Canada",
+        "3. France",
+        "4. Switzerland",
+        "4. Japan"
+    ],
+    "employment_label_short": [
+        "UK",
+        "CA",
+        "FR",
+        "CH",
+        "JP"
+    ],
+    "index_color": 3,
+    "jobs": [200, 322, 2],
+    "export": [0.6,
+        0.1,
+        0.1,
+        0.09,
+        0.07
+    ],
+    "export_label": [
+        "Computer & Electronic Products",
+        "Fabricated Metal Products",
+        "Transportation Equipment",
+        "Machinery",
+        "Chemicals"
+    ],
+    "import": [
+        0.8,
+        0.5,
+        0.4,
+        0.08,
+        0.07
+    ],
+    "import_label": [
+        "Electrical Equipment, Appliances, & Components",
+        "Computer & Electronic Products",
+        "Machinery",
+        "Food",
+        "Fabricated Metal Products"
+    ],
+    "companies": [
+        "Adecco",
+        "Clariant",
+        "Hoerbiger",
+        "Liebherr",
+        "SGS",
+        "Sulzer",
+        "Zurich"
+    ]
+}

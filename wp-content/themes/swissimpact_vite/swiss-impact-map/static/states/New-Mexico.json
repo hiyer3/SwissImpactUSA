@@ -1,0 +1,74 @@
+{
+    "state": "New Mexico",
+    "resident": "3,674",
+    "percent": 4,
+    "jobs_created": "20,100",
+    "export_amount": "11 M",
+    "import_amount": "21 M",
+    "employment": [
+        3300,
+        3000,
+        2000,
+        1500,
+        900
+    ],
+    "employment_label": [
+        "2. UK",
+        "3. Germany",
+        "4. Japan",
+        "5. France",
+        "6. Switzerland"
+    ],
+    "employment_label_short": [
+        "UK",
+        "DE",
+        "JP",
+        "FR",
+        "CH"
+    ],
+    "index_color": 4,
+    "jobs": [900,1128,24],
+    "export": [
+        2.6,
+        2.1,
+        0.7,
+        0.2,
+        0.2
+    ],
+    "export_label": [
+        "Used Merchandise",
+        "Chemicals",
+        "Computer & Electronic Products",
+        "Transportation Equipment",
+        "Machinery"
+    ],
+    "import": [
+        6.5,
+        4.8,
+        4.3,
+        1.7,
+        0.5
+    ],
+    "import_label": [
+        "Machinery",
+        "Fabricated Metal Products",
+        "Computer & Electronic Products",
+        "Transportation Equipment",
+        "Chemicals"
+    ],
+    "companies": [
+        "ABB Northwire (Lemo)",
+        "Adecco",
+        "Avolta",
+        "Brugg",
+        "Clariant",
+        "INEOS",
+        "LafargeHolcim",
+        "SGS",
+        "SICPA",
+        "Sulzer",
+        "Swissport",
+        "UBS",
+        "Zurich"
+    ]
+}

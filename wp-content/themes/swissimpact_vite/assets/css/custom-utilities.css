@@ -1,0 +1,11 @@
+* {
+  --background-color: grey;
+  --color: rgb(255, 0, 0);
+}
+
+.main-menu {
+  .current-menu-item,
+  .current_page_item {
+    @apply underline;
+  }
+}

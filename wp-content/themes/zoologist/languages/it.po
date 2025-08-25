@@ -1,0 +1,73 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WordPress.com - Themes - Zoologist\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2022-07-21T04:43:59+00:00\n"
+"PO-Revision-Date: 2022-06-30 09:00:31+0000\n"
+"Language: it\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: GlotPress/2.4.0-alpha\n"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Extra Large"
+msgstr "Molto grande"
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Page without title"
+msgstr "Pagina senza titolo"
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Header and Footer Only"
+msgstr "Intestazione e piè di pagina"
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Blank"
+msgstr "Vuoto"
+
+#: theme.json
+msgctxt "Color name"
+msgid "Tertiary"
+msgstr "Terziario"
+
+#: theme.json
+msgctxt "Color name"
+msgid "Background"
+msgstr "Sfondo"
+
+#: theme.json
+msgctxt "Color name"
+msgid "Secondary"
+msgstr "Secondario"
+
+#: theme.json
+msgctxt "Color name"
+msgid "Primary"
+msgstr "Primario"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Large"
+msgstr "Grande"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Medium"
+msgstr "Medio"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Small"
+msgstr "Piccolo"
+
+#. Description of the theme
+msgid "Zoologist is a simple blogging theme that supports full-site editing."
+msgstr "Zoologist è un semplice tema per blog che ti permette di modificare il sito completamente."

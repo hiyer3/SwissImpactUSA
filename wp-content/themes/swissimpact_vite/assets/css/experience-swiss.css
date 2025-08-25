@@ -1,0 +1,99 @@
+#experience-swiss-impact {
+  background-image: url("/wp-content/themes/swissimpact_vite/assets/img/home/swiss-impact-bg-dark-2x.jpg");
+  background-size: cover;
+  background-position: center;
+  min-height: 65vh;
+  transition: background 0.2s linear;
+  overflow-y: hidden;
+  position: relative;
+}
+
+@media screen and (max-width: 991px) {
+  #experience-swiss-impact {
+    background-image: url("/wp-content/themes/swissimpact_vite/assets/img/home/si-tablet-blu-bg-2x.jpg");
+    background-position: bottom;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  #experience-swiss-impact {
+    background-image: url("/wp-content/themes/swissimpact_vite/assets/img/home/si-mobile-blu-bg-2x.jpg");
+    background-position: bottom;
+    height: 88vh;
+  }
+}
+
+#experience-swiss-impact .category img {
+  margin: auto;
+  width: 75%;
+}
+
+#experience-swiss-impact.item-active {
+  background-image: url("/wp-content/themes/swissimpact_vite/assets/img/home/swiss-impact-bg-light-2x.jpg");
+}
+
+@media screen and (max-width: 991px) {
+  #experience-swiss-impact.item-active {
+    background-image: url("/wp-content/themes/swissimpact_vite/assets/img/home/si-tablet-ko-bg-2x.jpg");
+    background-size: 100% auto;
+  }
+
+  #experience-swiss-impact .category {
+    position: relative;
+  }
+
+  #experience-swiss-impact .category img {
+    width: 100%;
+  }
+
+  #experience-swiss-impact .cat-title {
+    position: absolute;
+    bottom: 15px;
+    color: rgba(255, 255, 255, 0.9);
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-weight: 500;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  #experience-swiss-impact.item-active {
+    background-image: url("/wp-content/themes/swissimpact_vite/assets/img/home/si-mobile-ko-bg-2x.png");
+    background-size: 100% auto;
+  }
+
+  #experience-swiss-impact .cat-title {
+    bottom: auto;
+    position: relative;
+  }
+}
+
+#experience-swiss-impact .category img {
+  margin: 0px auto;
+}
+
+#experience-swiss-impact .attribute.active {
+  @apply text-white;
+}
+
+.floating {
+  animation-name: floating;
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+  margin-left: 30px;
+  margin-top: 5px;
+}
+
+@keyframes floating {
+  0% {
+    transform: translate(0, 0px);
+  }
+  50% {
+    transform: translate(0, -30px);
+  }
+  100% {
+    transform: translate(0, -0px);
+  }
+}

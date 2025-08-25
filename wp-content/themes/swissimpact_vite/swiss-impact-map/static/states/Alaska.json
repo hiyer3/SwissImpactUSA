@@ -1,0 +1,18 @@
+{
+    "state": "Alaska",
+    "resident": "2,631",
+    "percent": "1",
+    "jobs_created": "15,200",
+    "export_amount": "277 M",
+    "import_amount": "5.4 M",
+    "employment": [2400, 1700, 1400, 400, 200],
+    "employment_label": ["2. Japan", "3.UK", "4. France", "5. Germany", "6. Switzerland"],
+    "employment_label_short": ["JP", "UK", "FR", "DE", "CH"],
+    "index_color": 4,
+    "jobs": [200, 412, 606],
+    "export": [277, 0.5, 0.07, 0.07, 0.04],
+    "export_label": ["Primary Metals", "Fish", "Computer & Electronic Products", "Transportation Equipment", "Fabricated Metal Products"],
+    "import": [4.5, 0.4, 0.2, 0.03, 0.03],
+    "import_label": ["Machinery", "Computer & Electronic Products", "Fabricated Metal Products", "Used Merchandise", "Electrical Equipment, Appliances, & Components"],
+    "companies": ["Adecco", "Endress+Hauser", "Nestle", "Schindler", "SGS", "Swissport", "UBS"]
+}

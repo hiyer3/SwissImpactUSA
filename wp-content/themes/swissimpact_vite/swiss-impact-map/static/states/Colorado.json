@@ -1,0 +1,28 @@
+{
+    "state": "Colorado",
+    "resident": "21,968",
+    "percent": 4,
+    "jobs_created": "126,600",
+    "export_amount": "738 M",
+    "import_amount": "891 M",
+    "employment": [10200, 10100, 9100, 5100, 4800],
+    "employment_label": ["3. Japan", "4. France", "5. Germany", "6. Netherlands", "7. Switzerland"],
+    "employment_label_short": ["JP", "FR", "DE", "NL", "CH"],
+    "index_color": 4,
+    "jobs": [4800,4111,1612],
+    "export": [320, 178, 14, 13, 5.4],
+    "export_label": ["Primary Metals", "Chemicals", "Computer & Electronic Products", "Machinery", "Transportation Equipment"],
+    "import": [591, 51, 43, 12, 8.1],
+    "import_label": ["Transportation Equipment", "Computer & Electronic Products", "Machinery", "Electrical Equipment, Appliances, & Components", "Chemicals"],
+    "companies": [
+        "ABB", "Diamond", "Adecco", "DT Swiss", "Avolta", "EM Microelectronics",
+        "Bernina", "Endress+Hauser", "Blue Mountain", "Flyability", "Brugg", "FRACHT FWO",
+        "Bucher+Suter", "Hallmark Aviation Services", "Checkout.com", "Hoerbiger", "Holcim",
+        "Credit Suisse", "INFICON", "Interroll", "Kuehne+Nagel", "Leica Geosystems", "Mammut",
+        "Mercuria", "Meyer Burger", "Mikron", "Mimacom", "Nagra", "Nespresso", "Nestle", "SGS",
+        "Novamax Industrial", "Sika", "Novartis", "Similasan", "Partners Group", "STMicroelectronics",
+        "Pilatus", "Sulzer", "Pix4D", "Swatch", "Richard Mille", "Swisslog", "Lindt & Sprungli",
+        "Swissport", "Schaffner EMC", "Syngenta", "Schindler", "UBS", "Weatherford", "Wingtra",
+        "Wyssen", "Zund", "Zurich"
+    ]
+}

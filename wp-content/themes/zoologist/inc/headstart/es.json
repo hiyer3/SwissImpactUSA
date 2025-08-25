@@ -1,0 +1,92 @@
+{
+    "settings": {
+        "options": {
+            "show_on_front": "page",
+            "featured-content": {
+                "tag-id": 35890,
+                "tag-name": "featured",
+                "hide-tag": 0,
+                "show-all": 1
+            },
+            "jetpack_global_styles": false
+        },
+        "theme_mods": {
+            "0": false,
+            "nav_menu_locations": {
+                "primary": "main"
+            },
+            "custom_css_post_id": -1
+        },
+        "headstart": {
+            "mapped_id_options": [],
+            "mapped_id_theme_mods": [],
+            "keep_submenu_items": true
+        }
+    },
+    "widgets": [],
+    "content": [
+        {
+            "post_type": "page",
+            "post_title": "Inicio",
+            "post_content": "<!-- wp:query {\"queryId\":8,\"query\":{\"perPage\":\"10\",\"pages\":0,\"offset\":0,\"postType\":\"post\",\"categoryIds\":[],\"tagIds\":[],\"order\":\"desc\",\"orderBy\":\"date\",\"author\":\"\",\"search\":\"\",\"exclude\":[],\"sticky\":\"\",\"inherit\":false}} -->\n<div class=\"wp-block-query\"><!-- wp:post-template -->\n<!-- wp:post-title {\"isLink\":true,\"style\":{\"typography\":{\"fontSize\":\"64px\",\"lineHeight\":\"1.2\"}}} /-->\n\n<!-- wp:post-featured-image {\"isLink\":true,\"align\":\"wide\"} /-->\n\n<!-- wp:post-content /-->\n\n<!-- wp:group {\"layout\":{\"type\":\"flex\"}} -->\n<div class=\"wp-block-group\"><!-- wp:post-date {\"isLink\":true,\"style\":{\"typography\":{\"fontSize\":\"16px\"}}} /-->\n\n<!-- wp:post-terms {\"term\":\"category\",\"style\":{\"typography\":{\"fontSize\":\"16px\"}}} /-->\n\n<!-- wp:post-terms {\"term\":\"post_tag\",\"style\":{\"typography\":{\"fontSize\":\"16px\"}}} /--></div>\n<!-- /wp:group -->\n\n<!-- wp:spacer {\"height\":120} -->\n<div style=\"height:120px;\" aria-hidden=\"true\" class=\"wp-block-spacer\"></div>\n<!-- /wp:spacer -->\n<!-- /wp:post-template -->\n\n<!-- wp:query-pagination -->\n<div class=\"wp-block-query-pagination\"><!-- wp:query-pagination-previous /-->\n\n<!-- wp:query-pagination-next /--></div>\n<!-- /wp:query-pagination --></div>\n<!-- /wp:query -->",
+            "post_name": "home",
+            "post_excerpt": "",
+            "menu_order": 0,
+            "post_status": "publish",
+            "comment_status": "closed",
+            "ping_status": "closed",
+            "_starter_page_template": "blank",
+            "hs_old_id": 29,
+            "hs_post_parent": 0,
+            "hs_taxonomies": [],
+            "hs_custom_meta": "_hs_front_page",
+            "page_template": "header-footer-only"
+        },
+        {
+            "post_type": "post",
+            "post_title": "¡Hola mundo!",
+            "post_content": "<!-- wp:paragraph --> <p>Bienvenido a WordPress Esta es tu primera entrada. Edítala o elimínala para dar el primer paso en el periplo de tu blog.</p> <!-- /wp:paragraph -->",
+            "post_name": "hello-world",
+            "post_excerpt": "",
+            "menu_order": 0,
+            "post_status": "publish",
+            "comment_status": "open",
+            "ping_status": "open",
+            "_starter_page_template": "",
+            "hs_old_id": 4,
+            "hs_post_parent": 0,
+            "hs_taxonomies": {
+                "category_name": [
+                    "Uncategorized"
+                ],
+                "post_tag_name": []
+            },
+            "hs_custom_meta": "_hs_extra"
+        }
+    ],
+    "menus": {
+        "main": {
+            "name": "Principal",
+            "items": [
+                {
+                    "menu-item-title": "Inicio",
+                    "menu-item-db-id": 37,
+                    "menu-item-object-id": "29",
+                    "menu-item-object": "page",
+                    "menu-item-type": "post_type",
+                    "menu-item-status": "publish",
+                    "menu-item-position": 1,
+                    "menu-item-parent-id": "0",
+                    "menu-item-description": ""
+                }
+            ]
+        }
+    },
+    "images": [],
+    "meta": {
+        "blog_id": 198251896,
+        "url": "https://zoologiststarter.wordpress.com",
+        "update_date": "October 11, 2021, 12:35 am",
+        "update_timestamp": 1633912533
+    }
+}

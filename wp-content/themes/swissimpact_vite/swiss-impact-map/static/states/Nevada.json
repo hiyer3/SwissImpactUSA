@@ -1,0 +1,94 @@
+{
+    "state": "Nevada",
+    "resident": "9,134",
+    "percent": 3,
+    "jobs_created": "63,800",
+    "export_amount": "1.2 B",
+    "import_amount": "183 M",
+    "employment": [
+        7700,
+        6100,
+        5100,
+        3200,
+        2200
+    ],
+    "employment_label": [
+        "3. France",
+        "4. Japan",
+        "5. Germany",
+        "6. Netherlands",
+        "7. Switzerland"
+    ],
+    "employment_label_short": [
+        "FR",
+        "JP",
+        "DE",
+        "NL",
+        "CH"
+    ],
+    "index_color": 4,
+    "jobs": [2200,2317,2673],
+    "export": [
+        1100,
+        17,
+        7.8,
+        2.9,
+        1.6
+    ],
+    "export_label": [
+        "Primary Metals",
+        "Computer & Electronic Products",
+        "Machinery",
+        "Electrical Equipment, Appliances, & Components",
+        "Fabricated Metal Products"
+    ],
+    "import": [
+        111,
+        38,
+        4.9,
+        3.0,
+        2.5
+    ],
+    "import_label": [
+        "Computer & Electronic Products",
+        "Machinery",
+        "Electrical Equipment, Appliances, & Components",
+        "Used Merchandise",
+        "Fabricated Metal Products"
+    ],
+    "companies": [
+        "Adecco",
+        "ARYZTA",
+        "Avolta",
+        "Bally",
+        "Belimo",
+        "Breitling",
+        "Bucherer",
+        "Chubb (ACE)",
+        "Endress+Hauser",
+        "Gategroup",
+        "Ghirardelli (Lindt & Sprungli)",
+        "Haag-Streit",
+        "Holcim",
+        "Hublot",
+        "IWC Schaffhausen",
+        "Jaeger-Lecoultre",
+        "Kuehne+Nagel",
+        "Liebherr",
+        "Nagra",
+        "Nestle",
+        "Piaget",
+        "Richard Mille",
+        "Richemont",
+        "Schindler",
+        "SGS",
+        "SIKA",
+        "Swatch",
+        "Swissport",
+        "TAG Heuer",
+        "Thermoplan",
+        "UBS",
+        "Vacheron Constantin",
+        "Zurich"
+    ]
+}

@@ -1,0 +1,74 @@
+{
+    "state": "West Virginia",
+    "resident": "2,951",
+    "percent": 2,
+    "jobs_created": "30,600",
+    "export_amount": "13 M",
+    "import_amount": "11 M",
+    "employment": [
+        3700,
+        3200,
+        2500,
+        2000,
+        600
+    ],
+    "employment_label": [
+        "1. France",
+        "2. Netherlands",
+        "3. Germany",
+        "4. UK",
+        "5. Switzerland"
+    ],
+    "employment_label_short": [
+        "FR",
+        "NL",
+        "DE",
+        "UK",
+        "CH"
+    ],
+    "index_color": 4,
+    "jobs": [600, 900, 29],
+    "export": [
+        2.9,
+        2.4,
+        1.4,
+        0.7,
+        0.5
+    ],
+    "export_label": [
+        "Transportation Equipment",
+        "Chemicals",
+        "Electrical Equipment, Appliances, & Components",
+        "Primary Metals",
+        "Fabricated Metal Products"
+    ],
+    "import": [
+        3.3,
+        2.5,
+        0.4,
+        0.4,
+        0.3
+    ],
+    "import_label": [
+        "Fabricated Metal Products",
+        "Machinery",
+        "Plastics & Rubber Products",
+        "Computer & Electronic Products",
+        "Waste & Scrap"
+    ],
+    "companies": [
+        "ABB",
+        "Adecco",
+        "Alcon",
+        "Chubb (ACE)",
+        "Clariant",
+        "Holcim",
+        "Novartis",
+        "Oerlikon",
+        "Lindt & Sprungli",
+        "Schindler",
+        "SGS",
+        "Sulzer",
+        "Zurich"
+    ]
+}

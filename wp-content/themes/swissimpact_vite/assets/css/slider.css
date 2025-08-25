@@ -1,0 +1,218 @@
+.slider {
+  height: 100%;
+}
+
+.slider .swiper-slide {
+  height: auto;
+  display: flex;
+}
+
+.slider-wrapper .swiper-wrapper .swiper-slide .tags img {
+  max-width: 25px;
+}
+
+.slider-wrapper .swiper-nav div {
+  position: relative;
+}
+
+.slider-wrapper .swiper-nav div {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #aaa;
+  border-radius: 50%;
+  opacity: 1;
+  color: #333;
+}
+
+.slider-wrapper .swiper-nav div:not(.swiper-button-disabled) {
+  @apply bg-swissred text-white;
+}
+
+.slider-wrapper .swiper-nav div:after {
+  font-size: 15px;
+}
+
+@media screen and (max-width: 767px) {
+  .slider-wrapper {
+    overflow-y: hidden;
+  }
+
+  .w-swiper {
+    width: 100%;
+  }
+}
+
+.post-content #gallery-slider {
+  width: 100%;
+  margin: 40px 0 90px;
+  position: relative;
+}
+
+.post-content #gallery-slider .post-swiper-button-prev {
+  position: absolute;
+  display: flex;
+  left: -50px;
+  top: 46%;
+  z-index: 9;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: red;
+  border: 1px solid red;
+  padding-left: 6px;
+  cursor: pointer;
+}
+
+.post-content #gallery-slider .post-swiper-button-prev.swiper-button-disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.post-content #gallery-slider .post-swiper-button-prev::before {
+  content: "";
+  border-left: 2px solid white;
+  border-top: 2px solid white;
+  width: 15px;
+  height: 15px;
+  margin: auto;
+  display: block;
+  position: relative;
+  transform: rotate(-45deg);
+}
+
+.post-content #gallery-slider .post-swiper-button-next {
+  position: absolute;
+  display: flex;
+  right: -50px;
+  top: 46%;
+  z-index: 9;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: red;
+  border: 1px solid red;
+  padding-right: 6px;
+  cursor: pointer;
+}
+
+.post-content #gallery-slider img {
+  max-height: 400px;
+  width: auto;
+  cursor: pointer;
+}
+
+.post-content .wp-block-gallery.has-nested-images.is-cropped #gallery-slider figure.wp-block-image:not(#individual-image) img{
+  object-fit: contain;
+}
+
+.post-content #gallery-slider .swiper-slide {
+  background-color: black;
+  display: flex;
+  align-items: center;
+}
+
+.post-content #gallery-slider .post-swiper-button-next.swiper-button-disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.post-content #gallery-slider .post-swiper-button-next::before {
+  content: "";
+  border-right: 2px solid white;
+  border-bottom: 2px solid white;
+  width: 15px;
+  height: 15px;
+  margin: auto;
+  display: block;
+  position: relative;
+  transform: rotate(-45deg);
+}
+
+.post-content #gallery-slider .swiper-pagination {
+  bottom: -80px;
+}
+
+.post-content #gallery-slider .swiper-pagination .swiper-pagination-bullet {
+  height: 15px;
+  width: 15px;
+  background-color: red;
+}
+
+.post-content #gallery-slider .swiper-scrollbar {
+  bottom: -60px;
+}
+
+.post-content #gallery-slider .swiper-pagination {
+  display: none;
+}
+
+.post-content #gallery-slider figure.wp-block-image:not(#individual-image) {
+  width: 100%!important;
+}
+
+@media screen and (max-width: 767px) {
+  .post-content {
+    overflow-x: hidden;
+  }
+
+  .post-content .wp-block-gallery #gallery-slider {
+    max-width: 100%;
+  }
+
+  .post-content
+    .wp-block-gallery.has-nested-images
+    #gallery-slider
+    figure.wp-block-image {
+    width: 100%;
+  }
+
+  .post-content #gallery-slider .swiper-scrollbar {
+    display: none;
+  }
+
+  .post-content #gallery-slider .swiper-pagination {
+    display: block;
+  }
+
+  .post-content #gallery-slider .post-swiper-button-next {
+    right: 0px;
+    top: auto;
+    bottom: -50px;
+  }
+
+  .post-content #gallery-slider .post-swiper-button-prev {
+    left: 0px;
+    top: auto;
+    bottom: -50px;
+  }
+}
+
+
+/* Popup */
+.lightbox {
+  @apply hidden w-full h-full fixed left-0 top-0 bg-black/60 z-[9999] justify-center items-center flex-col;
+}
+
+.lightbox.active {
+  @apply flex;
+}
+
+.post-content #gallery-slider .lightbox img {
+  @apply mx-auto h-auto w-auto max-h-[80vh] max-w-[80%];
+}
+
+.post-content #gallery-slider .lightbox .post-swiper-button-next {
+  right: 10px;
+}
+
+.post-content #gallery-slider .lightbox .post-swiper-button-prev {
+  left: 10px;
+}
+
+.lightbox .close-lightbox {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  font-size: 28px;
+  color: white;
+}

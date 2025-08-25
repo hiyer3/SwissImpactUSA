@@ -1,0 +1,190 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WordPress.com - Themes - Blockbase\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2024-04-11T01:19:19+00:00\n"
+"PO-Revision-Date: 2022-07-21 01:52:17+0000\n"
+"Language: de\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: GlotPress/2.4.0-alpha\n"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "System Font"
+msgstr "Systemschriftart"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Chivo"
+msgstr "Chivo"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Source Serif Pro"
+msgstr "Source Serif Pro"
+
+#. Theme URI of the theme
+#: style.css
+msgid "https://wordpress.com/theme/blockbase"
+msgstr "https://wordpress.com/theme/blockbase"
+
+#: inc/patterns/footer-with-site-title.php:9
+msgid "Footer with site title"
+msgstr "Footer mit Website-Titel"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Extra Large"
+msgstr "Sehr groß"
+
+#: inc/patterns/footer-small.php:9
+msgid "Small footer"
+msgstr "Kleiner Footer"
+
+#: inc/patterns/footer-simple.php:9
+msgid "Simple footer"
+msgstr "Einfacher Footer"
+
+#: inc/patterns/footer-separator.php:9
+msgid "Footer with menu and separator"
+msgstr "Footer mit Menü und Trenner"
+
+#: inc/patterns/footer-search.php:9
+msgid "Footer with Search Block"
+msgstr "Footer mit Suche-Block"
+
+#: inc/patterns/footer-primary.php:9
+msgid "Footer with menu"
+msgstr "Footer mit Menü"
+
+#: inc/patterns/footer-left.php:9
+msgid "Left aligned footer"
+msgstr "Linksbündiger Footer"
+
+#: inc/patterns/footer-columns.php:33
+msgid "More info"
+msgstr "Weitere Informationen"
+
+#: inc/patterns/footer-columns.php:41
+msgid "Search"
+msgstr "Suche"
+
+#: inc/patterns/footer-columns.php:9
+msgid "Footer with 3 columns"
+msgstr "Footer mit 3 Spalten"
+
+#: inc/block-patterns.php:52
+msgid "Blockbase Header ("
+msgstr "Blockbase-Header ("
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Footer Only"
+msgstr "Nur Footer"
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Header and Footer Only"
+msgstr "Nur Header und Footer"
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Blank"
+msgstr "Leer"
+
+#: styles/charcoal.json
+#: styles/rainforest.json
+#: styles/ruby-wine.json
+#: theme.json
+msgctxt "Color name"
+msgid "Tertiary"
+msgstr "Tertiär"
+
+#: styles/charcoal.json
+#: styles/rainforest.json
+#: styles/ruby-wine.json
+#: theme.json
+msgctxt "Color name"
+msgid "Background"
+msgstr "Hintergrund"
+
+#: styles/charcoal.json
+#: styles/rainforest.json
+#: styles/ruby-wine.json
+#: theme.json
+msgctxt "Color name"
+msgid "Foreground"
+msgstr "Vordergrund"
+
+#: styles/charcoal.json
+#: styles/rainforest.json
+#: styles/ruby-wine.json
+#: theme.json
+msgctxt "Color name"
+msgid "Secondary"
+msgstr "Sekundär"
+
+#: styles/charcoal.json
+#: styles/rainforest.json
+#: styles/ruby-wine.json
+#: theme.json
+msgctxt "Color name"
+msgid "Primary"
+msgstr "Primär"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Medium"
+msgstr "Mittel"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Large"
+msgstr "Groß"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Small"
+msgstr "Klein"
+
+#: inc/patterns/404.php:9
+msgid "404"
+msgstr "404"
+
+#: functions.php:41
+msgid "Social Navigation"
+msgstr "Social-Media-Navigation"
+
+#. Description of the theme
+#: style.css
+msgid "Blockbase is a simple theme that supports full-site editing. It comes with a set of minimal templates and design settings that can be manipulated through Global Styles. Use it to build something beautiful."
+msgstr "Blockbase ist ein schlichtes Theme, das Full-Site-Editing unterstützt. Es enthält verschiedene minimalistische Templates und Design-Einstellungen, die über Global Styles verändert werden können. Erstelle damit eine wunderschöne Website."
+
+#: inc/customizer/wp-customize-fonts.php:22
+msgid "Fonts"
+msgstr "Schriftarten"
+
+#: inc/customizer/wp-customize-colors.php:18
+msgid "Colors"
+msgstr "Farben"
+
+#: inc/customizer/wp-customize-colors.php:17
+msgid "Color Customization for %1$s"
+msgstr "Anpassung der Farben für %1$s"
+
+#: inc/patterns/404.php:17
+msgid "It looks like nothing was found at this location. Maybe try a search?"
+msgstr "Wie es aussieht, wurde an diesem Ort nichts gefunden. Möchtest du eine Suche starten?"
+
+#: functions.php:40
+msgid "Primary Navigation"
+msgstr "Primäre Navigation"
+
+#: inc/patterns/404.php:13
+msgid "Oops! That page can&rsquo;t be found."
+msgstr "Ups! Diese Seite konnte leider nicht gefunden werden."

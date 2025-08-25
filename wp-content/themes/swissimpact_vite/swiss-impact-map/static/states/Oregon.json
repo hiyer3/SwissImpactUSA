@@ -1,0 +1,81 @@
+{
+    "state": "Oregon",
+    "resident": "26,205",
+    "percent": 9,
+    "jobs_created": "68,200",
+    "export_amount": "144 M",
+    "import_amount": "205 M",
+    "employment": [
+        11100,
+        9700,
+        9300,
+        6300,
+        6100
+    ],
+    "employment_label": [
+        "1. UK",
+        "2. Japan",
+        "3. Germany",
+        "4. Canada",
+        "5. Switzerland"
+    ],
+    "employment_label_short": [
+        "UK",
+        "JP",
+        "DE",
+        "CA",
+        "CH"
+    ],
+    "index_color": 4,
+    "jobs": [6100, 2684, 315],
+    "export": [
+        114,
+        10,
+        4.4,
+        2.6,
+        1.6
+    ],
+    "export_label": [
+        "Chemicals",
+        "Computer & Electronic Products",
+        "Machinery",
+        "Electrical Equipment, Appliances, & Components",
+        "Transportation Equipment"
+    ],
+    "import": [
+        49,
+        36,
+        27,
+        5.1,
+        2.3
+    ],
+    "import_label": [
+        "Chemicals",
+        "Computer & Electronic Products",
+        "Machinery",
+        "Electrical Equipment, Appliances, & Components",
+        "Fabricated Metal Products"
+    ],
+    "companies": [
+        "Adecco",
+        "Avolta",
+        "Brugg",
+        "Chubb (ACE)",
+        "Hoffmann-La Roche",
+        "Ionbond",
+        "Kuehne+Nagel",
+        "Lonza",
+        "MBT Systems",
+        "Meyer Burger",
+        "Nagra",
+        "Nestle",
+        "ON",
+        "Schindler",
+        "SGS",
+        "Sulzer",
+        "Swissport",
+        "Syngenta",
+        "UBS",
+        "Zurich"
+    ]
+}

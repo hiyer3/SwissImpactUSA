@@ -1,0 +1,77 @@
+{
+    "state": "Utah",
+    "resident": "34,705",
+    "percent": 7,
+    "jobs_created": "56,600",
+    "export_amount": "101 M",
+    "import_amount": "92 M",
+    "employment": [
+        9800,
+        6800,
+        5600,
+        4700,
+        4200
+    ],
+    "employment_label": [
+        "1. UK",
+        "2. Germany",
+        "3. France",
+        "4. Canada",
+        "5. Switzerland"
+    ],
+    "employment_label_short": [
+        "UK",
+        "DE",
+        "FR",
+        "CA",
+        "CH"
+    ],
+    "index_color": 4,
+    "jobs": [4200, 2269, 221],
+    "export": [
+        65,
+        8.6,
+        6.5,
+        4.8,
+        1.0
+    ],
+    "export_label": [
+        "Transportation Equipment",
+        "Computer & Electronic Products",
+        "Chemicals",
+        "Machinery",
+        "Primary Metals"
+    ],
+    "import": [
+        35,
+        22,
+        10,
+        9.2,
+        3.7
+    ],
+    "import_label": [
+        "Machinery",
+        "Paper",
+        "Computer & Electronic Products",
+        "Transportation Equipment",
+        "Fabricated Metal Products"
+    ],
+    "companies": [
+        "Adecco",
+        "Avolta",
+        "Clariant",
+        "Endress+Hauser",
+        "Holcim",
+        "Kuehne+Nagel",
+        "Mammut",
+        "Nestle",
+        "Schindler",
+        "SGS",
+        "SIKA",
+        "Stadler",
+        "Stat Peel",
+        "Sulzer",
+        "UBS",
+        "Zurich"
+    ]
+}

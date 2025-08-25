@@ -1,0 +1,147 @@
+{
+    "settings": {
+        "options": {
+            "show_on_front": "posts",
+            "featured-content": false,
+            "jetpack_global_styles": {
+                "font_base": "Roboto",
+                "font_headings": "Rubik"
+            }
+        },
+        "theme_mods": {
+            "0": false,
+            "nav_menu_locations": {
+                "primary": "primary"
+            },
+            "custom_css_post_id": -1
+        },
+        "headstart": {
+            "mapped_id_options": [],
+            "mapped_id_theme_mods": [],
+            "keep_submenu_items": true
+        }
+    },
+    "widgets": [],
+    "content": [
+        {
+            "post_type": "post",
+            "post_title": "De waterfan",
+            "post_content": "<!-- wp:paragraph --> <p>We hebben vier dagen gelopen voor we de top bereikten. Toen we tussen de bomen vandaan kwamen, werden we verwelkomd door een ochtendmist die verder reikte dan we konden zien. Het was niet het uitzicht waar we op hadden gehoopt, maar het was zeker memorabel.</p> <!-- /wp:paragraph -->",
+            "post_name": "the-water-fan",
+            "post_excerpt": "",
+            "menu_order": 0,
+            "post_status": "publish",
+            "comment_status": "closed",
+            "ping_status": "closed",
+            "_starter_page_template": "",
+            "hs_old_id": 12,
+            "hs_post_parent": 0,
+            "hs_taxonomies": {
+                "category_name": [
+                    "Uncategorized"
+                ],
+                "post_tag_name": []
+            },
+            "hs_custom_meta": "_hs_extra",
+            "attachment_url": "https://blockbasedemo.files.wordpress.com/2021/06/free-illustration-img-ship-water-man.jpg"
+        },
+        {
+            "post_type": "page",
+            "post_title": "Over",
+            "post_content": "<!-- wp:paragraph {\"align\":\"left\"} --> <p class=\"has-text-align-left\">Bezoekers willen weten wie aan de andere kant van de pagina zit. Gebruik dit gedeelte om wat te schrijven over jezelf, je site, je bedrijf of wat je maar wil. Gebruik de onderstaande testimonials om anderen te citeren die het over hetzelfde hebben.</p> <!-- /wp:paragraph --> <!-- wp:paragraph {\"align\":\"left\"} --> <p class=\"has-text-align-left\">Dit is voorbeeldinhoud, meegeleverd bij het sjabloon om alle functies te demonstreren. Verwijder de inhoud of vervang deze door je eigen woorden en media.</p> <!-- /wp:paragraph --> <!-- wp:spacer {\"height\":32,\"className\":\"desktop-only\"} --> <div style=\"height:32px;\" aria-hidden=\"true\" class=\"wp-block-spacer desktop-only\"></div> <!-- /wp:spacer --> <!-- wp:separator {\"className\":\"is-style-wide\"} --> <hr class=\"wp-block-separator is-style-wide\" /> <!-- /wp:separator --> <!-- wp:spacer {\"height\":32,\"className\":\"desktop-only\"} --> <div style=\"height:32px;\" aria-hidden=\"true\" class=\"wp-block-spacer desktop-only\"></div> <!-- /wp:spacer --> <!-- wp:paragraph --> <p>Laten we samen wat opbouwen.</p> <!-- /wp:paragraph --> <!-- wp:buttons --> <div class=\"wp-block-buttons\"><!-- wp:button --> <div class=\"wp-block-button\"><a class=\"wp-block-button__link\" href=\"#\">Neem contact op!</a></div> <!-- /wp:button --></div> <!-- /wp:buttons --> <!-- wp:spacer {\"height\":32} --> <div style=\"height:32px;\" aria-hidden=\"true\" class=\"wp-block-spacer\"></div> <!-- /wp:spacer -->",
+            "post_name": "about",
+            "post_excerpt": "",
+            "menu_order": 1,
+            "post_status": "publish",
+            "comment_status": "closed",
+            "ping_status": "closed",
+            "_starter_page_template": "",
+            "hs_old_id": 5,
+            "hs_post_parent": 0,
+            "hs_taxonomies": [],
+            "hs_custom_meta": "_hs_extra"
+        },
+        {
+            "post_type": "page",
+            "post_title": "Contact",
+            "post_content": "<!-- wp:paragraph {\"align\":\"left\"} --> <p class=\"has-text-align-left\">Laten we dit bespreken &amp;amp;#128075; aarzel niet om contact met ons op te nemen via de onderstaande contactgegevens, of een bericht te sturen via het formulier.</p> <!-- /wp:paragraph --> <!-- wp:spacer {\"height\":32,\"className\":\"desktop-only\"} --> <div style=\"height:32px;\" aria-hidden=\"true\" class=\"wp-block-spacer desktop-only\"></div> <!-- /wp:spacer --> <!-- wp:heading {\"textAlign\":\"left\"} --> <h2 class=\"has-text-align-left\">Neem contact op</h2> <!-- /wp:heading --> <!-- wp:jetpack/contact-info --> <div class=\"wp-block-jetpack-contact-info\"><!-- wp:jetpack/address {\"address\":\"10 Street Road\",\"city\":\"City\",\"postal\":\"10100\",\"country\":\"USA\"} --> <div class=\"wp-block-jetpack-address\"><div class=\"jetpack-address__address jetpack-address__address1\">Straat 10</div><div><span class=\"jetpack-address__city\">1234 AB</span>, <span class=\"jetpack-address__region\"></span><span class=\"jetpack-address__postal\">Stad</span></div><div class=\"jetpack-address__country\">Nederland</div></div> <!-- /wp:jetpack/address --> <!-- wp:jetpack/email {\"email\":\"mail@example.com\"} --> <div class=\"wp-block-jetpack-email\"><a href=\"mailto:mail@example.com\">email@voorbeeld.com</a></div> <!-- /wp:jetpack/email --> <!-- wp:jetpack/phone {\"phone\":\"(555) 555 1234\"} --> <div class=\"wp-block-jetpack-phone\"><a href=\"tel:5555551234\">+31 12345678</a></div> <!-- /wp:jetpack/phone --></div> <!-- /wp:jetpack/contact-info --> <!-- wp:spacer {\"height\":32,\"className\":\"desktop-only\"} --> <div style=\"height:32px;\" aria-hidden=\"true\" class=\"wp-block-spacer desktop-only\"></div> <!-- /wp:spacer --> <!-- wp:heading {\"textAlign\":\"left\"} --> <h2 class=\"has-text-align-left\">Stuur ons een bericht</h2> <!-- /wp:heading --> <!-- wp:jetpack/contact-form {\"subject\":\"[Blockbase] Contact\"} --> <!-- wp:jetpack/field-name {\"required\":true} /--> <!-- wp:jetpack/field-email {\"label\":\"Email\",\"required\":true} /--> <!-- wp:jetpack/field-url /--> <!-- wp:jetpack/field-textarea {\"required\":true} /--> <!-- /wp:jetpack/contact-form --> <!-- wp:paragraph --> <p></p> <!-- /wp:paragraph -->",
+            "post_name": "contact",
+            "post_excerpt": "",
+            "menu_order": 1,
+            "post_status": "publish",
+            "comment_status": "closed",
+            "ping_status": "closed",
+            "_starter_page_template": "",
+            "hs_old_id": 6,
+            "hs_post_parent": 0,
+            "hs_taxonomies": [],
+            "hs_custom_meta": "_hs_extra"
+        },
+        {
+            "post_type": "page",
+            "post_title": "",
+            "post_content": "<!-- wp:paragraph -->\n<p> </p>\n<!-- /wp:paragraph -->",
+            "post_name": "home",
+            "post_excerpt": "",
+            "menu_order": 0,
+            "post_status": "publish",
+            "comment_status": "closed",
+            "ping_status": "closed",
+            "_starter_page_template": "",
+            "hs_old_id": 2,
+            "hs_post_parent": 0,
+            "hs_taxonomies": [],
+            "hs_custom_meta": "_hs_front_page"
+        }
+    ],
+    "menus": {
+        "primary": {
+            "name": "Primaire",
+            "items": [
+                {
+                    "menu-item-title": "Home",
+                    "menu-item-db-id": 26,
+                    "menu-item-object-id": "26",
+                    "menu-item-object": "custom",
+                    "menu-item-type": "custom",
+                    "menu-item-status": "publish",
+                    "menu-item-position": 1,
+                    "menu-item-parent-id": "0",
+                    "menu-item-description": "",
+                    "menu-item-url": "/"
+                },
+                {
+                    "menu-item-title": "Contact",
+                    "menu-item-db-id": 27,
+                    "menu-item-object-id": "6",
+                    "menu-item-object": "page",
+                    "menu-item-type": "post_type",
+                    "menu-item-status": "publish",
+                    "menu-item-position": 2,
+                    "menu-item-parent-id": "0",
+                    "menu-item-description": ""
+                },
+                {
+                    "menu-item-title": "Over",
+                    "menu-item-db-id": 28,
+                    "menu-item-object-id": "5",
+                    "menu-item-object": "page",
+                    "menu-item-type": "post_type",
+                    "menu-item-status": "publish",
+                    "menu-item-position": 3,
+                    "menu-item-parent-id": "0",
+                    "menu-item-description": ""
+                }
+            ]
+        }
+    },
+    "images": [
+        "https://blockbasedemo.files.wordpress.com/2021/06/free-illustration-img-ship-water-man.jpg"
+    ],
+    "meta": {
+        "blog_id": 194382036,
+        "url": "https://blockbasedemo.wordpress.com",
+        "update_date": "September 28, 2021, 6:17 pm",
+        "update_timestamp": 1632853053
+    }
+}

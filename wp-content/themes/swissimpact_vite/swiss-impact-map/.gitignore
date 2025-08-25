@@ -1,0 +1,7 @@
+node_modules
+package-lock.json
+dist
+static/download
+static/favicon
+static/font
+static/img

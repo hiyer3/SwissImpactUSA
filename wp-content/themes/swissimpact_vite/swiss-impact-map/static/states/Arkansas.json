@@ -1,0 +1,21 @@
+{
+    "state": "Arkansas",
+    "resident": "4,696",
+    "percent": "5",
+    "jobs_created": "58,500",
+    "export_amount": "105 M",
+    "import_amount": "41 M",
+    "employment": [6600, 4900, 4500, 3200, 3100],
+    "employment_label": ["2. France", "3. Japan", "4. Canada", "5. Germany", "6. Switzerland"],
+    "employment_label_short": ["FR", "JP", "CA", "DE", "CH"],
+    "index_color": 4,
+    "jobs": [3100,1681,229],
+    "export": [100, 0.7, 0.3, 0.3, 0.1],
+    "export_label": ["Transportation Equipment", "Chemicals", "Plastics & Rubber Products", "Machinery", "Food"],
+    "import": [13, 8.9, 2.4, 1.8, 0.3],
+    "import_label": ["Machinery", "Fabricated Metal Products", "Chemicals", "Computer & Electronic Products", "Textiles & Fabrics"],
+    "companies": [
+        "ABB", "Nestle", "Adecco", "Schindler", "Chubb (ACE)", "SGS", 
+        "Georg Fischer", "Syngenta", "Holcim", "UBS"
+    ]
+}

@@ -1,0 +1,144 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WordPress.com - Themes - Blockbase\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2024-04-11T01:18:59+00:00\n"
+"PO-Revision-Date: 2022-07-21 01:52:17+0000\n"
+"Language: zh_TW\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: GlotPress/2.4.0-alpha\n"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "System Font"
+msgstr "System Font"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Chivo"
+msgstr "Chivo"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Source Serif Pro"
+msgstr "Source Serif Pro"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Extra Large"
+msgstr "超大型"
+
+#: inc/patterns/footer-columns.php:33
+msgid "More info"
+msgstr "更多資訊"
+
+#: inc/patterns/footer-columns.php:41
+msgid "Search"
+msgstr "搜尋"
+
+#: styles/charcoal.json
+#: styles/rainforest.json
+#: styles/ruby-wine.json
+#: theme.json
+msgctxt "Color name"
+msgid "Primary"
+msgstr "主要"
+
+#: styles/charcoal.json
+#: styles/rainforest.json
+#: styles/ruby-wine.json
+#: theme.json
+msgctxt "Color name"
+msgid "Tertiary"
+msgstr "第三級"
+
+#: styles/charcoal.json
+#: styles/rainforest.json
+#: styles/ruby-wine.json
+#: theme.json
+msgctxt "Color name"
+msgid "Background"
+msgstr "背景"
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Blank"
+msgstr "空白"
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Header and Footer Only"
+msgstr "僅用於頁首與頁尾"
+
+#: styles/charcoal.json
+#: styles/rainforest.json
+#: styles/ruby-wine.json
+#: theme.json
+msgctxt "Color name"
+msgid "Foreground"
+msgstr "前景"
+
+#: styles/charcoal.json
+#: styles/rainforest.json
+#: styles/ruby-wine.json
+#: theme.json
+msgctxt "Color name"
+msgid "Secondary"
+msgstr "第二級"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Medium"
+msgstr "中型"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Large"
+msgstr "大型"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Small"
+msgstr "小型"
+
+#: inc/patterns/404.php:9
+msgid "404"
+msgstr "404"
+
+#: functions.php:41
+msgid "Social Navigation"
+msgstr "社群導覽"
+
+#: inc/customizer/wp-customize-fonts.php:22
+msgid "Fonts"
+msgstr "字體"
+
+#. Description of the theme
+#: style.css
+msgid "Blockbase is a simple theme that supports full-site editing. It comes with a set of minimal templates and design settings that can be manipulated through Global Styles. Use it to build something beautiful."
+msgstr "Blockbase 是個簡潔的佈景主題，支援全站編輯模式。該佈景主題提供一組極簡範與版面設計設定，可以透過全站樣式設定予以變更。請用它架出美美的網站。"
+
+#: inc/customizer/wp-customize-colors.php:18
+msgid "Colors"
+msgstr "色彩"
+
+#: inc/customizer/wp-customize-colors.php:17
+msgid "Color Customization for %1$s"
+msgstr "%1$s 的色彩設定調整。"
+
+#: functions.php:40
+msgid "Primary Navigation"
+msgstr "主導覽列"
+
+#: inc/patterns/404.php:17
+msgid "It looks like nothing was found at this location. Maybe try a search?"
+msgstr "這裡看來什麼也沒有，要改用搜尋嗎？"
+
+#: inc/patterns/404.php:13
+msgid "Oops! That page can&rsquo;t be found."
+msgstr "唉呀！找不到這個頁面。"

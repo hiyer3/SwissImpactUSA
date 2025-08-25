@@ -1,0 +1,28 @@
+{
+    "state":"North Dakota",
+    "resident":"1,981",
+    "percent": "3",
+    "jobs_created":"15,000",
+    "export_amount":"17 M",
+    "import_amount": "7.7 M",
+    "employment" : [900, 900, 900, 700, 400],
+    "employment_label" :["3. France","3. Japan","3. Netherlands","6. Germany","7. Switzerland"],
+    "employment_label_short" :["FR","JP","NL","DE","CH"],
+    "index_color" : 4,
+    "jobs":[400, 560, 42],
+    "export":[14,1.3,0.7,0.3,0.2],
+    "export_label":["Chemicals","Computer & Electronic Products","Furniture & Fixtures","Machinery","Agricultural Products"],
+    "import":[3.1,1.1,1.0,0.3,0.2],
+    "import_label":["Chemicals","Machinery","Computer & Electronic Products","Fabricated Metal Products","Plastics & Rubber Products"],
+    "companies":[
+        "Adecco",
+        "Chubb (ACE)",
+        "LafargeHolcim",
+        "Schindler",
+        "SGS",
+        "Syngenta",
+        "UBS",
+        "Weatherford",
+        "Zurich"
+    ]
+}

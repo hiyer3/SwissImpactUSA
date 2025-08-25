@@ -1,0 +1,25 @@
+{
+    "state":"Kansas",
+    "resident":"12,614",
+    "percent": "10",
+    "jobs_created":"76,100",
+    "export_amount":"83 M",
+    "import_amount": "38 M",
+    "employment" : [11600, 9900, 8700, 7500, 6800],
+    "employment_label" :["1. Japan","2. Canada","3. UK","4. Switzerland","5. Germany"],
+    "employment_label_short" :["JP","CA","UK","CH","DE"],
+    "index_color" : 3,
+    "jobs":[7500, 1875, 201],
+    "export":[33,20,8.5,7.0,6.2],
+    "export_label":["Transportation Equipment","Computer & Electronic Products","Electrical Equipment, Appliances & Components","Machinery","Fabricated Metal Products"],
+    "import":[9.5,5.7,4.2,3.1,1.9],
+    "import_label":["Machinery","Chemicals","Computer & Electronic Products","Electrical Equipment, Appliances & Components","Fabricated Metal Products"],
+    "companies":[
+        "Adecco",
+        "Bucher Industries",
+        "Chubb (ACE)",
+        "Hoerbiger",
+        "INFICON",
+        "Kuehne+Nagel"
+    ]
+}

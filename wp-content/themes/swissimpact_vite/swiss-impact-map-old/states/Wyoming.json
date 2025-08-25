@@ -1,0 +1,25 @@
+{
+    "state":"Wyoming",
+    "resident":"2,563",
+    "percent": "4",
+    "jobs_created":"7,700",
+    "export_amount":"0.7 M",
+    "import_amount": "5.8 M",
+    "employment" : [2000, 900, 800, 300, 100],
+    "employment_label" :["1. UK","2. France","3. Canada","4. Switzerland","5. Japan"],
+    "employment_label_short" :["UK","FR","CA","CH","JP"],
+    "index_color" : 3,
+    "jobs":[300,332,2],
+    "export":[0.4,0.1,0.1,0.05,0.03],
+    "export_label":["Computer & Electronic Products","Used Merchandise","Machinery","Nonmetallic Mineral Products","Transportation Equipment"],
+    "import":[0.7,0.4,0.2,0.1,0.07],
+    "import_label":["Machinery","Components & Electronic Products","Chemicals","Fabricated Metal Products","Used Merchandise"],
+    "companies":[
+        "Adecco",
+        "Clariant",
+        "Hoerbiger",
+        "SGS",
+        "Sulzer",
+        "Zurich"
+    ]
+}

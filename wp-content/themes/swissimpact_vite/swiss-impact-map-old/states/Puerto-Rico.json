@@ -1,0 +1,27 @@
+{
+    "state":"Puerto Rico",
+    "resident":"11",
+    "percent": "5",
+    "jobs_created":"23,900",
+    "export_amount":"136 M",
+    "import_amount": "1.8 B",
+    "employment" : [2800, 2000, 1800, 1300, 900],
+    "employment_label" :["1. Germany","2. UK","3. Canada"," 4. Switzerland","5. France"],
+    "employment_label_short" :["DE","UK","CA","CH","FR"],
+    "index_color" : 3,
+    "jobs":[1300, 1208, 332],
+    "export":[124,2.9,2.3,0.8,0.3],
+    "export_label":["Chemicals","Primary Metals","Plastics & Rubber Products","Computer & Electronic Products","Machinery"],
+    "import":[1700,33,11,8.9,0.7],
+    "import_label":["Chemicals","Electrical Equipment, Appliances & Components","Machinery","Computer & Electronic Products","Plastics & Rubber Products"],
+    "companies":[
+        "ABB",
+        "Adecco",
+        "Chubb (ACE)",
+        "Kuehne+Nagel",
+        "Novartis",
+        "Schindler",
+        "Syngenta",
+        "UBS"
+    ]
+}

@@ -1,0 +1,69 @@
+{
+    "state": "Idaho",
+    "resident": "11,904",
+    "percent": 2,
+    "jobs_created": "21,000",
+    "export_amount": "3.5 M",
+    "import_amount": "9.0 M",
+    "employment": [
+        3000,
+        2500,
+        1300,
+        700,
+        400
+    ],
+    "employment_label": [
+        "3. Germany",
+        "4. France",
+        "5. Japan",
+        "6. Netherlands",
+        "7. Switzerland"
+    ],
+    "employment_label_short": [
+        "DE",
+        "FR",
+        "JP",
+        "NL",
+        "CH"
+    ],
+    "index_color": 4,
+    "jobs": [400,1101,8],
+    "export": [
+        1.4,
+        0.9,
+        0.5,
+        0.2,
+        0.1
+    ],
+    "export_label": [
+        "Transportation Equipment",
+        "Agricultural Products",
+        "Computer & Electronic Products",
+        "Fabricated Metal Products",
+        "Electrical Equipment, Appliances, & Components"
+    ],
+    "import": [
+        3.5,
+        1.5,
+        1.5,
+        0.4,
+        0.4
+    ],
+    "import_label": [
+        "Machinery",
+        "Computer & Electronic Products",
+        "Primary Metals",
+        "Fabricated Metal Products",
+        "Electrical Equipment, Appliances, & Components"
+    ],
+    "companies": [
+        "Adecco",
+        "Holcim",
+        "Nestle",
+        "Schindler",
+        "Swissport",
+        "Syngenta",
+        "UBS",
+        "Zurich"
+    ]
+}

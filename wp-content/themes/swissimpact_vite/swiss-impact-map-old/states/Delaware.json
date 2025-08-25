@@ -1,0 +1,32 @@
+{
+    "state":"Delaware",
+    "resident":"2,090",
+    "percent": "6",
+    "jobs_created":"24,600",
+    "export_amount":"30 M",
+    "import_amount": "2.3 B",
+    "employment" : [3500, 2400, 1900, 1700, 1500],
+    "employment_label" :["2. Germany","3. Netherlands","4. Canada","5. France","6. Switzerland"],
+    "employment_label_short" :["DE","NL","CA","FR","CH"],
+    "index_color" : 4,
+    "jobs":[1500, 700, 74],
+    "export":[3.4,2.9,2.6,1.5,1.3],
+    "export_label":["Primary Metals","Used Merchandise", "Chemicals", "Machinery", "Plastics & Rubber Products"],
+    "import":[2100,113,17,11,9.4],
+    "import_label":["Chemicals", "Primary Metals","Machinery", "Transportation Equipment","Computer & Electronic Products"],
+    "companies":[
+        "Adecco",
+        "Chubb (ACE)",
+        "Datwyler",
+        "Hoffmann-La Roche",
+        "IBSA Pharma",
+        "Incyte",
+        "Juice Technology",
+        "Nestlé",
+        "Publicitas",
+        "Swisslog",
+        "Syngenta",
+        "UBS",
+        "Zurich"
+    ]
+}

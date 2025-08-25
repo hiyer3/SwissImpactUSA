@@ -1,0 +1,24 @@
+{
+    "state": "Arizona",
+    "resident": "18,248",
+    "percent": "4",
+    "jobs_created": "144,600",
+    "export_amount": "304 M",
+    "import_amount": "197 M",
+    "employment": [12200, 11100, 11000, 9500, 6100],
+    "employment_label": ["3. Japan", "4. France", "5. Germany", "6. Netherlands", "7. Switzerland"],
+    "employment_label_short": ["JP", "FR", "DE", "NL", "CH"],
+    "index_color": 4,
+    "jobs": [6100,4646,665],
+    "export": [77, 51, 19, 7.5, 6.7],
+    "export_label": ["Computer & Electronic Products", "Transportation Equipment", "Electrical Equipment, Appliances, & Components", "Fabricated Metal Products", "Machinery"],
+    "import": [63, 38, 24, 19, 15],
+    "import_label": ["Primary Metals", "Computer & Electronic Products", "Machinery", "Fabricated Metal Products", "Electrical Equipment, Appliances, & Components"],
+    "companies": [
+        "ABB", "Acronis", "Adecco", "Avolta", "Bernina", "Bossard", "Chubb (ACE)", "Clariant", 
+        "Endress+Hauser", "Daedalean", "Fisba", "Hoffmann-La Roche", "Holcim", "Kuehne+Nagel", 
+        "Leica Geosystems", "Lindt & Sprungli", "Meyer Burger", "Nagra", "Nespresso", "Katadyn", 
+        "Nestle", "Omya", "Quadrant", "Schindler", "SGS", "Swissport", "Syngenta", "UBS", "Zurich", 
+        "STA Travel", "STMicroelectronics", "Sulzer"
+    ]
+}

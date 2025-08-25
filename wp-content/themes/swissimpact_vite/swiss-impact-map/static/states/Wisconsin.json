@@ -1,0 +1,95 @@
+{
+    "state": "Wisconsin",
+    "resident": "51,327",
+    "percent": 7,
+    "jobs_created": "135,900",
+    "export_amount": "270 M",
+    "import_amount": "387 M",
+    "employment": [
+        15000,
+        12900,
+        10500,
+        10000,
+        9600
+    ],
+    "employment_label": [
+        "1. UK",
+        "2. Germany",
+        "3. France",
+        "4. Japan",
+        "5. Switzerland"
+    ],
+    "employment_label_short": [
+        "UK",
+        "DE",
+        "FR",
+        "JP",
+        "CH"
+    ],
+    "index_color": 4,
+    "jobs": [9600,3806,590],
+    "export": [
+        190,
+        22,
+        21,
+        15,
+        7.9
+    ],
+    "export_label": [
+        "Transportation Equipment",
+        "Chemicals",
+        "Computer & Electronic Products",
+        "Machinery",
+        "Plastics & Rubber Products"
+    ],
+    "import": [
+        169,
+        97,
+        55,
+        22,
+        7.0
+    ],
+    "import_label": [
+        "Chemicals",
+        "Machinery",
+        "Electrical Equipment, Appliances, & Components",
+        "Computer & Electronic Products",
+        "Fabricated Metal Products"
+    ],
+    "companies": [
+        "ABB",
+        "Adecco",
+        "Aebi Schmidt",
+        "Alp & Dell",
+        "Bossard",
+        "Bucher Industries",
+        "Chalet Landhaus Inn",
+        "Chubb (ACE)",
+        "Emmi Roth",
+        "Esther's European Imports",
+        "Ferrum",
+        "FISCHER",
+        "HOPPE",
+        "lnauen Group",
+        "Komax",
+        "Holcim",
+        "LEM",
+        "Lindt & Sprungli",
+        "Mosmatic",
+        "Nestle",
+        "New Glarus Hotel Restaurant",
+        "Northwire (Lerno)",
+        "Oerlikon",
+        "Roche Diagnostics",
+        "Satisloh",
+        "Siegfried",
+        "Schindler",
+        "SGS",
+        "SoftwareONE",
+        "Swissray International",
+        "Syngenta",
+        "UBS",
+        "Weidmann",
+        "Zurich"
+    ]
+}

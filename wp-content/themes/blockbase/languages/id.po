@@ -1,0 +1,144 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WordPress.com - Themes - Blockbase\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2024-04-11T01:19:28+00:00\n"
+"PO-Revision-Date: 2022-07-21 01:52:17+0000\n"
+"Language: id\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: GlotPress/2.4.0-alpha\n"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "System Font"
+msgstr "System Font"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Chivo"
+msgstr "Chivo"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Source Serif Pro"
+msgstr "Source Serif Pro"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Extra Large"
+msgstr "Ekstra Luas"
+
+#: inc/patterns/footer-columns.php:33
+msgid "More info"
+msgstr "Info selengkapnya."
+
+#: inc/patterns/footer-columns.php:41
+msgid "Search"
+msgstr "Cari"
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Header and Footer Only"
+msgstr "Hanya Header dan Footer"
+
+#: styles/charcoal.json
+#: styles/rainforest.json
+#: styles/ruby-wine.json
+#: theme.json
+msgctxt "Color name"
+msgid "Background"
+msgstr "Latar belakang"
+
+#: styles/charcoal.json
+#: styles/rainforest.json
+#: styles/ruby-wine.json
+#: theme.json
+msgctxt "Color name"
+msgid "Tertiary"
+msgstr "Tersier"
+
+#: styles/charcoal.json
+#: styles/rainforest.json
+#: styles/ruby-wine.json
+#: theme.json
+msgctxt "Color name"
+msgid "Primary"
+msgstr "Primer"
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Blank"
+msgstr "Kosong"
+
+#: styles/charcoal.json
+#: styles/rainforest.json
+#: styles/ruby-wine.json
+#: theme.json
+msgctxt "Color name"
+msgid "Secondary"
+msgstr "Sekunder"
+
+#: styles/charcoal.json
+#: styles/rainforest.json
+#: styles/ruby-wine.json
+#: theme.json
+msgctxt "Color name"
+msgid "Foreground"
+msgstr "Latar depan"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Medium"
+msgstr "Sedang"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Large"
+msgstr "Besar"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Small"
+msgstr "Kecil"
+
+#: inc/patterns/404.php:9
+msgid "404"
+msgstr "404"
+
+#: functions.php:41
+msgid "Social Navigation"
+msgstr "Navigasi Media Sosial"
+
+#: inc/customizer/wp-customize-fonts.php:22
+msgid "Fonts"
+msgstr "Font"
+
+#. Description of the theme
+#: style.css
+msgid "Blockbase is a simple theme that supports full-site editing. It comes with a set of minimal templates and design settings that can be manipulated through Global Styles. Use it to build something beautiful."
+msgstr "Blockbase adalah tema sederhana yang mendukung pengeditan situs penuh. Tema berikut memiliki satu set template minimal dan pengaturan desain yang dapat dimanipulasi melalui Global Styles. Gunakan Blockbase untuk membangun sesuatu yang indah."
+
+#: inc/customizer/wp-customize-colors.php:18
+msgid "Colors"
+msgstr "Warna"
+
+#: inc/customizer/wp-customize-colors.php:17
+msgid "Color Customization for %1$s"
+msgstr "Penyesuaian Warna untuk %1$s"
+
+#: inc/patterns/404.php:17
+msgid "It looks like nothing was found at this location. Maybe try a search?"
+msgstr "Tidak ditemukan apa pun di sini. Silakan gunakan pencarian."
+
+#: functions.php:40
+msgid "Primary Navigation"
+msgstr "Navigasi Utama"
+
+#: inc/patterns/404.php:13
+msgid "Oops! That page can&rsquo;t be found."
+msgstr "Maaf! Laman tidak dapat ditemukan."

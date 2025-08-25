@@ -1,0 +1,23 @@
+{
+    "state": "Alabama",
+    "resident": "4,508",
+    "percent": "1",
+    "jobs_created": "132,400",
+    "export_amount": "25 M",
+    "import_amount": "148 M",
+    "employment": [17000, 12400, 8900, 3200, 1800],
+    "employment_label": ["3. Canada", "4. UK", "5. France", "6. Netherlands", "7. Switzerland"],
+    "employment_label_short": ["CA", "UK", "FR", "NL", "CH"],
+    "index_color": 4,
+    "jobs": [1800,2601,55],
+    "export": [15, 4.2, 2.4, 0.7, 0.4],
+    "export_label": ["Chemicals", "Transportation Equipment", "Computer & Electronic Products", "Primary Metals", "Machinery"],
+    "import": [66, 45, 11, 7.8, 3.9],
+    "import_label": ["Transportation Equipment", "Chemicals", "Fabricated Metal Products", "Machinery", "Computer & Electronic Products"],
+    "companies": [
+        "Bruderer", "Chubb (ACE)", "Hoerbiger", "Holcim", "INEOS", "Kuehne+Nagel",
+        "Leica Geosytems", "Nestlé", "Oerlikon", "Omya", "RUAG", 
+        "Russell Stover Candies (Lindt)", "SGS", "Sika", "Sulzer", 
+        "Syngenta", "UBS"
+    ]
+}

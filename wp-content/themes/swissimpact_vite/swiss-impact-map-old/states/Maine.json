@@ -1,0 +1,30 @@
+{
+    "state":"Maine",
+    "resident":"2,147",
+    "percent": "7",
+    "jobs_created":"35,600",
+    "export_amount":"5.6 M",
+    "import_amount": "18 M",
+    "employment" : [11000, 8700, 2500, 2100, 1700],
+    "employment_label" :["1. Netherlands","2. Canada","3. Switzerland","4. UK","5. Germany"],
+    "employment_label_short" :["NL","CA","CH","UK","DE"],
+    "index_color" : 2,
+    "jobs":[2500, 909, 14],
+    "export":[1.6,0.6,0.5,0.5,0.2],
+    "export_label":["Machinery","Fabricated Metal Products","Computer & Electronic Products","Chemicals","Used Merchandise"],
+    "import":[2.3,1.7,1.4,0.6,0.3],
+    "import_label":["Fabricated Metal Products","Computer & Electronic Products","Machinery","Electrical Equipment, Appliances & Components","Plastics & Rubber Products"],
+    "companies":[
+        "Adecco",
+        "Chubb (ACE)",
+        "Clariant",
+        "Kardex",
+        "Katadyn",
+        "Lindt & Sprüngli",
+        "Lonza",
+        "Nestlé",
+        "Syngenta",
+        "UBS",
+        "Zurich"
+    ]
+}

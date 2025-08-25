@@ -1,0 +1,190 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WordPress.com - Themes - Blockbase\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2024-04-11T01:18:54+00:00\n"
+"PO-Revision-Date: 2022-07-21 01:52:17+0000\n"
+"Language: zh_CN\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: GlotPress/2.4.0-alpha\n"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "System Font"
+msgstr "System Font"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Chivo"
+msgstr "Chivo"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Source Serif Pro"
+msgstr "Source Serif Pro"
+
+#. Theme URI of the theme
+#: style.css
+msgid "https://wordpress.com/theme/blockbase"
+msgstr "https://wordpress.com/theme/blockbase"
+
+#: inc/patterns/footer-with-site-title.php:9
+msgid "Footer with site title"
+msgstr "带有站点标题的页脚"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Extra Large"
+msgstr "特大"
+
+#: inc/patterns/footer-small.php:9
+msgid "Small footer"
+msgstr "小页脚"
+
+#: inc/patterns/footer-simple.php:9
+msgid "Simple footer"
+msgstr "简单页脚"
+
+#: inc/patterns/footer-separator.php:9
+msgid "Footer with menu and separator"
+msgstr "带有菜单和分隔符的页脚"
+
+#: inc/patterns/footer-search.php:9
+msgid "Footer with Search Block"
+msgstr "带有搜索块的页脚"
+
+#: inc/patterns/footer-primary.php:9
+msgid "Footer with menu"
+msgstr "带有菜单的页脚"
+
+#: inc/patterns/footer-left.php:9
+msgid "Left aligned footer"
+msgstr "左对齐的页脚"
+
+#: inc/patterns/footer-columns.php:33
+msgid "More info"
+msgstr "更多信息"
+
+#: inc/patterns/footer-columns.php:41
+msgid "Search"
+msgstr "查询"
+
+#: inc/patterns/footer-columns.php:9
+msgid "Footer with 3 columns"
+msgstr "有3栏的页脚"
+
+#: inc/block-patterns.php:52
+msgid "Blockbase Header ("
+msgstr "块状为主的标题 ("
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Footer Only"
+msgstr "仅限页脚"
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Header and Footer Only"
+msgstr "只有页眉和页脚"
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Blank"
+msgstr "空白"
+
+#: styles/charcoal.json
+#: styles/rainforest.json
+#: styles/ruby-wine.json
+#: theme.json
+msgctxt "Color name"
+msgid "Tertiary"
+msgstr "第三级"
+
+#: styles/charcoal.json
+#: styles/rainforest.json
+#: styles/ruby-wine.json
+#: theme.json
+msgctxt "Color name"
+msgid "Background"
+msgstr "背景"
+
+#: styles/charcoal.json
+#: styles/rainforest.json
+#: styles/ruby-wine.json
+#: theme.json
+msgctxt "Color name"
+msgid "Foreground"
+msgstr "前景"
+
+#: styles/charcoal.json
+#: styles/rainforest.json
+#: styles/ruby-wine.json
+#: theme.json
+msgctxt "Color name"
+msgid "Secondary"
+msgstr "第二级"
+
+#: styles/charcoal.json
+#: styles/rainforest.json
+#: styles/ruby-wine.json
+#: theme.json
+msgctxt "Color name"
+msgid "Primary"
+msgstr "主要"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Medium"
+msgstr "中"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Large"
+msgstr "大"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Small"
+msgstr "小"
+
+#: inc/patterns/404.php:9
+msgid "404"
+msgstr "404"
+
+#: functions.php:41
+msgid "Social Navigation"
+msgstr "社群导览"
+
+#: inc/customizer/wp-customize-fonts.php:22
+msgid "Fonts"
+msgstr "字体"
+
+#. Description of the theme
+#: style.css
+msgid "Blockbase is a simple theme that supports full-site editing. It comes with a set of minimal templates and design settings that can be manipulated through Global Styles. Use it to build something beautiful."
+msgstr "Blockbase 是一个支持全站编辑的简单主题。它具备一套最小的模板和设计设置，可以通过全局样式进行操作。您可以使用它构建精美站点。"
+
+#: inc/customizer/wp-customize-colors.php:18
+msgid "Colors"
+msgstr "颜色"
+
+#: inc/customizer/wp-customize-colors.php:17
+msgid "Color Customization for %1$s"
+msgstr "%1$s 的色彩设定调整。"
+
+#: inc/patterns/404.php:17
+msgid "It looks like nothing was found at this location. Maybe try a search?"
+msgstr "这儿似乎什么都没有，试试搜索？"
+
+#: functions.php:40
+msgid "Primary Navigation"
+msgstr "主导航栏"
+
+#: inc/patterns/404.php:13
+msgid "Oops! That page can&rsquo;t be found."
+msgstr "抱歉！无法找到该页面。"

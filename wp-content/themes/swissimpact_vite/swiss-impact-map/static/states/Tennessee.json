@@ -1,0 +1,86 @@
+{
+    "state": "Tennessee",
+    "resident": "12,062",
+    "percent": 4,
+    "jobs_created": "213,000",
+    "export_amount": "100 M",
+    "import_amount": "1.6 B",
+    "employment": [
+        26600,
+        17900,
+        15200,
+        10500,
+        7600
+    ],
+    "employment_label": [
+        "3. France",
+        "4. Germany",
+        "5. Canada",
+        "6. Netherlands",
+        "7. Switzerland"
+    ],
+    "employment_label_short": [
+        "FR",
+        "DE",
+        "CA",
+        "NL",
+        "CH"
+    ],
+    "index_color": 4,
+    "jobs": [7600, 4558, 218],
+    "export": [
+        26,
+        13,
+        5.9,
+        4.0,
+        2.1
+    ],
+    "export_label": [
+        "Chemicals",
+        "Transportation Equipment",
+        "Computer & Electronic Products",
+        "Beverages & Tobacco Products",
+        "Machinery"
+    ],
+    "import": [
+        676,
+        450,
+        134,
+        48,
+        7.5
+    ],
+    "import_label": [
+        "Computer & Electronic Products",
+        "Chemicals",
+        "Machinery",
+        "Electrical Equipment, Appliances, & Components",
+        "Fabricated Metal Products"
+    ],
+    "companies": [
+        "ABB",
+        "Lindt & Sprungli",
+        "Adecco",
+        "Medacta",
+        "Chubb (ACE)",
+        "Nestle",
+        "Feintool",
+        "Oerlikon",
+        "Foam Partner",
+        "Omya",
+        "Franke",
+        "Schindler",
+        "Gategroup",
+        "SGS",
+        "Kuehne+Nagel",
+        "Sika",
+        "Holcim",
+        "Sontara",
+        "Sulzer",
+        "Swissport",
+        "Syngenta",
+        "TE Connectivity",
+        "UBS",
+        "Uster Technologies",
+        "Zurich"
+    ]
+}

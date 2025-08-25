@@ -1,0 +1,88 @@
+{
+    "state": "Maryland",
+    "resident": "11,354",
+    "percent": 5,
+    "jobs_created": "122,800",
+    "export_amount": "63 M",
+    "import_amount": "160 M",
+    "employment": [
+        26400,
+        12800,
+        11800,
+        9700,
+        6300
+    ],
+    "employment_label": [
+        "2. Netherlands",
+        "3. Canada",
+        "4. Germany",
+        "5. France",
+        "6. Switzerland"
+    ],
+    "employment_label_short": [
+        "NL",
+        "CA",
+        "DE",
+        "FR",
+        "CH"
+    ],
+    "index_color": 4,
+    "jobs": [6300,3818,137],
+    "export": [
+        20,
+        11,
+        7.1,
+        6.3,
+        5.8
+    ],
+    "export_label": [
+        "Waste & Scrap",
+        "Chemicals",
+        "Textiles & Fabrics",
+        "Machinery",
+        "Computer & Electronic Products"
+    ],
+    "import": [
+        43,
+        24,
+        24,
+        24,
+        9.4
+    ],
+    "import_label": [
+        "Machinery",
+        "Computer & Electronic Products",
+        "Electrical Equipment, Appliances, & Components",
+        "Chemicals",
+        "Food"
+    ],
+    "companies": [
+        "Adecco",
+        "Albert Uster Imports",
+        "Alcon",
+        "Genentech (Roche Group)",
+        "Gsell",
+        "Lindt & Sprungli",
+        "Lonza",
+        "Avolta",
+        "Biodenta",
+        "Chubb (ACE)",
+        "DK Contractors",
+        "Ferrum",
+        "GT Gain Therapeutics",
+        "Holcim",
+        "Infers Hat",
+        "Kuehne+Nagel",
+        "MSC",
+        "Nespresso",
+        "Nestle",
+        "Novartis",
+        "Phoenix Mecano",
+        "Schindler",
+        "SGS",
+        "Swissport",
+        "Syngenta",
+        "UBS",
+        "Zurich"
+    ]
+}

@@ -1,0 +1,55 @@
+.email-wrapper form {
+  display: flex;
+  position: relative;
+}
+
+.email-wrapper .gform_wrapper.gravity-theme .gform_footer {
+  margin: 0;
+  padding: 0;
+}
+
+.email-wrapper .validation_message {
+  position: absolute;
+  bottom: -15px;
+  background-color: transparent !important;
+  color: white !important;
+  font-weight: 500;
+  border: 0 !important;
+  padding: 0 15px !important;
+  margin-top: 0 !important;
+}
+
+.email-wrapper .gform_validation_errors {
+  position: absolute !important;
+  display: none !important;
+}
+
+.email-wrapper .gform_confirmation_message {
+  color: #fff;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+@media screen and (max-width: 767px) {
+  .stay-in-touch {
+    padding-bottom: 50px;
+  }
+
+  .stay-in-touch input:not([type="submit"]) {
+    height: 48px;
+    min-width: auto;
+  }
+
+  .stay-in-touch input[type="submit"] {
+    height: 50px;
+    line-height: 1 !important;
+  }
+}
+
+.stay-in-touch .gform_ajax_spinner {
+  max-width: 16px;
+  position: absolute;
+  right: -20px;
+  top: 15px;
+}

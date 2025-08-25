@@ -1,0 +1,89 @@
+{
+    "state": "South Carolina",
+    "resident": "7,704",
+    "percent": 3,
+    "jobs_created": "184,900",
+    "export_amount": "183 M",
+    "import_amount": "273 M",
+    "employment": [
+        21300,
+        19200,
+        16000,
+        14000,
+        4800
+    ],
+    "employment_label": [
+        "3. Canada",
+        "4. Japan",
+        "5. UK",
+        "6. Netherlands",
+        "7. Switzerland"
+    ],
+    "employment_label_short": [
+        "CA",
+        "JP",
+        "UK",
+        "NL",
+        "CH"
+    ],
+    "index_color": 4,
+    "jobs": [4800,2999,399],
+    "export": [
+        88,
+        56,
+        11,
+        8.6,
+        5.0
+    ],
+    "export_label": [
+        "Transportation Equipment",
+        "Chemicals",
+        "Machinery",
+        "Food",
+        "Computer & Electronic Products"
+    ],
+    "import": [
+        138,
+        62,
+        24,
+        14,
+        7.6
+    ],
+    "import_label": [
+        "Chemicals",
+        "Machinery",
+        "Computer & Electronic Products",
+        "Fabricated Metal Products",
+        "Electrical Equipment, Appliances, & Components"
+    ],
+    "companies": [
+        "Adecco",
+        "Holcim",
+        "Staubli",
+        "Aerolite",
+        "Lonza",
+        "Sukano Polymers",
+        "Avolta",
+        "Matica",
+        "Sulzer",
+        "American Lamprecht Transport",
+        "MSC",
+        "Swiss Krona",
+        "Nestle",
+        "Swiss Steel Group",
+        "Autoneum",
+        "Oerlikon",
+        "SYMTECH",
+        "EMS-Chemie",
+        "Rieter America",
+        "Syngenta",
+        "Foampartner Americas",
+        "Roche Carolina",
+        "TE Connectivity",
+        "Graf Mettalic of Americas",
+        "Schindler",
+        "Kuehne+Nagel",
+        "Sika",
+        "Zurich"
+    ]
+}

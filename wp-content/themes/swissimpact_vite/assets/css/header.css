@@ -1,0 +1,340 @@
+:root {
+  --alpha: 0;
+}
+
+header {
+  background-size: 100% auto;
+  background-image: url("/wp-content/themes/swissimpact_vite/assets/img/home/hero-bg-2x.jpg");
+  background-position: center 0%;
+  z-index: 99;
+}
+
+header nav {
+  background-size: 100% auto;
+  background-image: url("/wp-content/themes/swissimpact_vite/assets/img/home/hero-bg-2x.jpg");
+  background-position: top;
+  z-index: 999;
+  background-color: #dc0018;
+}
+
+header nav.scrolling {
+  background-image: none !important;
+  background-color: rgba(220, 0, 24, var(--alpha));
+}
+
+@keyframes fadeInHeaderColor {
+  0% {
+    @apply bg-swissred/0;
+  }
+
+  100% {
+    @apply bg-swissred/100;
+  }
+}
+
+body.logged-in header nav {
+  margin-top: 32px;
+}
+
+header nav .menu {
+  max-width: 50px;
+  z-index: 13;
+  position: relative;
+}
+
+@media screen and (max-width: 767px) {
+  header nav .menu {
+    max-width: 40px;
+  }
+}
+
+header nav .menu span {
+  width: 100%;
+  border-top: 2px solid white;
+  @apply ease-in duration-100;
+}
+
+header nav .menu.active span:nth-child(1) {
+  transform: rotate(45deg) translateX(10px);
+  margin-left: -10px;
+}
+
+header nav .menu.active span:nth-child(2) {
+  transform: rotate(135deg) translateX(-10px);
+  margin-left: -10px;
+}
+
+@media screen and (max-width: 767px) {
+  header nav .menu.active span:nth-child(1) {
+    margin-left: 0px;
+  }
+
+  header nav .menu.active span:nth-child(2) {
+    margin-left: 0px;
+  }
+}
+
+header .hero-logo {
+  max-width: 600px;
+  width: 100%;
+}
+
+header .scroll-down {
+  @apply animate-pulse;
+}
+
+header .logo-wrapper {
+  max-width: 80%;
+}
+
+header .btn {
+  border-top-width: 1px;
+}
+
+header .dropdown {
+  width: 100%;
+  height: 100vh;
+  background: url("/wp-content/themes/swissimpact_vite/assets/img/nav/nav-bg-2x.jpg");
+  background-size: cover;
+  background-position: center;
+  position: fixed;
+  top: -100vh;
+  left: 0;
+  visibility: hidden;
+  @apply pt-14 md:pt-0;
+  transition: all ease-out 0.4s;
+}
+
+header .dropdown ul.nav-menu {
+  position: relative;
+  overflow: visible;
+}
+
+header .dropdown ul li > a {
+  font-size: clamp(2.375rem, 2.0365rem + 1.6923vw, 3.75rem);
+  line-height: clamp(2.625rem, 2.1942rem + 2.1538vw, 4.375rem);
+  font-weight: 900;
+  padding-bottom: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+header .dropdown ul:not(.sub-menu) li {
+  display: flex;
+  position: relative;
+}
+
+header .dropdown ul li ul.sub-menu {
+  display: none;
+  position: absolute;
+  left: 70%;
+  top: 100%;
+  z-index: 100;
+}
+
+header .dropdown ul li ul.sub-menu.hover {
+  display: flex;
+  flex-direction: column;
+}
+
+header
+  .dropdown
+  ul
+  li.menu-item-has-children:not(:first-child)
+  ul.sub-menu.hover {
+  height: 150px;
+  margin-right: 20px;
+  left: 60%;
+  width: 40%;
+  flex-wrap: wrap;
+}
+
+header .dropdown ul.sub-menu li a {
+  font-size: 24px;
+  line-height: 1.2;
+  margin-bottom: 5px;
+  text-transform: none;
+  font-weight: 400;
+}
+
+header .dropdown.visible {
+  visibility: visible;
+  top: 0;
+}
+
+header .dropdown .nav-dropdown-bottom img {
+  max-width: 275px;
+  width: 100%;
+  padding: 35px 10px;
+}
+
+header .dropdown ul li a {
+  display: inline-block;
+  color: #fff;
+}
+
+header .dropdown ul li a.has-dropdown {
+  display: block;
+  color: #fff;
+  width: 80%;
+}
+
+header .dropdown ul li a {
+  border-bottom: 2px solid transparent;
+  margin-bottom: 30px;
+}
+
+header .dropdown ul li a h1 {
+  line-height: 1;
+  margin-bottom: 0;
+}
+
+header .dropdown ul li a.hover {
+  position: relative;
+  border-bottom: 2px solid #fff;
+}
+
+header h1.title {
+  font-size: clamp(2rem, 1.2615rem + 3.6923vw, 5rem);
+  line-height: 1.1;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+header p {
+  margin-bottom: 0.8rem;
+  @apply pb-0;
+}
+
+header .social {
+  z-index: 11;
+}
+
+header .logo-wrapper {
+  z-index: 10;
+}
+
+header .nav-logo-wrapper {
+  opacity: 0;
+  transition: all 0.2s linear;
+}
+
+header .nav-logo-wrapper.active {
+  opacity: 1;
+}
+
+@media screen and (max-width: 991px) {
+  header
+    .dropdown
+    ul
+    li.menu-item-has-children:not(:first-child)
+    ul.sub-menu.hover {
+    height: auto;
+    margin-left: auto;
+    left: auto;
+    width: auto;
+  }
+
+  header .dropdown ul:not(.sub-menu) li {
+    display: block;
+  }
+
+  header .dropdown ul li ul.sub-menu.hover {
+    position: relative;
+    display: block;
+    left: auto;
+    right: auto;
+    top: auto;
+  }
+
+  header .dropdown ul li a.has-dropdown::after {
+    content: "⌄";
+    display: inline-block;
+    position: absolute;
+    right: 0%;
+    top: 0%;
+    font-size: 30px;
+  }
+
+  header .dropdown ul li a.has-dropdown.hover::after {
+    content: "^";
+    font-weight: 100;
+    font-size: 24px;
+  }
+
+  header .dropdown ul li a.has-dropdown {
+    width: 100%;
+  }
+}
+
+header .nav-share-icon {
+  z-index: 9999;
+}
+
+header .share-icon-wrapper {
+  opacity: 0;
+  transition: all 0.15s linear;
+  margin-top: -350%;
+}
+
+header .share-icon-wrapper a {
+  pointer-events: none;
+}
+
+header .share-icon-wrapper a:hover {
+  border: 2px solid #fff;
+  border-radius: 50%;
+}
+
+.nav-share-icon.active {
+  scale: 1.15;
+  border: 2px solid white;
+  border-radius: 50%;
+  margin-bottom: 5px;
+}
+
+.single .nav-share-icon.active,
+.single header .share-icon-wrapper a:hover {
+  border-color: #dc0018;
+}
+
+header .share-icon-wrapper.active {
+  opacity: 1;
+  height: 100%;
+  margin-top: 0;
+}
+
+@media screen and (max-width: 991px) {
+  header .share-icon-wrapper {
+    height: 100%;
+    margin-top: 0;
+    width: 1px;
+  }
+
+  .nav-share-icon.active {
+    margin-bottom: 0;
+    margin-right: 5px;
+  }
+
+  header .share-icon-wrapper.active {
+    width: 100%;
+  }
+}
+ 
+@media screen and (max-width: 767px) {
+  header .share-icon-wrapper.active {
+    width: 100%;
+  }
+
+  header .share-icon-wrapper a:hover {
+    border: none;
+  }
+
+  .nav-share-icon.active {
+    scale: 1.35;
+  }
+}
+
+header .share-icon-wrapper.active a {
+  pointer-events: all;
+}

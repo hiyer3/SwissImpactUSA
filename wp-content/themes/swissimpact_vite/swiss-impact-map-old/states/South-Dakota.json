@@ -1,0 +1,25 @@
+{
+    "state":"South Dakota",
+    "resident":"3,253",
+    "percent": "3",
+    "jobs_created":"14,300",
+    "export_amount":"6.0 M",
+    "import_amount": "3.2 M",
+    "employment" : [3100, 1600, 1400, 1300, 400],
+    "employment_label" :["1. Canada","2. UK","3. France","4. Germany","5. Switzerland"],
+    "employment_label_short" :["CA","UK","FR","DE","CH"],
+    "index_color" : 4,
+    "jobs":[400, 606, 15],
+    "export":[4.2,1.0,0.5,0.1,0.1],
+    "export_label":["Computer & Electronic Products","Printed Matter","Food","Machinery","Transportation Equipment"],
+    "import":[1.1,1.0,0.5,0.1,0.05],
+    "import_label":["Computer & Electronic Products","Electrical Equipment, Appliances & Components","Machinery","Chemicals","Fabricated Metals Products"],
+    "companies":[
+        "Adecco",
+        "CISA Trust",
+        "SGS",
+        "Syngenta",
+        "UBS",
+        "Zurich"
+    ]
+}

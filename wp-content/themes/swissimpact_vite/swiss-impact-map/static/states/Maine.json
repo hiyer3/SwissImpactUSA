@@ -1,0 +1,72 @@
+{
+    "state": "Maine",
+    "resident": "2,235",
+    "percent": 4,
+    "jobs_created": "36,800",
+    "export_amount": "8.6 M",
+    "import_amount": "41 M",
+    "employment": [
+        8300,
+        2300,
+        1600,
+        1600,
+        1500
+    ],
+    "employment_label": [
+        "2. Canada",
+        "3. UK",
+        "4. France",
+        "5. Germany",
+        "6. Switzerland"
+    ],
+    "employment_label_short": [
+        "CA",
+        "UK",
+        "FR",
+        "DE",
+        "CH"
+    ],
+    "index_color": 4,
+    "jobs": [1500,889,19],
+    "export": [
+        2.0,
+        1.4,
+        1.2,
+        0.7,
+        0.5
+    ],
+    "export_label": [
+        "Machinery",
+        "Livestock & Livestock Products",
+        "Transportation Equipment",
+        "Fabricated Metal Products",
+        "Chemicals"
+    ],
+    "import": [
+        26,
+        2.8,
+        2.3,
+        1.1,
+        0.5
+    ],
+    "import_label": [
+        "Machinery",
+        "Electrical Equipment, Appliances, & Components",
+        "Computer & Electronic Products",
+        "Fabricated Metal Products",
+        "Plastics & Rubber Products"
+    ],
+    "companies": [
+        "Adecco",
+        "Chubb (ACE)",
+        "Clariant",
+        "FISBA North America",
+        "Kardex",
+        "Katadyn",
+        "Lindt & Sprungli",
+        "Nestle",
+        "Syngenta",
+        "UBS",
+        "Zurich"
+    ]
+}

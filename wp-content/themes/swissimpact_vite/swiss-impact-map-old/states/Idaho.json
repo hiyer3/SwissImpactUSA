@@ -1,0 +1,26 @@
+{
+    "state":"Idaho",
+    "resident":"12,229",
+    "percent": "3",
+    "jobs_created":"19,300",
+    "export_amount":"2.3 M",
+    "import_amount": "14 M",
+    "employment" : [2800, 2600, 1100, 900, 600],
+    "employment_label" :["2. France","4. UK","5. Japan","6. Netherlands","7. Switzerland"],
+    "employment_label_short" :["FR","UK","JP","NL","CH"],
+    "index_color" : 4,
+    "jobs":[600, 1112, 6],
+    "export":[0.8,0.6,0.3,0.2,0.1],
+    "export_label":["Agricultural Products","Transportation Equipment","Computer & Electronic Products","Apparel & Accessories","Electrical Equipment, Appliances & Components"],
+    "import":[3.3,2.1,1.8,1.3,0.7],
+    "import_label":["Machinery","Computer & Electronic Products","Food","Chemicals","Primary Metals"],
+    "companies":[
+        "Adecco",
+        "LafargeHolcim",
+        "Nestlé",
+        "Schindler",
+        "Syngenta",
+        "UBS",
+        "Zurich"
+    ]
+}

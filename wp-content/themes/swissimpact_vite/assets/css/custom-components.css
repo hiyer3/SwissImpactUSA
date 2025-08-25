@@ -1,0 +1,31 @@
+@layer components {
+  .btn {
+    color: #000;
+    padding: 5px 20px;
+    border-radius: 50px;
+    color: #333;
+    border: 2px solid #333; 
+    @apply text-sm font-medium transition-all ease-linear duration-200;
+  }
+
+  .btn:hover {
+    @apply bg-swissred text-white border-swissred cursor-pointer;
+  }
+
+  .btn.red{
+    @apply bg-swissred text-white border-swissred;
+  }
+
+  .btn.red:hover {
+    @apply bg-white text-swissred border-swissred;
+  }
+
+  .btn.transparent {
+    color: #fff;
+    border: 1px solid #fff;
+  }
+
+  .btn.transparent:hover {
+    @apply bg-white text-swissred;
+  }
+}

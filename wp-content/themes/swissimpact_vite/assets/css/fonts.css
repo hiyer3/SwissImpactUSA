@@ -1,0 +1,30 @@
+@font-face {
+  font-family: "CerebriSansPro";
+  src: url("/wp-content/themes/swissimpact_vite/assets/fonts/Cerebri-Sans-Pro/CerebriSansPro-Regular.otf")
+      format("opentype"),
+    url("/wp-content/themes/swissimpact_vite/assets/fonts/Cerebri-Sans-Pro/CerebriSansPro-Regular.ttf")
+      format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+    font-family: "CerebriSansPro";
+    src: url("/wp-content/themes/swissimpact_vite/assets/fonts/Cerebri-Sans-Pro/CerebriSansPro-Medium.otf")
+        format("opentype"),
+      url("/wp-content/themes/swissimpact_vite/assets/fonts/Cerebri-Sans-Pro/CerebriSansPro-Medium.ttf")
+        format("truetype");
+    font-weight: 500;
+    font-style: normal;
+  }
+  
+
+@font-face {
+  font-family: "CerebriSansPro";
+  src: url("/wp-content/themes/swissimpact_vite/assets/fonts/Cerebri-Sans-Pro/CerebriSansPro-ExtraBold.otf")
+      format("opentype"),
+    url("/wp-content/themes/swissimpact_vite/assets/fonts/Cerebri-Sans-Pro/CerebriSansPro-ExtraBold.ttf")
+      format("truetype");
+  font-weight: 900;
+  font-style: normal;
+}

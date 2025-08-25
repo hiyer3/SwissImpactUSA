@@ -1,0 +1,105 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WordPress.com - Themes - Verso\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2023-06-23T04:12:00+00:00\n"
+"PO-Revision-Date: 2023-05-12 06:45:33+0000\n"
+"Language: sv_SE\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: GlotPress/2.4.0-alpha\n"
+
+#: patterns/hidden-no-results-content.php
+msgctxt "Pattern title"
+msgid "Hidden No Results Content"
+msgstr "Dolt innehåll utan resultat"
+
+#: patterns/footer.php
+msgctxt "Pattern title"
+msgid "Default footer"
+msgstr "Standardsidfot"
+
+#: patterns/comments.php
+msgctxt "Pattern title"
+msgid "Comments"
+msgstr "Kommentarer"
+
+#: theme.json
+msgctxt "Color name"
+msgid "Tertiary"
+msgstr "Tertiär"
+
+#: theme.json
+msgctxt "Color name"
+msgid "Background"
+msgstr "Bakgrund"
+
+#: theme.json
+msgctxt "Color name"
+msgid "Foreground"
+msgstr "Förgrund"
+
+#: theme.json
+msgctxt "Color name"
+msgid "Secondary"
+msgstr "Sekundär"
+
+#: theme.json
+msgctxt "Color name"
+msgid "Primary"
+msgstr "Primär"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "System Font"
+msgstr "Systemtypsnitt"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Extra Large"
+msgstr "Extra stor"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Large"
+msgstr "Stor"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Medium"
+msgstr "Medium"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Small"
+msgstr "Liten"
+
+#. Description of the theme
+msgid "Verso pays tribute to the revered Portuguese writer and poet Fernando Pessoa, and his various pseudonyms. Its minimalist design features a black and white color scheme, complemented by an elegant serif font. Verso's carefully crafted templates boast a comfortable content width and meticulously considered white space that create a calming and immersive reading experience, ideal for the appreciation of poetry."
+msgstr "Verso hyllar den högt ansedda portugisiska författaren och poeten Fernando Pessoa och hans olika pseudonymer. Dess minimalistiska design har en svartvit färgsättning, kompletterad med en elegant serif-typsnitt. Versos noggrant utformade mallar skryter med en bekväm innehållsbredd och noga övervägt vitt utrymme som skapar en lugnande och engagerande läsupplevelse, idealisk för uppskattning av poesi."
+
+#: patterns/post-meta.php:18
+msgid "Published by"
+msgstr "Publicerad av"
+
+#: patterns/no-results.php:16
+msgid "Sorry, but nothing matched your search terms. Please try again with some different keywords."
+msgstr "Inget matchade dina söktermer. Försök igen med några andra nyckelord."
+
+#: patterns/hidden-no-results-content.php:9
+msgctxt "Message explaining that there are no results returned from a search"
+msgid "Sorry, but nothing matched your search terms. Please try again with some different keywords."
+msgstr "Inget matchade dina söktermer. Försök igen med några andra nyckelord."
+
+#: patterns/footer.php:24
+msgid "Designed with %1$s"
+msgstr "Designad med %1$s"
+
+#. Translators: WordPress link.
+#: patterns/footer.php:22
+msgid "https://wordpress.org"
+msgstr "https://sv.wordpress.org"

@@ -1,0 +1,24 @@
+{
+    "state": "District of Columbia",
+    "resident": "1,733",
+    "percent": 5,
+    "jobs_created": "21,100",
+    "export_amount": "162 M",
+    "import_amount": "34 M",
+    "employment": [2300, 1800, 1500, 1400, 1000],
+    "employment_label": ["2. France", "3. Canada", "4. Germany", "5. Netherlands", "6. Switzerland"],
+    "employment_label_short": ["FR", "CA", "DE", "NL", "CH"],
+    "index_color": 4,
+    "jobs": [1000,1019,355],
+    "export": [161, 1.1, 0.02, 0.02, 0.01],
+    "export_label": ["Primary Metals", "Used Merchandise", "Computer & Electronic Products", "Paper", "Electrical Equipment, Appliances, & Components"],
+    "import": [12, 4.3, 2.5, 1.3, 0.2],
+    "import_label": ["Printed Matter", "Machinery", "Computer & Electronic Products", "Used Merchandise", "Apparel & Accessories"],
+    "companies": [
+        "ABB", "Adecco", "Avolta", "Barbara Salman Landscape", "Chubb (ACE)", "Climeworks",
+        "Egon Zehnder", "Hoffman-La Roche", "Holcim", "IBSA Group", "Laderach", "Mercuria",
+        "Nestle", "Novartis", "Pini Group", "SITA", "Swatch", "Swiss Post Solutions",
+        "Swiss Re", "Swissport", "Syngenta", "TE Connectivity", "UBS", "Vestergaard Frandsen",
+        "Zurich"
+    ]
+}

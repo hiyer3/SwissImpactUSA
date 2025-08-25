@@ -1,0 +1,72 @@
+{
+    "state": "Kansas",
+    "resident": "12,006",
+    "percent": 10,
+    "jobs_created": "73,200",
+    "export_amount": "89 M",
+    "import_amount": "44 M",
+    "employment": [
+        10100,
+        9000,
+        7600,
+        7600,
+        6800
+    ],
+    "employment_label": [
+        "1. Germany",
+        "2. Canada",
+        "3. Switzerland",
+        "4. UK",
+        "5. Japan"
+    ],
+    "employment_label_short": [
+        "DE",
+        "CA",
+        "CH",
+        "UK",
+        "JP"
+    ],
+    "index_color": 2,
+    "jobs": [7600,1828,195],
+    "export": [
+        33,
+        24,
+        11,
+        8.1,
+        7.9
+    ],
+    "export_label": [
+        "Computer & Electronic Products",
+        "Transportation Equipment",
+        "Electrical Equipment, Appliances, & Components",
+        "Fabricated Metal Products",
+        "Machinery"
+    ],
+    "import": [
+        16,
+        5.5,
+        3.1,
+        1.5,
+        1.4
+    ],
+    "import_label": [
+        "Machinery",
+        "Computer & Electronic Products",
+        "Electrical Equipment, Appliances, & Components",
+        "Fabricated Metal Products",
+        "Chemicals"
+    ],
+    "companies": [
+        "Adecco",
+        "Bucher Industries",
+        "Chubb (ACE)",
+        "Hoerbiger",
+        "INFICON",
+        "Kuehne+Nagel",
+        "Nestle",
+        "Schindler",
+        "Syngenta",
+        "UBS",
+        "Zurich Insurance"
+    ]
+}

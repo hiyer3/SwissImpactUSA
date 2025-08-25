@@ -1,0 +1,21 @@
+{
+    "state":"United States",
+    "resident":"908,570",
+    "percent": "6",
+    "jobs_created":"7.9 million",
+    "export_amount":"24 B",
+    "import_amount": "63 B",
+    "employment" : [871300, 859900, 765100, 542900, 490600],
+    "employment_label" :["3. Canada","4. Germany","5. France","6. Netherlands","7. Switzerland"],
+    "employment_label_short" :["CA","DE","FR","NL","CH"],
+    "index_color" : 4,
+    "jobs":[490600, 217024, 58331],    
+    "export":[11000,3400,1200,1100,910],
+    "export_label":["Primary Metals","Chemicals", "Used Merchandise", "Computer & Electronic Products", "Transportation Equipment"],
+    "import":[26000,11000,7300,3200,1100],
+    "import_label":["Chemicals", "Primary Metals","Computer & Electronic Products", "Machinery","Food"],
+    "export_service":[18000,9000,5100,3500,1900],
+    "export_service_label":["Charges for the Use of Intellectual Property","Professional & Managment Consulting","Research & Development", "Computer","Transport"],
+    "import_service":[6600,5600,4000,3600,1900],
+    "import_service_label":["Insurance","Charges for the Use of Intellectual Property","Professional & Management Consulting","Transport","Technical,Trade-Related & Other Business"]
+}

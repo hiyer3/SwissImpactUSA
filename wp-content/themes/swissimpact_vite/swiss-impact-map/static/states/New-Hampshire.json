@@ -1,0 +1,79 @@
+{
+    "state": "New Hampshire",
+    "resident": "2,740",
+    "percent": 9,
+    "jobs_created": "52,300",
+    "export_amount": "47 M",
+    "import_amount": "149 M",
+    "employment": [
+        11300,
+        8000,
+        5900,
+        5100,
+        4800
+    ],
+    "employment_label": [
+        "1. UK",
+        "2. Netherlands",
+        "3. Canada",
+        "4. Japan",
+        "5. Switzerland"
+    ],
+    "employment_label_short": [
+        "UK",
+        "NL",
+        "CA",
+        "JP",
+        "CH"
+    ],
+    "index_color": 4,
+    "jobs": [4800,992,103],
+    "export": [
+        21,
+        5.5,
+        5.2,
+        3.1,
+        2.8
+    ],
+    "export_label": [
+        "Chemicals",
+        "Machinery",
+        "Computer & Electronic Products",
+        "Printed Matter",
+        "Electrical Equipment, Appliances, & Components"
+    ],
+    "import": [
+        90,
+        13,
+        9.1,
+        7.2,
+        7.1
+    ],
+    "import_label": [
+        "Machinery",
+        "Electrical Equipment, Appliances, & Components",
+        "Computer & Electronic Products",
+        "Food",
+        "Chemicals"
+    ],
+    "companies": [
+        "Adecco",
+        "Chubb (ACE)",
+        "Holcim",
+        "Ionbond",
+        "LEM",
+        "Lindt & Sprungli",
+        "Lonza",
+        "Novocure",
+        "Safran Vectronix",
+        "Schleuniger",
+        "SGS",
+        "Sulzer",
+        "SWISSto12",
+        "Syngenta",
+        "UBS",
+        "Unisensor",
+        "Zehnder",
+        "Zurich"
+    ]
+}

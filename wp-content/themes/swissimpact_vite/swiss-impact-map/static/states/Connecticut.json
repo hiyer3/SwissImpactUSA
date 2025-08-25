@@ -1,0 +1,26 @@
+{
+    "state": "Connecticut",
+    "resident": "7,649",
+    "percent": 5,
+    "jobs_created": "113,200",
+    "export_amount": "134 M",
+    "import_amount": "478 M",
+    "employment": [13700, 7400, 7000, 6400, 6000],
+    "employment_label": ["3. Germany", "4. Canada", "5. Japan", "6. France", "7. Switzerland"],
+    "employment_label_short": ["DE", "CA", "JP", "FR", "CH"],
+    "index_color": 4,
+    "jobs": [6000,2448,293],
+    "export": [28, 24, 23, 12, 11],
+    "export_label": ["Transportation Equipment", "Fabricated Metal Products", "Machinery", "Computer & Electronic Products", "Chemicals"],
+    "import": [181, 101, 96, 38, 8.4],
+    "import_label": ["Computer & Electronic Products", "Electrical Equipment, Appliances, & Components", "Machinery", "Fabricated Metal Products", "Chemicals"],
+    "companies": [
+        "Adecco", "Chubb (ACE)", "IBAG", "Agathon", "Comet", "Kalmar", "Allied World",
+        "Dara Capital", "Kuehne+Nagel", "Baumer", "EAO", "Leica Geosystems", "Belimo",
+        "Glencore", "Lindt & Sprungli", "Blumer", "Habasit", "Mercuria", "Breitling",
+        "Hoffmann-La Roche", "Mikron", "Bucher Industries", "Holcim", "Neoperl", "Nestle",
+        "SIX Financial Information", "Oerlikon", "Sulzer", "Philip Morris", "Swiss Re",
+        "RUAG", "Tornes Technologies", "S. Karger", "Tradition", "Schindler", "UBS", "SGS",
+        "Vector Controls", "Sihl AG", "Victorinox", "Vital", "Von Roll", "Zurich"
+    ]
+}

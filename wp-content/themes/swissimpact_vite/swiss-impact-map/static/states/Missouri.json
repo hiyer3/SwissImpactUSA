@@ -1,0 +1,86 @@
+{
+    "state": "Missouri",
+    "resident": "21,710",
+    "percent": 9,
+    "jobs_created": "134,300",
+    "export_amount": "48 M",
+    "import_amount": "227 M",
+    "employment": [
+        19000,
+        18700,
+        12700,
+        12400,
+        11300
+    ],
+    "employment_label": [
+        "1. UK",
+        "2. Germany",
+        "3. Switzerland",
+        "4. Canada",
+        "5. Japan"
+    ],
+    "employment_label_short": [
+        "UK",
+        "DE",
+        "CH",
+        "CA",
+        "JP"
+    ],
+    "index_color": 2,
+    "jobs": [12700,4043,105],
+    "export": [
+        18,
+        13,
+        4.2,
+        2.5,
+        2.3
+    ],
+    "export_label": [
+        "Chemicals",
+        "Machinery",
+        "Transportation Equipment",
+        "Computer & Electronic Products",
+        "Nonmetallic Mineral Products"
+    ],
+    "import": [
+        110,
+        35,
+        25,
+        8.4,
+        6.6
+    ],
+    "import_label": [
+        "Chemicals",
+        "Machinery",
+        "Used Merchandise",
+        "Transportation Equipment",
+        "Primary Metals"
+    ],
+    "companies": [
+        "ABB",
+        "Adecco",
+        "Avolta",
+        "Bucher Emhart",
+        "BC99",
+        "Chubb (ACE)",
+        "Dormakaba",
+        "Firmenich",
+        "Gategroup",
+        "Hallmark Aviation Services",
+        "Inauen Group",
+        "Kuehne+Nagel",
+        "Holcim",
+        "Liebherr",
+        "Lindt & Sprungli",
+        "Nestle",
+        "Schindler",
+        "Schiwag",
+        "Sefar",
+        "Sika",
+        "Swiss Re",
+        "Swissport",
+        "Syngenta",
+        "UBS",
+        "Zurich"
+    ]
+}

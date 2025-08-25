@@ -1,0 +1,46 @@
+.stay-in-touch{
+    background-image: url('/wp-content/themes/swissimpact_vite/assets/img/home/footer-signup-bg-2x.jpg');
+    background-size: cover;
+}
+
+.stay-in-touch .email-wrapper input:not([type="submit"]){
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+    background-color: #fff;
+    padding: 10px 25px!important;
+    @apply text-sm;
+    min-width: 300px;
+    min-height: 48px;
+    max-width: 100%;
+}
+
+.stay-in-touch .email-wrapper input:focus{
+    outline: none;
+}
+
+.stay-in-touch .email-wrapper input[type="submit"]{
+    background-color: #000;
+    color: white;
+    padding: 14px 25px;
+    border-top-right-radius: 30px;
+    border-bottom-right-radius: 30px;
+    border: 1px solid #000;
+    margin: -1px 0;
+    max-width: 100%;
+    min-height: 45px; 
+    @apply text-sm uppercase font-medium;
+}
+
+.stay-in-touch .email-wrapper button:hover{
+    @apply text-swissred transition-all ease-in duration-150;
+}
+
+.stay-in-touch .email-wrapper .validation_message{
+    position: relative;
+    max-width: 300px;
+}
+
+.email-wrapper .gform_wrapper.gravity-theme .gform_footer{
+    display: flex;
+    flex-direction: column;
+}

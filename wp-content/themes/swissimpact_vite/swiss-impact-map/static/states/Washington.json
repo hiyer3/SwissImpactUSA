@@ -1,0 +1,83 @@
+{
+    "state": "Washington",
+    "resident": "30,910",
+    "percent": 4,
+    "jobs_created": "148,500",
+    "export_amount": "95 M",
+    "import_amount": "155 M",
+    "employment": [
+        20400,
+        15500,
+        10400,
+        6500,
+        5700
+    ],
+    "employment_label": [
+        "1. UK",
+        "2. Japan",
+        "3. France",
+        "4. Netherlands",
+        "5. Switzerland"
+    ],
+    "employment_label_short": [
+        "UK",
+        "JP",
+        "FR",
+        "NL",
+        "CH"
+    ],
+    "index_color": 4,
+    "jobs": [5700,4833,208],
+    "export": [
+        23,
+        20,
+        10,
+        10,
+        7.5
+    ],
+    "export_label": [
+        "Transportation Equipment",
+        "Computer & Electronic Products",
+        "Used Merchandise",
+        "Chemicals",
+        "Electrical Equipment, Appliances, & Components"
+    ],
+    "import": [
+        38,
+        25,
+        19,
+        11,
+        10
+    ],
+    "import_label": [
+        "Food",
+        "Machinery",
+        "Computer & Electronic Products",
+        "Fabricated Metal Products",
+        "Electrical Equipment, Appliances, & Components"
+    ],
+    "companies": [
+        "Adecco",
+        "Bossard",
+        "Bucher Industries",
+        "Chubb (ACE)",
+        "Endress+Hauser",
+        "Gategroup",
+        "Holcim",
+        "Kuehne+Nagel",
+        "Lantal Textiles",
+        "Liebherr",
+        "Logitech",
+        "Luxoft",
+        "Nagra",
+        "Nespresso",
+        "Nestle",
+        "Omya",
+        "Schindler",
+        "Swissport",
+        "Syngenta",
+        "Toradex",
+        "UBS",
+        "Zurich"
+    ]
+}

@@ -1,0 +1,30 @@
+{
+    "state":"Mississippi",
+    "resident":"1,457",
+    "percent": "5",
+    "jobs_created":"45,500",
+    "export_amount":"5.1 M",
+    "import_amount": "143 M",
+    "employment" : [6400, 5300, 4800, 4300, 2500],
+    "employment_label" :["2. Canada","3. UK","4. France","5. Germany","6. Switzerland"],
+    "employment_label_short" :["CA","UK","FR","DE","CH"],
+    "index_color" : 4,
+    "jobs":[2500, 1476, 12],
+    "export":[1.5,1.1,0.7,0.7,0.5],
+    "export_label":["Computer & Electronic Products","Textile & Fabrics","Machinery","Electrical Equipment, Appliances & Components","Transportation Equipment"],
+    "import":[32,7.8,4.4,4.0,3.4],
+    "import_label":["Chemicals","Computer & Electronic Products","Electrical Equipment, Appliances & Components","Machinery","Printed Matter"],
+    "companies":[
+        "Adecco",
+        "Dufry",
+        "Kuehne+Nagel",
+        "LafargeHolcim",
+        "Nestlé",
+        "Phoenix Mecano",
+        "Schindler",
+        "Syngenta",
+        "UBS",
+        "Way Valve (Sistag)",
+        "Zurich"
+    ]
+}

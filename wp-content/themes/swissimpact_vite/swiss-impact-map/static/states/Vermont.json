@@ -1,0 +1,71 @@
+{
+    "state": "Vermont",
+    "resident": "1,816",
+    "percent": 4,
+    "jobs_created": "14,600",
+    "export_amount": "19 M",
+    "import_amount": "15 M",
+    "employment": [
+        3000,
+        2000,
+        1600,
+        1500,
+        600
+    ],
+    "employment_label": [
+        "1. Netherlands",
+        "2. UK",
+        "3. Canada",
+        "4. France",
+        "5. Switzerland"
+    ],
+    "employment_label_short": [
+        "NL",
+        "UK",
+        "CA",
+        "FR",
+        "CH"
+    ],
+    "index_color": 4,
+    "jobs": [600, 412, 40],
+    "export": [
+        12,
+        1.9,
+        1.2,
+        0.4,
+        0.3
+    ],
+    "export_label": [
+        "Transportation Equipment",
+        "Computer & Electronic Products",
+        "Machinery",
+        "Used Merchandise",
+        "Electrical Equipment, Appliances, & Components"
+    ],
+    "import": [
+        6.0,
+        2.3,
+        1.1,
+        0.8,
+        0.6
+    ],
+    "import_label": [
+        "Fabricated Metal Products",
+        "Computer & Electronic Products",
+        "Chemicals",
+        "Paper",
+        "Machinery"
+    ],
+    "companies": [
+        "Adecco",
+        "Barry Callebaut",
+        "Lindt & Sprungli",
+        "Omya",
+        "Mammut",
+        "Stockli Outdoor Sports",
+        "SUSI Partners",
+        "UBS",
+        "Weidmann",
+        "Zurich"
+    ]
+}

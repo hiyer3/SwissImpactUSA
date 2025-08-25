@@ -1,0 +1,101 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WordPress.com - Themes - Verso\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2024-02-04T04:23:08+00:00\n"
+"PO-Revision-Date: 2024-02-03 12:44:23+0000\n"
+"Language: sq_AL\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: GlotPress/2.4.0-alpha\n"
+
+#: patterns/hidden-no-results-content.php
+msgctxt "Pattern title"
+msgid "Hidden No Results Content"
+msgstr "Lëndë e Fshehur Pa Përfundime"
+
+#: patterns/footer.php
+msgctxt "Pattern title"
+msgid "Default footer"
+msgstr "Fundfaqe parazgjedhje"
+
+#: patterns/comments.php
+msgctxt "Pattern title"
+msgid "Comments"
+msgstr "Komente"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Extra Large"
+msgstr "Shumë të Mëdha"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "System Font"
+msgstr "Shkronja Sistemi"
+
+#: theme.json
+msgctxt "Color name"
+msgid "Primary"
+msgstr "Parësore"
+
+#: theme.json
+msgctxt "Color name"
+msgid "Secondary"
+msgstr "Dytësore"
+
+#: theme.json
+msgctxt "Color name"
+msgid "Foreground"
+msgstr "E përparme"
+
+#: theme.json
+msgctxt "Color name"
+msgid "Background"
+msgstr "Sfond"
+
+#: theme.json
+msgctxt "Color name"
+msgid "Tertiary"
+msgstr "Terciare"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Medium"
+msgstr "Të mesme"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Large"
+msgstr "Të mëdha"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Small"
+msgstr "Të vogla"
+
+#: patterns/post-meta.php:18
+msgid "Published by"
+msgstr "Botuar nga"
+
+#. Translators: WordPress link.
+#: patterns/footer.php:22
+msgid "https://wordpress.org"
+msgstr "https://wordpress.org"
+
+#: patterns/no-results.php:16
+msgid "Sorry, but nothing matched your search terms. Please try again with some different keywords."
+msgstr "Na ndjeni, por s’u përputh gjë me termat tuaj të kërkimit. Ju lutemi, riprovoni me ndonjë fjalëkyçe tjetër."
+
+#: patterns/footer.php:24
+msgid "Designed with %1$s"
+msgstr "Hartuar me %1$s"
+
+#: patterns/hidden-no-results-content.php:9
+msgctxt "Message explaining that there are no results returned from a search"
+msgid "Sorry, but nothing matched your search terms. Please try again with some different keywords."
+msgstr "Na ndjeni, por s’u përputh gjë me termat tuaj të kërkimit. Ju lutemi, riprovoni me ndoca fjalëkyçe të tjera."

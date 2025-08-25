@@ -1,0 +1,87 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WordPress.com - Themes - Zoologist\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2022-05-27T03:43:17+00:00\n"
+"PO-Revision-Date: 2022-03-18 17:50:49+0000\n"
+"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: GlotPress/2.4.0-alpha\n"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Extra Large"
+msgstr "Extra large"
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Page without title"
+msgstr "Page sans titre "
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Header and Footer Only"
+msgstr "En-tête ou pied de page seulement"
+
+#: theme.json
+msgctxt "Custom template name"
+msgid "Blank"
+msgstr "Vide"
+
+#: theme.json
+msgctxt "Color name"
+msgid "Tertiary"
+msgstr "Tertiaire"
+
+#: theme.json
+msgctxt "Color name"
+msgid "Background"
+msgstr "Arrière plan"
+
+#: theme.json
+msgctxt "Color name"
+msgid "Secondary"
+msgstr "Secondaire"
+
+#: theme.json
+msgctxt "Color name"
+msgid "Primary"
+msgstr "Primaire"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Headings (DM Sans)"
+msgstr "Titres (DM Sans)"
+
+#: theme.json
+msgctxt "Font family name"
+msgid "Body (DM Sans)"
+msgstr "Corps du texte (DM Sans)"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Large"
+msgstr "Grand"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Medium"
+msgstr "Moyen"
+
+#: theme.json
+msgctxt "Font size name"
+msgid "Small"
+msgstr "Petit"
+
+#. Description of the theme
+msgid "Zoologist is a simple blogging theme that supports full-site editing."
+msgstr "Zoologist est un thème simple qui permet la modification complète du site, c'est-à-dire qu'il est entièrement personnalisable. "
+
+#. Theme Name of the theme
+msgid "Zoologist"
+msgstr "Zoologiste"

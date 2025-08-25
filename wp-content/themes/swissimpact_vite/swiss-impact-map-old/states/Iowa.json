@@ -1,0 +1,33 @@
+{
+    "state":"Iowa",
+    "resident":"15,317",
+    "percent": "6",
+    "jobs_created":"61,400",
+    "export_amount":"45 M",
+    "import_amount": "122 M",
+    "employment" : [6800, 5100, 4900, 4300, 3900],
+    "employment_label" :["2. Germany","3. Netherlands","4. Japan","5. France","6. Switzerland"],
+    "employment_label_short" :["DE","NL","JP","FR","CH"],
+    "index_color" : 4,
+    "jobs":[3900, 2051, 108],
+    "export":[34,2.6,2.5,1.8,1.0],
+    "export_label":["Chemicals","Computer & Electronic Products","Machinery","Transportation Equipment","Fabricated Products"],
+    "import":[95,9.3,6.8,3.2,2.9],
+    "import_label":["Chemicals","Machinery","Computer & Electronic Products","Fabricated Metal Products","Electrical Equipment, Aplliances & Components"],
+    "companies":[
+        "Adecco",
+        "Agta record",
+        "Bossard",
+        "Chubb (ACE)",
+        "Comet",
+        "Endress+Hauser",
+        "LafargeHolcim",
+        "Nestlé",
+        "Schindler",
+        "SFS Group",
+        "Swissport",
+        "Syngenta",
+        "UBS",
+        "Zurich"
+    ]
+}

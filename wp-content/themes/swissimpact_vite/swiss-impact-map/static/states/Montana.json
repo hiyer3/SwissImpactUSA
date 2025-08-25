@@ -1,0 +1,68 @@
+{
+    "state": "Montana",
+    "resident": "5,191",
+    "percent": 3,
+    "jobs_created": "10,300",
+    "export_amount": "4.6 M",
+    "import_amount": "13 M",
+    "employment": [
+        1000,
+        600,
+        500,
+        400,
+        300
+    ],
+    "employment_label": [
+        "3. France",
+        "4. Japan",
+        "5. Germany",
+        "6. Netherlands",
+        "7. Switzerland"
+    ],
+    "employment_label_short": [
+        "FR",
+        "JP",
+        "DE",
+        "NL",
+        "CH"
+    ],
+    "index_color": 4,
+    "jobs": [300,700,10],
+    "export": [
+        2.0,
+        0.5,
+        0.4,
+        0.3,
+        0.2
+    ],
+    "export_label": [
+        "Used Merchandise",
+        "Machinery",
+        "Chemicals",
+        "Computer & Electronic Products",
+        "Transportation Equipment"
+    ],
+    "import": [
+        7.8,
+        0.8,
+        0.8,
+        0.4,
+        0.4
+    ],
+    "import_label": [
+        "Machinery",
+        "Computer & Electronic Products",
+        "Electrical Equipment, Appliances, & Components",
+        "Transportation Equipment",
+        "Fabricated Metal Products"
+    ],
+    "companies": [
+        "Adecco",
+        "Chubb (ACE)",
+        "Oerlikon",
+        "SGS",
+        "Syngenta",
+        "UBS",
+        "Zurich"
+    ]
+}

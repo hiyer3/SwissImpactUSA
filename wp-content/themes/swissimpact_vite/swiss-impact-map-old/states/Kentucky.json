@@ -1,0 +1,27 @@
+{
+    "state":"Kentucky",
+    "resident":"10,447",
+    "percent": "5",
+    "jobs_created":"136,800",
+    "export_amount":"25 M",
+    "import_amount": "4.7 B",
+    "employment" : [15100, 10400, 10400, 10000, 6500],
+    "employment_label" :["2. Germany","3. France","3. Canada","5. UK","6. Switzerland"],
+    "employment_label_short" :["DE","FR","CA","UK","CH"],
+    "index_color" : 4,
+    "jobs":[6500, 2666, 60],
+    "export":[13,5.4,3.2,0.7,0.5],
+    "export_label":["Chemicals","Computer & Electronic Products","Transportation Equipment","Machinery","Fabricated Metal Products"],
+    "import":[468,38,24,17,6.3],
+    "import_label":["Chemicals","Machinery","Computer & Electronic Products","Fabricated Metal Products","Transportation Equipment"],
+    "companies":[
+        "3A Composites (Schweiter)",
+        "Adecco",
+        "Autoneum",
+        "Chubb (ACE)",
+        "Clariant",
+        "Dormakaba",
+        "Dufry",
+        "Evolva"
+    ]
+}
