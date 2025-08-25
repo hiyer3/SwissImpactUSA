@@ -7,6 +7,7 @@ import ApprenticeshipCompanies from "./map-popup-template/apprenticeshipCompanie
 import IndustryClusters from "./map-popup-template/industryClusters";
 import SwissRepresentations from "./map-popup-template/SwissRepresentations";
 import SwissImpact from "./map-popup-template/SwissImpact";
+import EconomicImpact from "./map-popup-template/EconomicImpact";
 
 const FILTERS = {
   SEE_ALL: "si-popup-filter-see-all",
@@ -23,7 +24,8 @@ const DATA_TYPE_TO_FILTER = {
   apprenticeshipCompanies: FILTERS.APPRENTICESHIP,
   industryClusters: FILTERS.INDUSTRY,
   swissRepresentations: FILTERS.SWISS_REPRESENTATIVES,
-  swissImpact: FILTERS.ECON,
+  swissImpact: FILTERS.ECON, // Note: swissImpact maps to ECON filter
+  economicImpact: FILTERS.ECON, // If you want separate economic impact data
 };
 
 export default function SIMapControl() {
@@ -43,13 +45,14 @@ export default function SIMapControl() {
     isLoadingTabs: false,
   });
 
-  // Centralized data cache for all components
+  // Centralized data cache for all components - ADD economicImpact here
   const [dataCache, setDataCache] = useState({
     scienceAcademia: {},
     apprenticeshipCompanies: {},
     industryClusters: {},
     swissRepresentations: {},
     swissImpact: {},
+    economicImpact: {}, // ADD THIS LINE
   });
 
   // Helper function to check if data array has content
@@ -130,6 +133,7 @@ export default function SIMapControl() {
             extractedData = data[0]?.acf?.swiss_representations || [];
             break;
           case "swissImpact":
+          case "economicImpact": // Handle both the same way, or customize as needed
             const acfData = data[0]?.acf || {};
 
             // Get field lengths/data
@@ -223,13 +227,14 @@ export default function SIMapControl() {
         isLoadingTabs: true,
       }));
 
-      // Pre-fetch all data types for the current state
+      // Pre-fetch all data types for the current state - ADD economicImpact here
       const dataTypes = [
         "scienceAcademia",
         "apprenticeshipCompanies",
         "industryClusters",
         "swissRepresentations",
         "swissImpact",
+        "economicImpact", // ADD THIS LINE
       ];
 
       const fetchPromises = dataTypes.map((dataType) => {
@@ -311,7 +316,7 @@ export default function SIMapControl() {
         />
       ),
       economicImpact: (
-        <div>Economic Impact template for {commonProps.name}</div>
+        <EconomicImpact {...commonProps} preloadedData={getCurrentData("economicImpact")} />
       ),
     };
   }, [singleStateData, getCurrentData]);
