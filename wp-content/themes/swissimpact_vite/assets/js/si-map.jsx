@@ -583,7 +583,7 @@ export default function SIMapControl() {
   }, [singleStateData.activeTabs, singleStateData.isLoadingTabs]);
 
   return (
-    <div className="h-[90%] overflow-y-scroll">
+    <div>
       {singleStateData.isLoadingTabs && (
         <div
           className="tabs-loading-indicator"

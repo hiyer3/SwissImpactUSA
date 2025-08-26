@@ -1,13 +1,17 @@
-.si-map-wrapper #si-map g[id]:hover path {
+.si-map-wrapper #si-map g.single-state:hover path {
   @apply fill-swissred transition-all duration-200 ease-in-out;
 }
 
-.si-map-wrapper #si-map g[id]:hover g[isolation] path {
+.si-map-wrapper #si-map g.single-state:hover g[isolation] path {
   @apply fill-white;
 }
 
-.si-map-wrapper #si-map g[id]:hover rect {
-  @apply fill-swissred;
+.si-map-wrapper #si-map g.single-state:hover rect {
+  @apply fill-swissred cursor-pointer;
+}
+
+.si-map-wrapper #si-map g.single-state:hover text {
+  @apply fill-white cursor-pointer;
 }
 
 .si-map-wrapper .state-list-container {
@@ -55,6 +59,10 @@
 
 .si-map-wrapper svg * {
   @apply transition-all duration-200 ease-in-out;
+}
+
+.si-map-wrapper svg > g.single-state:hover {
+  @apply cursor-pointer;
 }
 
 #si-map-popup-filter .single-popup-filter {

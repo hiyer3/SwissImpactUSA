@@ -4,7 +4,7 @@ const CardWrapper = ({ children, cols = 1, style }) => {
   return (
     <div
       className={`grid grid-cols-1 ${
-        cols === 1 ? "" : "lg:grid-cols-2"
+        cols === 1 ? "" : "sm:grid-cols-2"
       } gap-5 pb-5`}
       style={style}
     >
@@ -14,3 +14,4 @@ const CardWrapper = ({ children, cols = 1, style }) => {
 };
 
 export default CardWrapper;
+ 
