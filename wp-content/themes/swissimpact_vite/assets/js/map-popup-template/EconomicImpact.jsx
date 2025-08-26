@@ -484,18 +484,19 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
         <div>
           <h2 className="popup-title text-white">{name}</h2>
           <p className="popup-description text-white mt-2 mb-0">
-            Residents of Swiss Descent:{" "}
+            Residents of Swiss Descent: <strong>
             {data?.resident_of_swiss_descent
               ? formatUSNumber(data?.resident_of_swiss_descent)
               : 0}
+            </strong>
           </p>
         </div>
         <BackToMapButton />
       </div>
 
-      <div className="chart-container flex gap-6 mt-5 flex-col lg:flex-row">
+      <div className="chart-container flex gap-6 mt-4 flex-col lg:flex-row">
         {/* Employment Chart */}
-        <div className="bg-white p-6 rounded-lg">
+        <div className="bg-white p-6 rounded-3xl">
           <h2 className="text-xl mb-4">
             Employment Supported by Foreign Affiliates
           </h2>
@@ -548,7 +549,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
               data.exports_top_exports_of_goods_by_industry.length > 0 && (
                 <div
                   data-chart="export"
-                  className="bg-white p-6 rounded-lg"
+                  className="bg-white p-6 rounded-3xl"
                   ref={exportCardRef}
                 >
                   <h2 className="text-xl font-semibold mb-4">
@@ -580,7 +581,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
             ) &&
               data.import_top_imports_of_goods_by_industry_from_switzerland
                 .length > 0 && (
-                <div data-chart="import" className="bg-white p-6 rounded-lg">
+                <div data-chart="import" className="bg-white p-6 rounded-3xl">
                   <h2 className="text-xl font-semibold mb-4">
                     Top Imports of Goods by Industry from {name} to Switzerland
                   </h2>
@@ -610,7 +611,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
           {name !== "United States" &&
             Array.isArray(data?.companies_located_in_state) &&
             data.companies_located_in_state.length > 0 && (
-              <div className="bg-white p-6 rounded-lg lg:min-w-[300px]">
+              <div className="bg-white p-6 rounded-3xl lg:min-w-[300px]">
                 <h2 className="text-xl mb-4">
                   Swiss Companies Located in {name}
                 </h2>
