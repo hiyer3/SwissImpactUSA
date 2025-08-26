@@ -197,6 +197,38 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     }
   };
 
+  // Split a string into multiple lines not exceeding `maxChars` per line.
+  const wrapLabel = (str, maxChars) => {
+    const words = String(str || "").split(" ");
+    const lines = [];
+    let line = "";
+
+    for (const w of words) {
+      const test = (line ? line + " " : "") + w;
+      if (test.length <= maxChars) {
+        line = test;
+      } else {
+        if (line) lines.push(line);
+        line = w;
+      }
+    }
+    if (line) lines.push(line);
+    return lines;
+  };
+
+  // Estimate left padding so the wrapped label fits inside the canvas.
+  // Uses a rough width factor (0.6 * fontSize per char). Clamp to a max.
+  const computeLeftPadding = (labels, fontPx, wrapAt = 22, maxPad = 240) => {
+    const widths = labels.map((lab) => {
+      const lines = wrapLabel(lab, wrapAt);
+      const longest = Math.max(...lines.map((ln) => ln.length), 0);
+      return longest * fontPx * 0.6; // approx width in px
+    });
+    const widest = Math.max(0, ...widths);
+    // +16px breathing room; min 32px base
+    return Math.min(Math.max(Math.ceil(widest) + 16, 32), maxPad);
+  };
+
   // Sum total jobs
   const sumTotalJobs = (jobsArray) => {
     const sum = (jobsArray || [])
@@ -396,39 +428,74 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     ],
   };
 
+  const exportLabels =
+    data?.exports_top_exports_of_goods_by_industry?.map(
+      (i) => i.export_industry
+    ) || [];
+  const importLabels =
+    data?.import_top_imports_of_goods_by_industry_from_switzerland?.map(
+      (i) => i.import_industry
+    ) || [];
+
+  const wrapAt = isLg() ? 28 : 18; // tweak to taste
+  const leftPadExport = computeLeftPadding(exportLabels, labelFontSize, wrapAt);
+  const leftPadImport = computeLeftPadding(importLabels, labelFontSize, wrapAt);
+
   const exportChartOptions = {
     responsive: true,
     aspectRatio: isLg() ? 1.5 : 0.5,
     indexAxis: "y",
+    layout: {
+      padding: { left: leftPadExport }, // <= dynamic padding
+    },
     plugins: {
-      datalabels: {
-        anchor: "end",
-        align: "right",
-        formatter: formatCurrency,
-        backgroundColor: "#FFF",
-        color: "#000",
-        borderRadius: 5,
-        padding: { top: 4, bottom: 4, left: 12, right: 12 },
-        borderWidth: 1,
-        borderColor: "#EDEEEE",
-        font: { size: labelFontSize },
-      },
       legend: { display: false },
       tooltip: { enabled: false },
+      datalabels: {
+        labels: {
+          // LEFT label: the (possibly wrapped) industry name
+          industry: {
+            anchor: "start",
+            align: "left",
+            offset: 6,
+            clip: false, // allow drawing outside chartArea
+            textAlign: "left",
+            formatter: (_, ctx) => {
+              const lab = ctx.chart.data.labels?.[ctx.dataIndex] ?? "";
+              return wrapLabel(lab, wrapAt); // return array => multi-line
+            },
+            color: "#111",
+            font: { size: labelFontSize, weight: 500 },
+          },
+          // RIGHT label: the value pill
+          value: {
+            anchor: "end",
+            align: "right",
+            formatter: (val) => formatCurrency(val),
+            backgroundColor: "#FFF",
+            color: "#000",
+            borderRadius: 5,
+            padding: { top: 4, bottom: 4, left: 12, right: 12 },
+            borderWidth: 1,
+            borderColor: "#EDEEEE",
+            font: { size: labelFontSize },
+          },
+        },
+      },
     },
     scales: {
       x: {
         max:
           Math.max(
-            ...(data?.exports_top_exports_of_goods_by_industry.map(
-              (item) => item.export_value
+            ...(data?.exports_top_exports_of_goods_by_industry?.map(
+              (i) => i.export_value
             ) || [0])
           ) * 1.35,
         grid: { display: false, drawBorder: false },
         ticks: { display: false },
       },
       y: {
-        ticks: { display: false },
+        ticks: { display: false }, // keep axis clean
         grid: { display: false, drawTicks: false, drawBorder: false },
       },
     },
@@ -484,17 +551,18 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
         <div>
           <h2 className="popup-title text-white">{name}</h2>
           <p className="popup-description text-white mt-2 mb-0">
-            Residents of Swiss Descent: <strong>
-            {data?.resident_of_swiss_descent
-              ? formatUSNumber(data?.resident_of_swiss_descent)
-              : 0}
+            Residents of Swiss Descent:{" "}
+            <strong>
+              {data?.resident_of_swiss_descent
+                ? formatUSNumber(data?.resident_of_swiss_descent)
+                : 0}
             </strong>
           </p>
         </div>
         <BackToMapButton />
       </div>
 
-      <div className="chart-container flex gap-6 mt-4 flex-col lg:flex-row">
+      <div className="chart-container flex gap-6 mt-5 flex-col lg:flex-row">
         {/* Employment Chart */}
         <div className="bg-white p-6 rounded-3xl">
           <h2 className="text-xl mb-4">
@@ -558,15 +626,6 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                   {isVisible.export && (
                     <Bar data={exportChartData} options={exportChartOptions} />
                   )}
-                  <div className="mt-4 space-y-1">
-                    {(data?.exports_top_exports_of_goods_by_industry || []).map(
-                      (item, index) => (
-                        <div key={index} className="text-sm text-gray-600">
-                          {item.export_industry}
-                        </div>
-                      )
-                    )}
-                  </div>
                   <div className="text-sm mt-4">
                     Total Export Value of Goods ={" "}
                     {formatCurrency(data?.export_total_export_value_of_goods) ||
@@ -588,13 +647,6 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                   {isVisible.import && (
                     <Bar data={importChartData} options={importChartOptions} />
                   )}
-                  <div className="mt-4 space-y-1">
-                    {(data?.import_label || []).map((label, index) => (
-                      <div key={index} className="text-sm text-gray-600">
-                        {label}
-                      </div>
-                    ))}
-                  </div>
                   <div className="text-sm mt-4">
                     Total Import Value of Goods ={" "}
                     {data?.import_total_import_value

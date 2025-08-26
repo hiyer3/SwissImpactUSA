@@ -58,7 +58,7 @@ const DataTable = ({
               <tr key={item.id || index}>
                 {/* ID column - always first */}
                 <td
-                  className="text-sm text-gray-800 overflow-hidden text-ellipsis whitespace-nowrap px-2"
+                  className="text-sm text-gray-800 overflow-hidden px-2"
                   style={{ width: idColumnWidth, minWidth: idColumnWidth }}
                 >
                   {item.id}
@@ -66,7 +66,7 @@ const DataTable = ({
                 {columns.map((column) => (
                   <td
                     key={column.key}
-                    className="text-sm text-gray-800 overflow-hidden text-ellipsis whitespace-nowrap px-2"
+                    className="text-sm text-gray-800 overflow-hidden px-2"
                     style={{
                       width: column.width || cellWidth,
                       minWidth: column.minWidth || column.width || cellWidth,

@@ -8,7 +8,7 @@ const SwissRepresentations = (props) => {
   const [swissRepresentationsData, setSwissRepresentationsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   useEffect(() => {
     // If preloaded data is available, use it instead of fetching
     if (props.preloadedData) {
@@ -153,7 +153,7 @@ const SwissRepresentations = (props) => {
         <BackToMapButton />
       </div>
 
-      <div className="bg-white rounded-3xl popup-table-content">
+      <div className="bg-white mt-5 rounded-3xl popup-table-content">
         <div className="mt-4 p-8 w-full flex justify-between gap-6 sm:gap-9 sm:items-center flex-col sm:flex-row">
           <p className="text-xl font-black pb-0">
             Swiss Representations of Switzerland in {props.name}.

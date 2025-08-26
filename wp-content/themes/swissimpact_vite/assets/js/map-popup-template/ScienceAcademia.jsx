@@ -108,14 +108,13 @@ const ScienceAcademia = (props) => {
         <div>
           <h2 className="popup-title text-white">{props.name}</h2>
           <p className="popup-description text-white mt-2 mb-0">
-            Swiss academics and scientists in the United States:{" "}
-            {props.scienceAcademiaData?.length || 0}
+            Swiss academics and scientists in {props.name}: <strong>{scienceAcademiaData?.length || 0}</strong>
           </p>
         </div>
         <BackToMapButton />
       </div>
 
-      <div className="bg-white rounded-3xl popup-table-content">
+      <div className="bg-white mt-5 rounded-3xl popup-table-content">
         <div className="mt-4 p-8 w-full flex justify-between gap-6 sm:gap-9 sm:items-center flex-col sm:flex-row">
           <p className="text-xl font-black pb-0">
             Creating Positive Impact in U.S. Academia and Science.

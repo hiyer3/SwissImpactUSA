@@ -139,63 +139,71 @@ const SwissImpact = (props) => {
       ) : (
         <div className="bg-swissred rounded-3xl popup-table-content mt-5">
           <CardWrapper cols={2}>
-            <Card>
-              <CardTitle
-                title="Economic Impact"
-                imageURL="/wp-content/themes/swissimpact_vite/assets/img/si-number-map/icon-ei-2x.png"
-                alt="Economic Impact Icon"
-                iconWidth={70}
-                iconPadding={10}
-              />
-              <CardContent
-                type="fullWidth"
-                description="Total Jobs Supported in U.S"
-              >
-                <CardStatNumber
-                  style={{ marginLeft: "0", marginRight: "auto" }}
-                  number={impactData?.totalJobs || 0}
+            {impactData?.totalJobs && (
+              <Card>
+                <CardTitle
+                  title="Economic Impact"
+                  imageURL="/wp-content/themes/swissimpact_vite/assets/img/si-number-map/icon-ei-2x.png"
+                  alt="Economic Impact Icon"
+                  iconWidth={70}
+                  iconPadding={10}
                 />
-              </CardContent>
-            </Card>
+                <CardContent
+                  type="fullWidth"
+                  description="Total Jobs Supported in U.S"
+                >
+                  <CardStatNumber
+                    style={{ marginLeft: "0", marginRight: "auto" }}
+                    number={impactData?.totalJobs || 0}
+                  />
+                </CardContent>
+              </Card>
+            )}
 
-            <Card>
-              <CardTitle
-                title="Science & Academia"
-                imageURL="/wp-content/themes/swissimpact_vite/assets/img/si-number-map/icon-sa-2x.png"
-                alt="Academic Institutions Icon"
-                iconWidth={60}
-                iconPadding={20}
-              />
-              <CardContent description="Total Academic Institutions in U.S">
-                <CardStatNumber number={impactData.scienceAcademia} />
-              </CardContent>
-            </Card>
+            {impactData.scienceAcademia > 0 && (
+              <Card>
+                <CardTitle
+                  title="Science & Academia"
+                  imageURL="/wp-content/themes/swissimpact_vite/assets/img/si-number-map/icon-sa-2x.png"
+                  alt="Academic Institutions Icon"
+                  iconWidth={60}
+                  iconPadding={20}
+                />
+                <CardContent description="Total Academic Institutions in U.S">
+                  <CardStatNumber number={impactData.scienceAcademia} />
+                </CardContent>
+              </Card>
+            )}
 
-            <Card>
-              <CardTitle
-                title="Apprenticeship Companies"
-                imageURL="/wp-content/themes/swissimpact_vite/assets/img/si-number-map/icon-ec-2x.png"
-                alt="Apprenticeship Companies Icon"
-                iconWidth={80}
-                iconPadding={0}
-              />
-              <CardContent description="Total Apprenticeships in U.S">
-                <CardStatNumber number={impactData.apprenticeshipCompanies} />
-              </CardContent>
-            </Card>
+            {impactData.apprenticeshipCompanies > 0 && (
+              <Card>
+                <CardTitle
+                  title="Apprenticeship Companies"
+                  imageURL="/wp-content/themes/swissimpact_vite/assets/img/si-number-map/icon-ec-2x.png"
+                  alt="Apprenticeship Companies Icon"
+                  iconWidth={80}
+                  iconPadding={0}
+                />
+                <CardContent description="Total Apprenticeships in U.S">
+                  <CardStatNumber number={impactData.apprenticeshipCompanies} />
+                </CardContent>
+              </Card>
+            )}
 
-            <Card>
-              <CardTitle
-                title="Industry Clusters"
-                imageURL="/wp-content/themes/swissimpact_vite/assets/img/si-number-map/icon-ic-2x.png"
-                alt="Industry Clusters Icon"
-                iconWidth={30}
-                iconPadding={40}
-              />
-              <CardContent description="Total number of Industry Clusters in U.S">
-                <CardStatNumber number={impactData.industryClusters} />
-              </CardContent>
-            </Card>
+            {impactData.industryClusters > 0 && (
+              <Card>
+                <CardTitle
+                  title="Industry Clusters"
+                  imageURL="/wp-content/themes/swissimpact_vite/assets/img/si-number-map/icon-ic-2x.png"
+                  alt="Industry Clusters Icon"
+                  iconWidth={30}
+                  iconPadding={40}
+                />
+                <CardContent description="Total number of Industry Clusters in U.S">
+                  <CardStatNumber number={impactData.industryClusters} />
+                </CardContent>
+              </Card>
+            )}
           </CardWrapper>
 
           <CardWrapper style={{ gap: 0 }}>
