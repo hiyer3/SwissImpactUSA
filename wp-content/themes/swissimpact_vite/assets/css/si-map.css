@@ -93,6 +93,10 @@
   background-image: url("/wp-content/themes/swissimpact_vite/assets/img/si-number-map/search-icon.png");
 }
 
+.data-popup .popup-table-content {
+  @apply overflow-hidden;
+}
+
 .data-popup .popup-table-content .sa-table-data tbody tr {
   @apply bg-[#F5F5F5];
 }

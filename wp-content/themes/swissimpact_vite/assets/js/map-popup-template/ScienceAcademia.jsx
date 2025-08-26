@@ -9,7 +9,6 @@ const ScienceAcademia = (props) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  console.log("ScienceAcademia props:", props); // Debug log
   useEffect(() => {
     // If preloaded data is available, use it instead of fetching
     if (props.preloadedData) {
@@ -109,7 +108,8 @@ const ScienceAcademia = (props) => {
         <div>
           <h2 className="popup-title text-white">{props.name}</h2>
           <p className="popup-description text-white mt-2 mb-0">
-            {props.description}
+            Swiss academics and scientists in the United States:{" "}
+            {props.scienceAcademiaData?.length || 0}
           </p>
         </div>
         <BackToMapButton />
