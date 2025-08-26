@@ -8,7 +8,7 @@ const SwissRepresentations = (props) => {
   const [swissRepresentationsData, setSwissRepresentationsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  
   useEffect(() => {
     // If preloaded data is available, use it instead of fetching
     if (props.preloadedData) {
@@ -89,9 +89,8 @@ const SwissRepresentations = (props) => {
     return swissRepresentationsData.map((item, index) => {
       return {
         id: index + 1,
-        state: props.preloadedData.data.statecode || "",
-        representation:
-          item?.representation || item?.office_name || item?.name || "",
+        state: item.state || "",
+        representation: item?.representation,
         type: constructTypeValue(item),
       };
     });

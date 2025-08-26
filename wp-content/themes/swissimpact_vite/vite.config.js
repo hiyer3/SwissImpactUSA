@@ -14,13 +14,15 @@ import { defineConfig } from 'vite'
 import liveReload from 'vite-plugin-live-reload'
 const { resolve } = require('path')
 const fs = require('fs')
-
+import preact from '@preact/preset-vite';
+ 
 
 // https://vitejs.dev/config
 export default defineConfig({
 
   plugins: [
     //vue(),
+    preact(),
     liveReload(__dirname+'/**/*.php')
   ],
 

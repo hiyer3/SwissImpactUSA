@@ -131,10 +131,27 @@
   cursor: pointer;
 }
 
-#si-map text{
+#si-map text {
   font-family: "Cerebri Sans Pro ExtraBold", sans-serif;
 }
 
-#si-map, .si-map-filter-wrapper{
+#si-map,
+.si-map-filter-wrapper {
   @apply hidden lg:block;
+}
+
+.ei-donut-legend li {
+  @apply relative ml-4;
+}
+
+.ei-donut-legend li:first-child::before {
+  @apply content-[''] absolute w-2.5 h-2.5 rounded-full bg-[#ff0000] top-1 left-[-1.1rem];
+}
+
+.ei-donut-legend li:nth-child(2)::before {
+  @apply content-[''] absolute w-2.5 h-2.5 rounded-full bg-[#F08262] top-1 left-[-1.1rem];
+}
+
+.ei-donut-legend li:last-child::before {
+  @apply content-[''] absolute w-2.5 h-2.5 rounded-full bg-[#F9C5AF] top-1 left-[-1.1rem];
 }

@@ -87,7 +87,7 @@
                 </div>
             </div>
         </div>
-        <div class="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-4">
+        <div class="grid grid-cols-1 xl:grid-cols-[280px_1fr] gap-4">
             <div></div>
             <div class="popup-content-wrapper h-full px-5">
             </div>
