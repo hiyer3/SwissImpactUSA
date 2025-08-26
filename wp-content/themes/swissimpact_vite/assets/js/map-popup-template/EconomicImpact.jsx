@@ -31,9 +31,9 @@ const DEMO_DATA = {
   data: [
     {
       // Basic stats
-      resident: "71,000",
-      percent: "3.34%",
-      jobs_created: "12,841",
+      resident_of_swiss_descent: "7,000",
+      esbfa_affiliate_percentage: "3.34%",
+      esbfa_foreign_jobs: "12,841",
 
       // Employment data
       employment: [19835, 22600, 20400, 16000, 12900, 7000],
@@ -136,7 +136,6 @@ const vp = () => (typeof window !== "undefined" ? window.innerWidth : 1440);
 const isLg = () => vp() > 1024;
 
 const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
-    console.log("EconomicImpact props:", { name, stateId, preloadedData }); // Debug log
   const [isVisible, setIsVisible] = useState({
     employment: false,
     jobs: false,
@@ -157,32 +156,45 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
   );
   const actualData = usingPreloaded ? preloadedData : DEMO_DATA;
 
-  console.log("EconomicImpact actualData:", actualData);
+  console.log(
+    "EconomicImpact preloadedData:",
+    preloadedData,
+    preloadedData.data?.[0]?.employment_supported_by_foreign_affiliates.map(
+      (item) => item.esbfa_country
+    )
+  );
 
   const data = actualData?.data?.[0] || null;
   const loading = usingPreloaded ? !!preloadedData?.loading : false;
   const error = usingPreloaded ? preloadedData?.error ?? null : null;
 
-  // Helper function to format numbers
-  const formatNumber = (value) => {
-    const n =
-      typeof value === "string" ? Number(value.replace(/,/g, "")) : value;
-    if (Number.isNaN(n) || n == null) return "0";
-    const s = String(n);
-    if (n >= 100000) return s.slice(0, 3) + "," + s.slice(3);
-    if (n >= 10000) return s.slice(0, 2) + "," + s.slice(2);
-    if (n >= 1000) return s.slice(0, 1) + "," + s.slice(1);
-    return s;
-  };
+  function formatUSNumber(number) {
+    return number.toLocaleString("en-US");
+  }
 
   // Helper function to format currency (expects numbers in millions unless noted)
-  const formatCurrency = (value) => {
-    const n =
-      typeof value === "string" ? Number(value.replace(/[^0-9.]/g, "")) : value;
-    if (Number.isNaN(n) || n == null) return "$ 0";
-    if (n >= 1000) return `$ ${n / 1000} B`;
-    if (n < 1) return `$ ${n * 1000} K`;
-    return `$ ${n} M`;
+  const formatCurrency = (amount) => {
+    if (amount === 0) return "$0";
+
+    const absAmount = Math.abs(amount);
+    const sign = amount < 0 ? "-" : "";
+
+    if (absAmount >= 1e9) {
+      // Billions
+      const billions = absAmount / 1e9;
+      return `${sign}$${billions.toFixed(3).replace(/\.?0+$/, "")}B`;
+    } else if (absAmount >= 1e6) {
+      // Millions
+      const millions = absAmount / 1e6;
+      return `${sign}$${millions.toFixed(3).replace(/\.?0+$/, "")}M`;
+    } else if (absAmount >= 1e3) {
+      // Thousands
+      const thousands = absAmount / 1e3;
+      return `${sign}$${thousands.toFixed(3).replace(/\.?0+$/, "")}K`;
+    } else {
+      // Less than 1000
+      return `${sign}$${absAmount}`;
+    }
   };
 
   // Sum total jobs
@@ -190,7 +202,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     const sum = (jobsArray || [])
       .slice(0, 3)
       .reduce((acc, val) => acc + (Number(val) || 0), 0);
-    return formatNumber(sum);
+    return formatUSNumber(sum);
   };
 
   // Intersection Observer for scroll animations
@@ -259,17 +271,28 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
   // ===== Chart configs (compute sizes from viewport safely) =====
   const barThickness = isLg() ? vp() * 0.025 : vp() * 0.0468;
   const labelFontSize = isLg() ? vp() * 0.00833 : vp() * 0.03889;
-
+  console.log(
+    "EconomicImpact data:",
+    data,
+    data?.employment_supported_by_foreign_affiliates.map(
+      (item) => item.esbfa_country
+    )
+  );
   // Employment Chart
   const employmentChartData = {
-    labels: data?.employment_label || [],
+    labels: data?.employment_supported_by_foreign_affiliates.map(
+      (item) => item.esbfa_country
+    ),
     datasets: [
       {
-        data: data?.employment || [],
-        backgroundColor: (data?.employment || []).map((_, index) =>
-          index === (data?.index_color ?? -1)
-            ? "rgb(228, 16, 28)"
-            : "rgb(157, 157, 156)"
+        data: data?.employment_supported_by_foreign_affiliates.map(
+          (item) => item.esbfa_value
+        ),
+        backgroundColor: (data?.employment_supported_by_foreign_affiliates).map(
+          (item, index) =>
+            item.esbfa_country.includes("Switzerland")
+              ? "rgb(228, 16, 28)"
+              : "rgb(157, 157, 156)"
         ),
         borderRadius: { topLeft: 5, topRight: 5 },
         barThickness,
@@ -284,7 +307,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
       datalabels: {
         anchor: "end",
         align: "top",
-        formatter: formatNumber,
+        formatter: formatUSNumber,
         backgroundColor: "#FFF",
         color: "#000",
         borderRadius: 5,
@@ -298,7 +321,12 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     },
     scales: {
       y: {
-        max: Math.max(...(data?.employment || [0])) * 1.2,
+        max:
+          Math.max(
+            ...(data?.employment_supported_by_foreign_affiliates.map(
+              (item) => item.esbfa_value
+            ) || [0])
+          ) * 1.2,
         beginAtZero: true,
         ticks: { display: false },
         grid: { display: false, drawTicks: false, drawBorder: false },
@@ -315,7 +343,12 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
   const jobsChartData = {
     datasets: [
       {
-        data: data?.jobs || [],
+        data:
+          [
+            data?.esbfa_jobs_supported_by_services_exports_to_switzerland,
+            data?.esbfa_jobs_supported_by_swiss_affiliates,
+            data?.esbfajobs_supported_by_goods_exports_to_switzerland,
+          ] || [],
         backgroundColor: ["#ff0000", "#F08262", "#F9C5AF"],
         hoverOffset: 0,
         cutout: "60%",
@@ -329,7 +362,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     aspectRatio: isLg() ? 1.6 : 1,
     plugins: {
       datalabels: {
-        formatter: formatNumber,
+        formatter: formatUSNumber,
         backgroundColor: "#FFF",
         color: "#000",
         borderRadius: 5,
@@ -346,10 +379,16 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
 
   // Export Chart
   const exportChartData = {
-    labels: data?.export_label || [],
+    labels:
+      data?.exports_top_exports_of_goods_by_industry.map(
+        (item) => item.export_industry
+      ) || [],
     datasets: [
       {
-        data: data?.export || [],
+        data:
+          data?.exports_top_exports_of_goods_by_industry.map(
+            (item) => item.export_value
+          ) || [],
         backgroundColor: "rgb(157, 157, 156)",
         borderRadius: { topRight: 5, bottomRight: 5 },
         barThickness,
@@ -379,7 +418,12 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     },
     scales: {
       x: {
-        max: Math.max(...(data?.export || [0])) * 1.35,
+        max:
+          Math.max(
+            ...(data?.exports_top_exports_of_goods_by_industry.map(
+              (item) => item.export_value
+            ) || [0])
+          ) * 1.35,
         grid: { display: false, drawBorder: false },
         ticks: { display: false },
       },
@@ -393,10 +437,16 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
 
   // Import Chart
   const importChartData = {
-    labels: data?.import_label || [],
+    labels:
+      data?.import_top_imports_of_goods_by_industry_from_switzerland.map(
+        (item) => item.import_industry
+      ) || [],
     datasets: [
       {
-        data: data?.import || [],
+        data:
+          data?.import_top_imports_of_goods_by_industry_from_switzerland.map(
+            (item) => item.import_value
+          ) || [],
         backgroundColor: "rgb(157, 157, 156)",
         borderRadius: { topRight: 5, bottomRight: 5 },
         barThickness,
@@ -408,7 +458,12 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     ...exportChartOptions,
     scales: {
       x: {
-        max: Math.max(...(data?.import || [0])) * 1.35,
+        max:
+          Math.max(
+            ...(data?.import_top_imports_of_goods_by_industry_from_switzerland.map(
+              (item) => item.import_value
+            ) || [0])
+          ) * 1.35,
         grid: { display: false, drawBorder: false },
         ticks: { display: false },
       },
@@ -417,53 +472,6 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
         grid: { display: false, drawTicks: false, drawBorder: false },
       },
     },
-  };
-
-  // Service Charts (US only) – kept for future data
-  const exportServiceChartData = {
-    labels: data?.export_service_label || [],
-    datasets: [
-      {
-        data: data?.export_service || [],
-        backgroundColor: "rgb(157, 157, 156)",
-        borderRadius: { topLeft: 5, topRight: 5 },
-        barThickness,
-      },
-    ],
-  };
-
-  const serviceChartOptions = {
-    responsive: true,
-    aspectRatio: isLg() ? 2.15 : 1.2,
-    plugins: {
-      datalabels: {
-        anchor: "end",
-        align: "top",
-        formatter: formatCurrency,
-        backgroundColor: "#FFF",
-        color: "#000",
-        borderRadius: 5,
-        padding: { top: 4, bottom: 4, left: 12, right: 12 },
-        borderWidth: 1,
-        borderColor: "#EDEEEE",
-        font: { size: labelFontSize },
-      },
-      legend: { display: false },
-      tooltip: { enabled: false },
-    },
-    scales: {
-      y: {
-        max: Math.max(...(data?.export_service || [0])) * 1.3,
-        beginAtZero: true,
-        ticks: { display: false },
-        grid: { display: false, drawTicks: false, drawBorder: false },
-      },
-      x: {
-        grid: { display: false, drawBorder: false },
-        ticks: { display: false },
-      },
-    },
-    animation: { duration: 2000 },
   };
 
   return (
@@ -476,7 +484,10 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
         <div>
           <h2 className="popup-title text-white">{name}</h2>
           <p className="popup-description text-white mt-2 mb-0">
-            Residents of Swiss Descent: {formatNumber(data?.resident || 0)}
+            Residents of Swiss Descent:{" "}
+            {data?.resident_of_swiss_descent
+              ? formatUSNumber(data?.resident_of_swiss_descent)
+              : 0}
           </p>
         </div>
         <BackToMapButton />
@@ -484,115 +495,131 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
 
       <div className="chart-container flex gap-6 mt-5 flex-col lg:flex-row">
         {/* Employment Chart */}
-        <div className="bg-white p-6 rounded-lg shadow-lg">
+        <div className="bg-white p-6 rounded-lg">
           <h2 className="text-xl mb-4">
             Employment Supported by Foreign Affiliates
           </h2>
           <div className="flex gap-2 flex-col lg:flex-row">
-            {Array.isArray(data?.employment) && data.employment.length > 0 && (
-              <div data-chart="employment">
-                {isVisible.employment && (
-                  <Bar
-                    data={employmentChartData}
-                    options={employmentChartOptions}
-                  />
-                )}
-                <p className="text-sm text-gray-600 mt-4">
-                  Swiss Affiliates account for 2% of the 11,400 jobs created by
-                  all foreign affiliates in {name}.
-                </p>
-              </div>
-            )}
-            {/* Jobs Doughnut Chart */}
-            {Array.isArray(data?.jobs) && data.jobs.length > 0 && (
-              <div data-chart="jobs" className="bg-white p-6">
-                <div className="w-full max-w-md mx-auto">
-                  {isVisible.jobs && (
-                    <Doughnut data={jobsChartData} options={jobsChartOptions} />
+            {Array.isArray(data?.employment_supported_by_foreign_affiliates) &&
+              data.employment_supported_by_foreign_affiliates.length > 0 && (
+                <div data-chart="employment">
+                  {isVisible.employment && (
+                    <Bar
+                      data={employmentChartData}
+                      options={employmentChartOptions}
+                    />
                   )}
+                  <p className="text-sm text-gray-600 mt-4">
+                    Swiss Affiliates account for{" "}
+                    {data?.esbfa_affiliate_percentage || 0}% of the{" "}
+                    {data?.esbfa_foreign_jobs
+                      ? formatUSNumber(data?.esbfa_foreign_jobs)
+                      : 0}{" "}
+                    jobs created by all foreign affiliates in {name}.
+                  </p>
                 </div>
-                <ul className="ei-donut-legend mt-4 text-sm text-gray-600 list-none">
-                  <li>Jobs Supported by Swiss Affiliates</li>
-                  <li>Jobs Supported by Services Exports to Switzerland</li>
-                  <li>Jobs Supported by Goods Exports to Switzerland</li>
-                </ul>
-              </div>
-            )}
+              )}
+            {/* Jobs Doughnut Chart */}
+            {data?.esbfa_jobs_supported_by_services_exports_to_switzerland &&
+              data?.esbfa_jobs_supported_by_services_exports_to_switzerland &&
+              data?.esbfa_jobs_supported_by_swiss_affiliates && (
+                <div data-chart="jobs" className="bg-white p-6">
+                  <div className="w-full max-w-md mx-auto">
+                    {isVisible.jobs && (
+                      <Doughnut
+                        data={jobsChartData}
+                        options={jobsChartOptions}
+                      />
+                    )}
+                  </div>
+                  <ul className="ei-donut-legend mt-4 text-sm text-gray-600 list-none">
+                    <li>Jobs Supported by Swiss Affiliates</li>
+                    <li>Jobs Supported by Services Exports to Switzerland</li>
+                    <li>Jobs Supported by Goods Exports to Switzerland</li>
+                  </ul>
+                </div>
+              )}
           </div>
 
           {/* Export/Import Charts Row */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Export Chart */}
-            {Array.isArray(data?.export) && data.export.length > 0 && (
-              <div
-                data-chart="export"
-                className="bg-white p-6 rounded-lg shadow-lg"
-                ref={exportCardRef}
-              >
-                <h2 className="text-xl font-semibold mb-4">
-                  Top Exports of Goods by Industry from Georgia to Switzerland
-                </h2>
-                {isVisible.export && (
-                  <Bar data={exportChartData} options={exportChartOptions} />
-                )}
-                <div className="mt-4 space-y-1">
-                  {(data?.export_label || []).map((label, index) => (
-                    <div key={index} className="text-sm text-gray-600">
-                      {label}
-                    </div>
-                  ))}
+            {Array.isArray(data?.exports_top_exports_of_goods_by_industry) &&
+              data.exports_top_exports_of_goods_by_industry.length > 0 && (
+                <div
+                  data-chart="export"
+                  className="bg-white p-6 rounded-lg"
+                  ref={exportCardRef}
+                >
+                  <h2 className="text-xl font-semibold mb-4">
+                    Top Exports of Goods by Industry from Georgia to Switzerland
+                  </h2>
+                  {isVisible.export && (
+                    <Bar data={exportChartData} options={exportChartOptions} />
+                  )}
+                  <div className="mt-4 space-y-1">
+                    {(data?.exports_top_exports_of_goods_by_industry || []).map(
+                      (item, index) => (
+                        <div key={index} className="text-sm text-gray-600">
+                          {item.export_industry}
+                        </div>
+                      )
+                    )}
+                  </div>
+                  <div className="text-sm mt-4">
+                    Total Export Value of Goods ={" "}
+                    {formatCurrency(data?.export_total_export_value_of_goods) ||
+                      "$0"}
+                  </div>
                 </div>
-                <div className="text-sm mt-4">
-                  Total Export Value of Goods = {data?.export_amount || "$0"}
-                </div>
-              </div>
-            )}
+              )}
 
             {/* Import Chart */}
-            {Array.isArray(data?.import) && data.import.length > 0 && (
-              <div
-                data-chart="import"
-                className="bg-white p-6 rounded-lg shadow-lg"
-              >
-                <h2 className="text-xl font-semibold mb-4">
-                  Imports from Switzerland
-                  <span className="block text-sm font-normal text-gray-600 mt-1">
-                    {data?.import_amount || "$0"}
-                  </span>
-                </h2>
-                {isVisible.import && (
-                  <Bar data={importChartData} options={importChartOptions} />
-                )}
-                <div className="mt-4 space-y-1">
-                  {(data?.import_label || []).map((label, index) => (
-                    <div key={index} className="text-sm text-gray-600">
-                      {label}
-                    </div>
-                  ))}
+            {Array.isArray(
+              data?.import_top_imports_of_goods_by_industry_from_switzerland
+            ) &&
+              data.import_top_imports_of_goods_by_industry_from_switzerland
+                .length > 0 && (
+                <div data-chart="import" className="bg-white p-6 rounded-lg">
+                  <h2 className="text-xl font-semibold mb-4">
+                    Top Imports of Goods by Industry from {name} to Switzerland
+                  </h2>
+                  {isVisible.import && (
+                    <Bar data={importChartData} options={importChartOptions} />
+                  )}
+                  <div className="mt-4 space-y-1">
+                    {(data?.import_label || []).map((label, index) => (
+                      <div key={index} className="text-sm text-gray-600">
+                        {label}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="text-sm mt-4">
+                    Total Import Value of Goods ={" "}
+                    {data?.import_total_import_value
+                      ? formatCurrency(data?.import_total_import_value)
+                      : "$0"}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
           </div>
         </div>
 
         <div>
           {/* Companies List for non-US states */}
           {name !== "United States" &&
-            Array.isArray(data?.companies) &&
-            data.companies.length > 0 && (
-              <div className="bg-white p-6 rounded-lg shadow-lg lg:min-w-[300px]">
+            Array.isArray(data?.companies_located_in_state) &&
+            data.companies_located_in_state.length > 0 && (
+              <div className="bg-white p-6 rounded-lg lg:min-w-[300px]">
                 <h2 className="text-xl mb-4">
                   Swiss Companies Located in {name}
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {data.companies
-                    .slice()
-                    .sort()
-                    .map((company, index) => (
-                      <div key={index} className="text-sm text-gray-700 py-1">
-                        {company}
-                      </div>
-                    ))}
+                  {data.companies_located_in_state.map((company, index) => (
+                    <div key={index} className="text-sm text-gray-700 py-1">
+                      {company.company_name}
+                    </div>
+                  ))}
                 </div>
               </div>
             )}

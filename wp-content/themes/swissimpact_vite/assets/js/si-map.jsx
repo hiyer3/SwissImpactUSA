@@ -1,6 +1,12 @@
-// SIMapControl.jsx
+// SIMapControl.jsx - Fixed infinite re-render issue
 import { h } from "preact";
-import { useEffect, useState, useMemo, useCallback } from "preact/hooks";
+import {
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+  useRef,
+} from "preact/hooks";
 import inlineSVG from "./inlineSVG";
 import ScienceAcademia from "./map-popup-template/ScienceAcademia";
 import ApprenticeshipCompanies from "./map-popup-template/apprenticeshipCompanies";
@@ -18,7 +24,6 @@ const FILTERS = {
   SWISS_REPRESENTATIVES: "si-popup-filter-swiss-representatives",
 };
 
-// Multiple data types can map to the same filter
 const DATA_TYPE_TO_FILTER = {
   scienceAcademia: FILTERS.SCIENCE,
   apprenticeshipCompanies: FILTERS.APPRENTICESHIP,
@@ -26,6 +31,10 @@ const DATA_TYPE_TO_FILTER = {
   swissRepresentations: FILTERS.SWISS_REPRESENTATIVES,
   swissImpact: FILTERS.ECON,
   economicImpact: FILTERS.ECON,
+};
+
+const isMobile = () => {
+  return window.innerWidth <= 768 || /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 };
 
 export default function SIMapControl() {
@@ -45,7 +54,8 @@ export default function SIMapControl() {
     isLoadingTabs: false,
   });
 
-  const [dataCache, setDataCache] = useState({
+  // Use ref to store cache - prevents re-renders when cache updates
+  const dataCacheRef = useRef({
     scienceAcademia: {},
     apprenticeshipCompanies: {},
     industryClusters: {},
@@ -54,139 +64,170 @@ export default function SIMapControl() {
     economicImpact: {},
   });
 
+  // Force component updates when needed
+  const [updateTrigger, setUpdateTrigger] = useState(0);
+
   const hasValidData = (data) => Array.isArray(data) && data.length > 0;
 
-  // ---- Tabs activation (handles collisions like ECON = swissImpact OR economicImpact)
-  const updateActiveTabs = useCallback(
-    (stateId) => {
-      const newActiveTabs = {
-        [FILTERS.SEE_ALL]: true,
-        [FILTERS.ECON]: false,
-        [FILTERS.SCIENCE]: false,
-        [FILTERS.APPRENTICESHIP]: false,
-        [FILTERS.INDUSTRY]: false,
-        [FILTERS.SWISS_REPRESENTATIVES]: false,
+  // ---- Fetch & cache - NO dependencies to prevent infinite loops
+  const fetchStateData = useCallback(async (stateId, dataType) => {
+    const cache = dataCacheRef.current;
+
+    if (cache[dataType][stateId]) {
+      return cache[dataType][stateId];
+    }
+
+    // Set loading state
+    cache[dataType] = {
+      ...cache[dataType],
+      [stateId]: { data: [], loading: true, error: null },
+    };
+
+    // Trigger update for loading state
+    setUpdateTrigger((prev) => prev + 1);
+
+    try {
+      const response = await fetch(`/wp-json/wp/v2/mapstate?slug=${stateId}`);
+      if (!response.ok)
+        throw new Error(`HTTP error! status: ${response.status}`);
+
+      const data = await response.json();
+      const acf = data?.[0]?.acf || {};
+      let extractedData = [];
+
+      switch (dataType) {
+        case "scienceAcademia":
+          extractedData = acf["science_&_academia_fields"] || [];
+          break;
+
+        case "apprenticeshipCompanies":
+          extractedData = acf.apprenticeship_companies || [];
+          break;
+
+        case "industryClusters":
+          extractedData = acf.industry_clusters || [];
+          break;
+
+        case "swissRepresentations":
+          extractedData = acf.swiss_representations || [];
+          if (extractedData.length > 0) {
+            const statecode = acf.state_short_code || "";
+            extractedData = extractedData.map((rep) => ({
+              ...rep,
+              statecode,
+            }));
+          }
+          break;
+
+        case "swissImpact": {
+          console.log("swissImpact acf:", acf);
+          const counts = {
+            total_jobs: acf.economic_impact?.esbfa_total_jobs || 0,
+            resident: acf.economic_impact?.resident_of_swiss_descent || 0,
+            science_academia:
+              (acf["science_&_academia_fields"] || []).length || 0,
+            apprenticeship_companies:
+              (acf.apprenticeship_companies || []).length || 0,
+            industry_clusters: (acf.industry_clusters || []).length || 0,
+          };
+
+          const reps = Array.isArray(acf.swiss_representations)
+            ? acf.swiss_representations
+            : [];
+
+          const payload = {
+            ...(counts.total_jobs > 0 && { total_jobs: counts.total_jobs }),
+            ...(counts.resident > 0 && { swiss_residents: counts.resident }),
+            ...(counts.science_academia > 0 && {
+              science_academia: counts.science_academia,
+            }),
+            ...(counts.apprenticeship_companies > 0 && {
+              apprenticeship_companies: counts.apprenticeship_companies,
+            }),
+            ...(counts.industry_clusters > 0 && {
+              industry_clusters: counts.industry_clusters,
+            }),
+            ...(reps.length > 0 && { swiss_representations: reps }),
+            statecode: acf.state_short_code || "",
+          };
+
+          extractedData = Object.keys(payload).length > 1 ? [payload] : [];
+          break;
+        }
+
+        case "economicImpact": {
+          const economicData = acf.economic_impact;
+          // Only include if economic_impact exists and has meaningful data
+          if (
+            economicData &&
+            (economicData.esbfa_total_jobs > 0 ||
+              economicData.resident_of_swiss_descent > 0 ||
+              Object.keys(economicData).some(
+                (key) => economicData[key] && economicData[key] !== 0
+              ))
+          ) {
+            extractedData = [economicData];
+          } else {
+            extractedData = [];
+          }
+          break;
+        }
+
+        default:
+          extractedData = [];
+      }
+
+      console.log(
+        "EconomicImpact extractedData:",
+        dataType,
+        extractedData,
+        Array.isArray(extractedData)
+      );
+
+      const result = {
+        data: Array.isArray(extractedData) ? extractedData : [],
+        loading: false,
+        error: null,
       };
 
-      Object.entries(DATA_TYPE_TO_FILTER).forEach(([dataType, filterId]) => {
-        const cached = dataCache[dataType][stateId];
-        if (
-          cached &&
-          !cached.loading &&
-          !cached.error &&
-          hasValidData(cached.data)
-        ) {
-          newActiveTabs[filterId] = newActiveTabs[filterId] || true;
-        }
-      });
+      cache[dataType][stateId] = result;
+      setUpdateTrigger((prev) => prev + 1);
 
-      setSingleStateData((prev) => ({ ...prev, activeTabs: newActiveTabs }));
-    },
-    [dataCache]
-  );
+      return result;
+    } catch (error) {
+      const errorResult = { data: [], loading: false, error: error.message };
+      cache[dataType][stateId] = errorResult;
+      setUpdateTrigger((prev) => prev + 1);
+      return errorResult;
+    }
+  }, []); // NO dependencies
 
-  // ---- Fetch & cache
-  const fetchStateData = useCallback(
-    async (stateId, dataType) => {
-      if (dataCache[dataType][stateId]) return dataCache[dataType][stateId];
+  // ---- Tabs activation - NO dependencies to prevent infinite loops
+  const updateActiveTabs = useCallback((stateId) => {
+    const cache = dataCacheRef.current;
+    const newActiveTabs = {
+      [FILTERS.SEE_ALL]: true,
+      [FILTERS.ECON]: false,
+      [FILTERS.SCIENCE]: false,
+      [FILTERS.APPRENTICESHIP]: false,
+      [FILTERS.INDUSTRY]: false,
+      [FILTERS.SWISS_REPRESENTATIVES]: false,
+    };
 
-      setDataCache((prev) => ({
-        ...prev,
-        [dataType]: {
-          ...prev[dataType],
-          [stateId]: { data: [], loading: true, error: null },
-        },
-      }));
-
-      try {
-        const response = await fetch(`/wp-json/wp/v2/mapstate?slug=${stateId}`);
-        if (!response.ok)
-          throw new Error(`HTTP error! status: ${response.status}`);
-
-        const data = await response.json();
-        const acf = data?.[0]?.acf || {};
-        let extractedData = [];
-
-        switch (dataType) {
-          case "scienceAcademia":
-            extractedData = acf["science_&_academia_fields"] || [];
-            break;
-
-          case "apprenticeshipCompanies":
-            extractedData = acf.apprenticeship_companies || [];
-            break;
-
-          case "industryClusters":
-            extractedData = acf.industry_clusters || [];
-            break;
-
-          case "swissRepresentations":
-            extractedData = acf.swiss_representations || [];
-            break;
-
-          case "swissImpact": {
-            // Build a “See All” summary object (counts + reps + statecode)
-            const counts = {
-              science_academia:
-                (acf["science_&_academia_fields"] || []).length || 0,
-              apprenticeship_companies:
-                (acf.apprenticeship_companies || []).length || 0,
-              industry_clusters: (acf.industry_clusters || []).length || 0,
-            };
-            const reps = Array.isArray(acf.swiss_representations)
-              ? acf.swiss_representations
-              : [];
-
-            const payload = {
-              ...(counts.science_academia > 0 && {
-                science_academia: counts.science_academia,
-              }),
-              ...(counts.apprenticeship_companies > 0 && {
-                apprenticeship_companies: counts.apprenticeship_companies,
-              }),
-              ...(counts.industry_clusters > 0 && {
-                industry_clusters: counts.industry_clusters,
-              }),
-              ...(reps.length > 0 && { swiss_representations: reps }),
-              statecode: acf.state_short_code || "",
-            };
-
-            extractedData = Object.keys(payload).length > 1 ? [payload] : [];
-            break;
-          }
-
-          case "economicImpact": {
-            extractedData = acf.economic_impact || [];
-            break;
-          }
-
-          default:
-            extractedData = [];
-        }
-
-        const result = {
-          data: Array.isArray(extractedData) ? extractedData : [],
-          loading: false,
-          error: null,
-        };
-
-        setDataCache((prev) => ({
-          ...prev,
-          [dataType]: { ...prev[dataType], [stateId]: result },
-        }));
-
-        return result;
-      } catch (error) {
-        const errorResult = { data: [], loading: false, error: error.message };
-        setDataCache((prev) => ({
-          ...prev,
-          [dataType]: { ...prev[dataType], [stateId]: errorResult },
-        }));
-        return errorResult;
+    Object.entries(DATA_TYPE_TO_FILTER).forEach(([dataType, filterId]) => {
+      const cached = cache[dataType][stateId];
+      if (
+        cached &&
+        !cached.loading &&
+        !cached.error &&
+        hasValidData(cached.data)
+      ) {
+        newActiveTabs[filterId] = newActiveTabs[filterId] || true;
       }
-    },
-    [dataCache]
-  );
+    });
+
+    setSingleStateData((prev) => ({ ...prev, activeTabs: newActiveTabs }));
+  }, []); // NO dependencies
 
   // ---- Prefetch all data types for the selected state
   useEffect(() => {
@@ -203,31 +244,34 @@ export default function SIMapControl() {
       "economicImpact",
     ];
 
+    const cache = dataCacheRef.current;
+
     Promise.all(
       dataTypes.map((t) =>
-        dataCache[t][singleStateData.stateId]
-          ? Promise.resolve(dataCache[t][singleStateData.stateId])
+        cache[t][singleStateData.stateId]
+          ? Promise.resolve(cache[t][singleStateData.stateId])
           : fetchStateData(singleStateData.stateId, t)
       )
     ).then(() => {
       updateActiveTabs(singleStateData.stateId);
       setSingleStateData((prev) => ({ ...prev, isLoadingTabs: false }));
     });
-  }, [singleStateData.stateId, fetchStateData, dataCache, updateActiveTabs]);
+    
+  }, [singleStateData.stateId]); // Only depend on stateId
 
-  // ---- Keep tabs synced if cache changes
-  useEffect(() => {
-    if (singleStateData.stateId) updateActiveTabs(singleStateData.stateId);
-  }, [dataCache, singleStateData.stateId, updateActiveTabs]);
-
+  // Get current data - depends on updateTrigger to force re-renders when cache changes
   const getCurrentData = useCallback(
-    (dataType) =>
-      dataCache[dataType][singleStateData.stateId] || {
-        data: [],
-        loading: true,
-        error: null,
-      },
-    [dataCache, singleStateData.stateId]
+    (dataType) => {
+      const cache = dataCacheRef.current;
+      return (
+        cache[dataType][singleStateData.stateId] || {
+          data: [],
+          loading: true,
+          error: null,
+        }
+      );
+    },
+    [singleStateData.stateId, updateTrigger]
   );
 
   const memoizedComponents = useMemo(() => {
@@ -274,7 +318,7 @@ export default function SIMapControl() {
         />
       ),
     };
-  }, [singleStateData, getCurrentData]);
+  }, [singleStateData.name, singleStateData.stateId, getCurrentData]);
 
   const selectedComponent = useMemo(() => {
     switch (singleStateData.selectedFilter) {
@@ -487,6 +531,7 @@ export default function SIMapControl() {
         .querySelector(".state-list-container")
         ?.classList.remove("active");
     };
+
     const links = document.querySelectorAll(".state-link");
     links.forEach((a) => a.addEventListener("click", onStateClick));
 

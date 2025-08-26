@@ -7,13 +7,15 @@ import Card from "./components/SwissImpactCard/Card";
 import CardContent from "./components/SwissImpactCard/CardContent";
 import CardWrapper from "./components/SwissImpactCard/CardWrapper";
 import SRUSCard from "./components/SwissImpactCard/SRUSCard";
-import SwissRepresentations from "./SwissRepresentations";
 import SRStateCard from "./components/SwissImpactCard/SRStateCard";
+
+const formatUSNumber = (number) => number.toLocaleString("en-US");
 
 const SwissImpact = (props) => {
   const [swissImpactData, setSwissImpactData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   useEffect(() => {
     // If preloaded data is available, use it instead of fetching
     if (props.preloadedData) {
@@ -54,18 +56,22 @@ const SwissImpact = (props) => {
     }
   }, [props.stateId, props.preloadedData]);
 
-  // Extract data from the first item (assuming single record structure)
+  // More stable memoization
   const impactData = useMemo(() => {
+    if (!swissImpactData.length) return null;
+
     const data = swissImpactData[0] || {};
     return {
-      swissResidents: data.swiss_residents || 0,
-      SwissRepresentations: data.states || [],
+      swissResidents: formatUSNumber(data.swiss_residents || 0),
+      totalJobs: formatUSNumber(data.total_jobs || 0),
+      SwissRepresentations: data.swiss_representations || [],
       SwissRepresentationsDescription:
         data.swiss_representations_description || "default description",
-      economicImpact: data.economic_impact || 0,
-      scienceAcademia: data.science_academia || 0,
-      apprenticeshipCompanies: data.apprenticeship_companies || 0,
-      industryClusters: data.industry_clusters || 0,
+      scienceAcademia: formatUSNumber(data.science_academia || 0),
+      apprenticeshipCompanies: formatUSNumber(
+        data.apprenticeship_companies || 0
+      ),
+      industryClusters: formatUSNumber(data.industry_clusters || 0),
     };
   }, [swissImpactData]);
 
@@ -116,7 +122,7 @@ const SwissImpact = (props) => {
           <p className="popup-description text-white mt-2 mb-0">
             Residents of Swiss Descent:{" "}
             <strong>
-              {loading ? "Loading..." : impactData.swissResidents}
+              {loading ? "Loading..." : impactData?.swissResidents}
             </strong>
           </p>
         </div>
@@ -147,7 +153,7 @@ const SwissImpact = (props) => {
               >
                 <CardStatNumber
                   style={{ marginLeft: "0", marginRight: "auto" }}
-                  number={impactData.economicImpact}
+                  number={impactData?.totalJobs || 0}
                 />
               </CardContent>
             </Card>
@@ -210,9 +216,15 @@ const SwissImpact = (props) => {
             </Card>
 
             {props.stateId == "united-states" ? (
-              <SRUSCard description={impactData.SwissRepresentationsDescription} data={impactData.SwissRepresentations} />
+              <SRUSCard
+                description={impactData.SwissRepresentationsDescription}
+                data={impactData.SwissRepresentations}
+              />
             ) : (
-              <SRStateCard description={impactData.SwissRepresentationsDescription} data={impactData.SwissRepresentations} />
+              <SRStateCard
+                description={impactData.SwissRepresentationsDescription}
+                data={impactData.SwissRepresentations}
+              />
             )}
           </CardWrapper>
         </div>
