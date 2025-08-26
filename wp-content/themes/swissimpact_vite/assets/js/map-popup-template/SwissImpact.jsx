@@ -9,74 +9,122 @@ import CardWrapper from "./components/SwissImpactCard/CardWrapper";
 import SRUSCard from "./components/SwissImpactCard/SRUSCard";
 import SRStateCard from "./components/SwissImpactCard/SRStateCard";
 
-const formatUSNumber = (number) => number.toLocaleString("en-US");
+// ---------- helpers ----------
+const toNumber = (v) => {
+  if (v == null) return 0;
+  if (typeof v === "number") return v;
+  if (typeof v === "string") {
+    const n = Number(v.replace(/,/g, "").trim());
+    return Number.isFinite(n) ? n : 0;
+  }
+  return 0;
+};
 
-const SwissImpact = (props) => {
-  const [swissImpactData, setSwissImpactData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+const formatUSNumber = (n) => toNumber(n).toLocaleString("en-US");
 
+// Normalize a swiss impact record from either ACF snake_case or camelCase / custom shapes
+const normalizeImpact = (node) => {
+  if (!node || typeof node !== "object") {
+    return {
+      swissResidents: 0,
+      totalJobs: 0,
+      swissRepresentations: [],
+      swissRepresentationsDescription: "",
+      counts: { scienceAcademia: 0, apprenticeshipCompanies: 0, industryClusters: 0 },
+      statecode: "",
+    };
+  }
+
+  // Some payloads may have only counts + reps; others include residents/jobs too.
+  const swissResidents =
+    toNumber(node.swiss_residents ?? node.swissResidents ?? 0);
+  const totalJobs =
+    toNumber(node.total_jobs ?? node.totalJobs ?? 0);
+
+  const swissRepresentations =
+    Array.isArray(node.swiss_representations ?? node.SwissRepresentations)
+      ? (node.swiss_representations ?? node.SwissRepresentations)
+      : [];
+
+  const swissRepresentationsDescription =
+    node.swiss_representations_description ??
+    node.SwissRepresentationsDescription ??
+    "";
+
+  const counts = {
+    scienceAcademia: toNumber(node.science_academia ?? node.scienceAcademia ?? 0),
+    apprenticeshipCompanies: toNumber(
+      node.apprenticeship_companies ?? node.apprenticeshipCompanies ?? 0
+    ),
+    industryClusters: toNumber(node.industry_clusters ?? node.industryClusters ?? 0),
+  };
+
+  const statecode = node.statecode ?? node.stateCode ?? "";
+
+  return {
+    swissResidents,
+    totalJobs,
+    swissRepresentations,
+    swissRepresentationsDescription,
+    counts,
+    statecode,
+  };
+};
+
+// ---------- component ----------
+const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
+  const [dataNode, setDataNode] = useState(null);
+  const [loading, setLoading] = useState(!!preloadedData?.loading);
+  const [error, setError] = useState(preloadedData?.error ?? null);
+
+  // Prefer preloadedData; else fetch from WP
   useEffect(() => {
-    // If preloaded data is available, use it instead of fetching
-    if (props.preloadedData) {
-      setSwissImpactData(props.preloadedData.data || []);
-      setLoading(props.preloadedData.loading || false);
-      setError(props.preloadedData.error || null);
-      return;
-    }
+    let cancelled = false;
 
-    // Fallback to original fetch logic if no preloaded data
-    const fetchData = async () => {
+    const applyPreloaded = () => {
+      const node = Array.isArray(preloadedData?.data) ? preloadedData.data[0] : null;
+      setDataNode(node || null);
+      setLoading(!!preloadedData?.loading);
+      setError(preloadedData?.error ?? null);
+    };
+
+    const fetchLive = async () => {
+      if (!stateId) return;
       try {
         setLoading(true);
-        const response = await fetch(
-          `/wp-json/wp/v2/mapstate?slug=${props.stateId}`
-        );
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        const impactFields = data[0]?.acf?.swiss_impact || [];
-
-        setSwissImpactData(Array.isArray(impactFields) ? impactFields : []);
         setError(null);
+        const res = await fetch(`/wp-json/wp/v2/mapstate?slug=${stateId}`);
+        if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+        const json = await res.json();
+        // ACF swiss_impact is typically an array; we take the first item
+        const impactArray = json?.[0]?.acf?.swiss_impact;
+        const node = Array.isArray(impactArray) ? impactArray[0] : null;
+        if (!cancelled) setDataNode(node || null);
       } catch (e) {
-        console.error("Error in SwissImpact useEffect:", e.message);
-        setError(e.message);
-        setSwissImpactData([]);
+        if (!cancelled) {
+          setError(e?.message || "Failed to load Swiss impact data.");
+          setDataNode(null);
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
-    if (props.stateId) {
-      fetchData();
+    if (preloadedData) {
+      applyPreloaded();
+    } else {
+      fetchLive();
     }
-  }, [props.stateId, props.preloadedData]);
 
-  // More stable memoization
-  const impactData = useMemo(() => {
-    if (!swissImpactData.length) return null;
-
-    const data = swissImpactData[0] || {};
-    return {
-      swissResidents: formatUSNumber(data.swiss_residents || 0),
-      totalJobs: formatUSNumber(data.total_jobs || 0),
-      SwissRepresentations: data.swiss_representations || [],
-      SwissRepresentationsDescription:
-        data.swiss_representations_description || "default description",
-      scienceAcademia: formatUSNumber(data.science_academia || 0),
-      apprenticeshipCompanies: formatUSNumber(
-        data.apprenticeship_companies || 0
-      ),
-      industryClusters: formatUSNumber(data.industry_clusters || 0),
+    return () => {
+      cancelled = true;
     };
-  }, [swissImpactData]);
+  }, [stateId, preloadedData]);
 
-  // Loading component
-  const LoadingCards = () => (
+  const impact = useMemo(() => normalizeImpact(dataNode), [dataNode]);
+
+  // ---------- subviews ----------
+  const LoadingView = () => (
     <div className="bg-swissred rounded-3xl popup-table-content mt-5">
       <div className="flex justify-center items-center py-20">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
@@ -85,61 +133,71 @@ const SwissImpact = (props) => {
     </div>
   );
 
-  // Error component
-  const ErrorCards = () => (
+  const ErrorView = () => (
     <div className="bg-swissred rounded-3xl popup-table-content mt-5">
       <div className="flex justify-center items-center py-20">
         <div className="text-white text-center">
           <p className="text-lg font-semibold">Error loading data</p>
-          <p className="text-sm">{error}</p>
+          <p className="text-sm">{String(error)}</p>
         </div>
       </div>
     </div>
   );
 
-  // Empty state component
-  const EmptyCards = () => (
+  const EmptyView = () => (
     <div className="bg-swissred rounded-3xl popup-table-content mt-5">
       <div className="flex justify-center items-center py-20">
         <div className="text-white text-center">
           <p className="text-lg font-semibold">No Swiss Impact Data</p>
-          <p className="text-sm">
-            No Swiss impact information available for {props.name}
-          </p>
+          <p className="text-sm">No Swiss impact information available for {name}</p>
         </div>
       </div>
     </div>
   );
 
+  const hasAnyContent =
+    impact.swissResidents > 0 ||
+    impact.totalJobs > 0 ||
+    impact.counts.scienceAcademia > 0 ||
+    impact.counts.apprenticeshipCompanies > 0 ||
+    impact.counts.industryClusters > 0 ||
+    (Array.isArray(impact.swissRepresentations) && impact.swissRepresentations.length > 0);
+
+  // ---------- render ----------
   return (
     <div className="pt-12 pb-5">
+      {/* Header */}
       <div
         className="flex flex-row items-end space-evenly"
         style={{ justifyContent: "space-between" }}
       >
         <div>
-          <h2 className="popup-title text-white">{props.name}</h2>
+          <h2 className="popup-title text-white">
+            {name}
+            {impact.statecode ? (
+              <span className="ml-2 text-white/80 text-lg">({impact.statecode})</span>
+            ) : null}
+          </h2>
           <p className="popup-description text-white mt-2 mb-0">
             Residents of Swiss Descent:{" "}
-            <strong>
-              {loading ? "Loading..." : impactData?.swissResidents}
-            </strong>
+            <strong>{loading ? "Loading..." : formatUSNumber(impact.swissResidents)}</strong>
           </p>
         </div>
         <BackToMapButton />
       </div>
 
-      {/* Conditional rendering based on loading state */}
+      {/* Body */}
       {loading ? (
-        <LoadingCards />
+        <LoadingView />
       ) : error ? (
-        <ErrorCards />
-      ) : swissImpactData.length === 0 ? (
-        <EmptyCards />
+        <ErrorView />
+      ) : !hasAnyContent ? (
+        <EmptyView />
       ) : (
         <div className="bg-swissred rounded-3xl popup-table-content mt-5">
+          {/* Top metrics */}
           <CardWrapper cols={2}>
-            {impactData?.totalJobs && (
+            {impact.totalJobs > 0 && (
               <Card>
                 <CardTitle
                   title="Economic Impact"
@@ -148,19 +206,16 @@ const SwissImpact = (props) => {
                   iconWidth={70}
                   iconPadding={10}
                 />
-                <CardContent
-                  type="fullWidth"
-                  description="Total Jobs Supported in U.S"
-                >
+                <CardContent type="fullWidth" description="Total Jobs Supported in U.S">
                   <CardStatNumber
                     style={{ marginLeft: "0", marginRight: "auto" }}
-                    number={impactData?.totalJobs || 0}
+                    number={formatUSNumber(impact.totalJobs)}
                   />
                 </CardContent>
               </Card>
             )}
 
-            {impactData.scienceAcademia > 0 && (
+            {impact.counts.scienceAcademia > 0 && (
               <Card>
                 <CardTitle
                   title="Science & Academia"
@@ -170,12 +225,12 @@ const SwissImpact = (props) => {
                   iconPadding={20}
                 />
                 <CardContent description="Total Academic Institutions in U.S">
-                  <CardStatNumber number={impactData.scienceAcademia} />
+                  <CardStatNumber number={formatUSNumber(impact.counts.scienceAcademia)} />
                 </CardContent>
               </Card>
             )}
 
-            {impactData.apprenticeshipCompanies > 0 && (
+            {impact.counts.apprenticeshipCompanies > 0 && (
               <Card>
                 <CardTitle
                   title="Apprenticeship Companies"
@@ -185,12 +240,12 @@ const SwissImpact = (props) => {
                   iconPadding={0}
                 />
                 <CardContent description="Total Apprenticeships in U.S">
-                  <CardStatNumber number={impactData.apprenticeshipCompanies} />
+                  <CardStatNumber number={formatUSNumber(impact.counts.apprenticeshipCompanies)} />
                 </CardContent>
               </Card>
             )}
 
-            {impactData.industryClusters > 0 && (
+            {impact.counts.industryClusters > 0 && (
               <Card>
                 <CardTitle
                   title="Industry Clusters"
@@ -200,12 +255,13 @@ const SwissImpact = (props) => {
                   iconPadding={40}
                 />
                 <CardContent description="Total number of Industry Clusters in U.S">
-                  <CardStatNumber number={impactData.industryClusters} />
+                  <CardStatNumber number={formatUSNumber(impact.counts.industryClusters)} />
                 </CardContent>
               </Card>
             )}
           </CardWrapper>
 
+          {/* Swiss Representations */}
           <CardWrapper style={{ gap: 0 }}>
             <Card
               style={{
@@ -223,15 +279,15 @@ const SwissImpact = (props) => {
               />
             </Card>
 
-            {props.stateId == "united-states" ? (
+            {stateId === "united-states" ? (
               <SRUSCard
-                description={impactData.SwissRepresentationsDescription}
-                data={impactData.SwissRepresentations}
+                description={impact.swissRepresentationsDescription}
+                data={impact.swissRepresentations}
               />
             ) : (
               <SRStateCard
-                description={impactData.SwissRepresentationsDescription}
-                data={impactData.SwissRepresentations}
+                description={impact.swissRepresentationsDescription}
+                data={impact.swissRepresentations}
               />
             )}
           </CardWrapper>
