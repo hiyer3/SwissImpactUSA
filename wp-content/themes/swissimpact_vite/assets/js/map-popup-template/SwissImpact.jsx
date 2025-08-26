@@ -297,4 +297,4 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
   );
 };
 
-export default SwissImpact;
+export default SwissImpact; 
