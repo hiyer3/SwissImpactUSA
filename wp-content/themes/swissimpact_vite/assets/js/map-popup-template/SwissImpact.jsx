@@ -76,7 +76,7 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
   const [dataNode, setDataNode] = useState(null);
   const [loading, setLoading] = useState(!!preloadedData?.loading);
   const [error, setError] = useState(preloadedData?.error ?? null);
-
+  
   // Prefer preloadedData; else fetch from WP
   useEffect(() => {
     let cancelled = false;

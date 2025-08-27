@@ -18,7 +18,7 @@
 </section>
 
 <div class="relative min-h-[1440px] mb-20">
-    <section class="si-map-wrapper relative grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-4 w-11/12 pb-5 lg:pb-20">
+    <section class="si-map-wrapper">
         <div class="relative">
             <a href="javascript: void(0);" class="bg-white state-selector">
                 By State <span class="text-swissred pl-1 text-xl">+</span>
