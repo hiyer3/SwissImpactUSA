@@ -10,6 +10,7 @@ const ScienceAcademia = (props) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    console.log("ScienceAcademia props:", props);
     // If preloaded data is available, use it instead of fetching
     if (props.preloadedData) {
       setScienceAcademiaData(props.preloadedData.data || []);

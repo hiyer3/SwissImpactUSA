@@ -34,7 +34,12 @@ const DATA_TYPE_TO_FILTER = {
 };
 
 const isMobile = () => {
-  return window.innerWidth <= 768 || /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  return (
+    window.innerWidth <= 768 ||
+    /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
+    )
+  );
 };
 
 export default function SIMapControl() {
@@ -120,7 +125,6 @@ export default function SIMapControl() {
           break;
 
         case "swissImpact": {
-          console.log("swissImpact acf:", acf);
           const counts = {
             total_jobs: acf.economic_impact?.esbfa_total_jobs || 0,
             resident: acf.economic_impact?.resident_of_swiss_descent || 0,
@@ -176,14 +180,7 @@ export default function SIMapControl() {
         default:
           extractedData = [];
       }
-
-      console.log(
-        "EconomicImpact extractedData:",
-        dataType,
-        extractedData,
-        Array.isArray(extractedData)
-      );
-
+      
       const result = {
         data: Array.isArray(extractedData) ? extractedData : [],
         loading: false,
@@ -204,6 +201,22 @@ export default function SIMapControl() {
 
   // ---- Tabs activation - NO dependencies to prevent infinite loops
   const updateActiveTabs = useCallback((stateId) => {
+    // If it's the nationwide view, force all tabs visible
+    if (stateId === "united-states") {
+      setSingleStateData((prev) => ({
+        ...prev,
+        activeTabs: {
+          [FILTERS.SEE_ALL]: true,
+          [FILTERS.ECON]: true,
+          [FILTERS.SCIENCE]: true,
+          [FILTERS.APPRENTICESHIP]: true,
+          [FILTERS.INDUSTRY]: true,
+          [FILTERS.SWISS_REPRESENTATIVES]: true,
+        },
+      }));
+      return;
+    }
+
     const cache = dataCacheRef.current;
     const newActiveTabs = {
       [FILTERS.SEE_ALL]: true,
@@ -220,9 +233,10 @@ export default function SIMapControl() {
         cached &&
         !cached.loading &&
         !cached.error &&
-        hasValidData(cached.data)
+        Array.isArray(cached.data) &&
+        cached.data.length > 0
       ) {
-        newActiveTabs[filterId] = newActiveTabs[filterId] || true;
+        newActiveTabs[filterId] = true;
       }
     });
 
@@ -256,7 +270,6 @@ export default function SIMapControl() {
       updateActiveTabs(singleStateData.stateId);
       setSingleStateData((prev) => ({ ...prev, isLoadingTabs: false }));
     });
-    
   }, [singleStateData.stateId]); // Only depend on stateId
 
   // Get current data - depends on updateTrigger to force re-renders when cache changes

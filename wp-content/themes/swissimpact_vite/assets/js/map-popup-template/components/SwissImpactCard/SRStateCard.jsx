@@ -5,7 +5,7 @@ const SRStateCard = ({ data }) => {
     <div className="bg-white px-5 pb-6 flex items-center rounded-b-3xl">
       <div className="w-20"></div>
       <div className="w-full">
-        <div className="overflow-x-scroll">
+        <div>
           <ul className="sr-list mt-4 grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 grid">
             {data?.map((item, index) => (
               <li key={"srstate-" + index}>

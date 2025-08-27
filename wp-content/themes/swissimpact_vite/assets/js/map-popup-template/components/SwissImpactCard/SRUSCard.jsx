@@ -1,6 +1,7 @@
 import { h } from "preact";
 
 const SRUSCard = ({ data }) => {
+    console.log("SRUSCard data:", data);
   return (
     <div className="bg-white px-5 pb-6 flex items-center rounded-b-3xl">
       <div className="w-20"></div>
@@ -8,7 +9,7 @@ const SRUSCard = ({ data }) => {
         <p className="text-lg mb-5 lg:text-xl xl:text-2xl pb-0 font-bold">
           {data.representationDescription}
         </p>
-        <div className="mt-4 grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-4 grid overflow-x-scroll">
+        {/*<div className="mt-4 grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-4 grid overflow-x-scroll">
           <div>
             <img
               className="w-full max-w-[120px] mr-auto"
@@ -93,7 +94,7 @@ const SRUSCard = ({ data }) => {
               <li>Seattle (WA)</li>
             </ul>
           </div>
-        </div>
+        </div>*/}
       </div>
     </div>
   );

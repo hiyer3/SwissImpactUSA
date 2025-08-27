@@ -156,14 +156,6 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
   );
   const actualData = usingPreloaded ? preloadedData : DEMO_DATA;
 
-  console.log(
-    "EconomicImpact preloadedData:",
-    preloadedData,
-    preloadedData.data?.[0]?.employment_supported_by_foreign_affiliates.map(
-      (item) => item.esbfa_country
-    )
-  );
-
   const data = actualData?.data?.[0] || null;
   const loading = usingPreloaded ? !!preloadedData?.loading : false;
   const error = usingPreloaded ? preloadedData?.error ?? null : null;

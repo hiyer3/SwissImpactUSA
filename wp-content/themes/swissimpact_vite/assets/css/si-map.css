@@ -1,3 +1,7 @@
+.si-map-wrapper {
+  @apply relative grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-4 w-11/12 pb-5 lg:pb-20;
+}
+
 .si-map-wrapper #si-map g.single-state:hover path {
   @apply fill-swissred transition-all duration-200 ease-in-out;
 }
@@ -99,10 +103,6 @@
   content: "";
   @apply absolute left-3 top-1/2 transform -translate-y-1/2 h-6 w-6 bg-no-repeat bg-center;
   background-image: url("/wp-content/themes/swissimpact_vite/assets/img/si-number-map/search-icon.png");
-}
-
-.data-popup .popup-table-content {
-  @apply overflow-hidden;
 }
 
 .data-popup .popup-table-content .sa-table-data tbody tr {
