@@ -160,9 +160,18 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
   const loading = usingPreloaded ? !!preloadedData?.loading : false;
   const error = usingPreloaded ? preloadedData?.error ?? null : null;
 
-  function formatUSNumber(number) {
-    return number.toLocaleString("en-US");
-  }
+  // ---------- helpers ----------
+  const toNumber = (v) => {
+    if (v == null) return 0;
+    if (typeof v === "number") return v;
+    if (typeof v === "string") {
+      const n = Number(v.replace(/,/g, "").trim());
+      return Number.isFinite(n) ? n : 0;
+    }
+    return 0;
+  };
+
+  const formatUSNumber = (n) => toNumber(n).toLocaleString("en-US");
 
   // Helper function to format currency (expects numbers in millions unless noted)
   const formatCurrency = (amount) => {
@@ -576,7 +585,8 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                     {data?.esbfa_foreign_jobs
                       ? formatUSNumber(data?.esbfa_foreign_jobs)
                       : 0}{" "}
-                    jobs created by all foreign affiliates in {name}.
+                    jobs created by all foreign affiliates in{" "}
+                    {name == "United States" ? "the United States" : name}.
                   </p>
                 </div>
               )}
