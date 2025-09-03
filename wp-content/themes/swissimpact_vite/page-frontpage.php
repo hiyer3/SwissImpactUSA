@@ -24,7 +24,7 @@
         </div>
 
         <div class="pt-12 pb-20">
-            <a href="#experience-swiss-impact" class="btn transparent">Experience SWISS IMPACT</a>
+            <a href="#experience-swiss-impact" class="btn transparent">SWISS IMPACT By the Numbers</a>
         </div>
 
         <div class="absolute md:relative bottom-3 md:bottom-0">
@@ -223,7 +223,7 @@
     <div class="w-11/12 md:w-10/12 mx-auto py-10">
         <h1>Past Events</h1>
 
-        <?php 
+        <?php
         $args = array(
             'post_type' => 'post',
             'posts_per_page' => 3,
@@ -234,7 +234,7 @@
                 array(
                     'key' => 'wpcf-event-to-date',
                     'value' => todayUnixDate(),
-                    'compare' => '<', 
+                    'compare' => '<',
                     'type' => 'UNSIGNED'
                 )
             ),

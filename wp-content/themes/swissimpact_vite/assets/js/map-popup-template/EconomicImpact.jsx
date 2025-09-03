@@ -604,8 +604,8 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                     )}
                   </div>
                   <ul className="ei-donut-legend mt-4 text-sm text-gray-600 list-none">
-                    <li>Jobs Supported by Swiss Affiliates</li>
                     <li>Jobs Supported by Services Exports to Switzerland</li>
+                    <li>Jobs Supported by Swiss Affiliates</li>
                     <li>Jobs Supported by Goods Exports to Switzerland</li>
                   </ul>
                 </div>
@@ -623,7 +623,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                   ref={exportCardRef}
                 >
                   <h2 className="text-xl font-semibold mb-4">
-                    Top Exports of Goods by Industry from Georgia to Switzerland
+                    Top Exports of Goods by Industry from {name} to Switzerland
                   </h2>
                   {isVisible.export && (
                     <Bar data={exportChartData} options={exportChartOptions} />

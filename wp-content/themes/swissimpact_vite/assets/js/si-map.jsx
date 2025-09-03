@@ -180,7 +180,7 @@ export default function SIMapControl() {
         default:
           extractedData = [];
       }
-      
+
       const result = {
         data: Array.isArray(extractedData) ? extractedData : [],
         loading: false,
@@ -508,9 +508,20 @@ export default function SIMapControl() {
     const listC = document.querySelector(
       ".si-map-wrapper .state-list-container"
     );
+    // adding this to accomodate map width change.
+    const mapWrapper = document.querySelector(".si-map-wrapper");
+    const popupWidthWrapper = document.querySelector(
+      ".data-popup .popup-width-wrapper"
+    );
+    const popupFilterWrapper = document.querySelector(
+      ".data-popup .data-popup-filter-wrapper"
+    );
     const onToggle = () => {
       btn?.classList.toggle("active");
       listC?.classList.toggle("active");
+      mapWrapper?.classList.toggle("active");
+      popupWidthWrapper?.classList.toggle("active");
+      popupFilterWrapper?.classList.toggle("active");
     };
     btn?.addEventListener("click", onToggle);
 
@@ -543,6 +554,9 @@ export default function SIMapControl() {
       document
         .querySelector(".state-list-container")
         ?.classList.remove("active");
+      mapWrapper?.classList.remove("active");
+      popupWidthWrapper?.classList.remove("active");
+      popupFilterWrapper?.classList.remove("active");
     };
 
     const links = document.querySelectorAll(".state-link");
