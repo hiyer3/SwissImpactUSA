@@ -22,16 +22,23 @@ const SwissRepresentations = (props) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(
-          `/wp-json/wp/v2/mapstate?slug=${props.stateId}`
-        );
+        let fetchURL = `/wp-json/wp/v2/mapstate?slug=${props.stateId}`;
+
+        if (props.stateId == "united-states") {
+          fetchURL = `/wp-json/wp/v2/mapstate`;
+        }
+        const response = await fetch(fetchURL);
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
-        const representationsFields = data[0]?.acf?.swiss_representations || [];
+        const representationsFields = [];
+        data.forEach((item) => {
+          const fields = item.acf?.swiss_representations || [];
+          representationsFields.push(...fields);
+        });
         representationsFields.statecode = data[0]?.acf?.state_short_code || "";
         setSwissRepresentationsData(
           Array.isArray(representationsFields) ? representationsFields : []

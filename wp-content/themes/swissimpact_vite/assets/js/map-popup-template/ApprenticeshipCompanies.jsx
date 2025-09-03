@@ -22,17 +22,23 @@ const ApprenticeshipCompanies = (props) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(
-          `/wp-json/wp/v2/mapstate?slug=${props.stateId}`
-        );
+        let fetchURL = `/wp-json/wp/v2/mapstate?slug=${props.stateId}`;
+
+        if (props.stateId == "united-states") {
+          fetchURL = `/wp-json/wp/v2/mapstate`;
+        }
+        const response = await fetch(fetchURL);
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
-        const apprenticeshipFields =
-          data[0]?.acf?.apprenticeship_companies || [];
+        const apprenticeshipFields = [];
+        data.forEach((item) => {
+          const fields = item.acf?.apprenticeship_companies || [];
+          apprenticeshipFields.push(...fields);
+        });
 
         setApprenticeshipData(
           Array.isArray(apprenticeshipFields) ? apprenticeshipFields : []
