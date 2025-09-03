@@ -11,7 +11,7 @@ const IndustryClusters = (props) => {
 
   useEffect(() => {
     // If preloaded data is available, use it instead of fetching
-    if (props.preloadedData) {
+    if (props.preloadedData.length > 0) {
       setIndustryClustersData(props.preloadedData.data || []);
       setLoading(props.preloadedData.loading || false);
       setError(props.preloadedData.error || null);
@@ -22,16 +22,23 @@ const IndustryClusters = (props) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(
-          `/wp-json/wp/v2/mapstate?slug=${props.stateId}`
-        );
+        let fetchURL = `/wp-json/wp/v2/mapstate?slug=${props.stateId}`;
+
+        if (props.stateId == "united-states") {
+          fetchURL = `/wp-json/wp/v2/mapstate`;
+        }
+        const response = await fetch(fetchURL);
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
-        const clustersFields = data[0]?.acf?.industry_clusters || [];
+        const clustersFields = [];
+        data.forEach((item) => {
+          const fields = item.acf?.industry_clusters || [];
+          clustersFields.push(...fields);
+        });
 
         setIndustryClustersData(
           Array.isArray(clustersFields) ? clustersFields : []

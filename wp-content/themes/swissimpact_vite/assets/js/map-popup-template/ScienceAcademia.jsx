@@ -10,9 +10,8 @@ const ScienceAcademia = (props) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    console.log("ScienceAcademia props:", props);
     // If preloaded data is available, use it instead of fetching
-    if (props.preloadedData) {
+    if (props.preloadedData.length > 0) {
       setScienceAcademiaData(props.preloadedData.data || []);
       setLoading(props.preloadedData.loading || false);
       setError(props.preloadedData.error || null);
@@ -23,17 +22,24 @@ const ScienceAcademia = (props) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(
-          `/wp-json/wp/v2/mapstate?slug=${props.stateId}`
-        );
+
+        let fetchURL = `/wp-json/wp/v2/mapstate?slug=${props.stateId}`;
+
+        if (props.stateId == "united-states") {
+          fetchURL = `/wp-json/wp/v2/mapstate`;
+        }
+        const response = await fetch(fetchURL);
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
-        const academiaFields =
-          data[0]?.acf?.["science_&_academia_fields"] || [];
+        const academiaFields = [];
+        data.forEach((item) => {
+          const fields = item.acf?.["science_&_academia_fields"] || [];
+          academiaFields.push(...fields);
+        });
 
         setScienceAcademiaData(
           Array.isArray(academiaFields) ? academiaFields : []
@@ -109,7 +115,8 @@ const ScienceAcademia = (props) => {
         <div>
           <h2 className="popup-title text-white">{props.name}</h2>
           <p className="popup-description text-white mt-2 mb-0">
-            Swiss academics and scientists in {props.name}: <strong>{scienceAcademiaData?.length || 0}</strong>
+            Swiss academics and scientists in {props.name}:{" "}
+            <strong>{scienceAcademiaData?.length || 0}</strong>
           </p>
         </div>
         <BackToMapButton />
