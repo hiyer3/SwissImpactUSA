@@ -35,22 +35,22 @@
             <div class="mb-4 si-map-filter-wrapper min-w-0 overflow-x-auto scroll-smooth no-scrollbar overscroll-x-contain [-webkit-overflow-scrolling:touch]">
                 <div id="si-map-filter" class="flex gap-4 px-4 py-2 min-w-max">
                     <div class="single-filter-item active" id="si-filter-see-all" title="See All">
-                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/see-all-icon.png" alt="See All Icon" class="w-full max-w-[120px]" />
+                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/si-map-tab-see-all-2x-2.png" alt="See All Icon" class="w-full" />
                     </div>
                     <div class="single-filter-item" id="si-filter-economic-impact" title="Economic Impact">
-                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/economic-impact-icon.png" alt="Economic Impact Icon" class="w-full max-w-[120px]" />
+                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/si-map-tab-ei-2x-2.png" alt="Economic Impact Icon" class="w-full" />
                     </div>
                     <div class="single-filter-item" id="si-filter-science-academia" title="Science & Academia">
-                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/science-academia-icon.png" alt="Science & Academia Icon" class="w-full max-w-[120px]" />
+                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/si-map-tab-sa-2x-2.png" alt="Science & Academia Icon" class="w-full" />
                     </div>
                     <div class="single-filter-item" id="si-filter-apprenticeship-companies" title="Apprenticeship Companies">
-                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/apprenticeship-companies-icon.png" alt="Apprenticeship Companies Icon" class="w-full max-w-[150px]" />
+                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/si-map-tab-ac-2x-2.png" alt="Apprenticeship Companies Icon" class="w-full" />
                     </div>
                     <div class="single-filter-item" id="si-filter-industry-clusters" title="Industry Clusters">
-                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/industry-cluster-icon.png" alt="Industry Clusters Icon" class="w-full max-w-[80px]" />
+                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/si-map-tab-ic-2x-2.png" alt="Industry Clusters Icon" class="w-full" />
                     </div>
                     <div class="single-filter-item" id="si-filter-swiss-representatives" title="Swiss Representatives">
-                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/swiss-representation.png" alt="Swiss Representatives Icon" class="w-full max-w-[120px]" />
+                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/si-map-tab-sr-2x-2.png" alt="Swiss Representatives Icon" class="w-full" />
                     </div>
                 </div>
             </div>
@@ -65,22 +65,22 @@
                     <div class="min-w-0 overflow-x-auto scroll-smooth no-scrollbar overscroll-x-contain [-webkit-overflow-scrolling:touch]">
                         <div id="si-map-popup-filter" class="flex gap-4 px-4 min-w-max">
                             <div class="single-popup-filter active" id="si-popup-filter-see-all" title="See All">
-                                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/bp-swiss-impact-ko-2x.png" alt="See All Icon" class="w-full max-w-[120px]" />
+                                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/si-bp-tab-see-all-2x.png" alt="See All Icon" class="w-full" />
                             </div>
                             <div class="single-popup-filter" id="si-popup-filter-economic-impact" title="Economic Impact">
-                                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/bp-economic-impact-ko-2x.png" alt="Economic Impact Icon" class="w-full max-w-[120px]" />
+                                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/si-bp-tab-ei-2x.png" alt="Economic Impact Icon" class="w-full" />
                             </div>
                             <div class="single-popup-filter" id="si-popup-filter-science-academia" title="Science & Academia">
-                                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/bp-science-academia-ko-2x.png" alt="Science & Academia Icon" class="w-full max-w-[120px]" />
+                                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/si-bp-tab-sa-2x.png" alt="Science & Academia Icon" class="w-full" />
                             </div>
                             <div class="single-popup-filter" id="si-popup-filter-apprenticeship-companies" title="Apprenticeship Companies">
-                                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/bp-apprenticeship-companies-ko-2x.png" alt="Apprenticeship Companies Icon" class="w-full max-w-[150px]" />
+                                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/si-bp-tab-ac-2x.png" alt="Apprenticeship Companies Icon" class="w-full" />
                             </div>
                             <div class="single-popup-filter" id="si-popup-filter-industry-clusters" title="Industry Clusters">
-                                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/bp-industry-clusters-ko-2x-2.png" alt="Industry Clusters Icon" class="w-full max-w-[80px]" />
+                                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/si-bp-tab-ic-2x.png" alt="Industry Clusters Icon" class="w-full" />
                             </div>
                             <div class="single-popup-filter" id="si-popup-filter-swiss-representatives" title="Swiss Representatives">
-                                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/bp-swiss-representations-ko-2x.png" alt="Swiss Representatives Icon" class="w-full max-w-[120px]" />
+                                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/si-bp-tab-sr-2x.png" alt="Swiss Representatives Icon" class="w-full" />
                             </div>
                         </div>
                     </div>

@@ -174,9 +174,6 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
         <div>
           <h2 className="popup-title text-white">
             {name}
-            {impact.statecode ? (
-              <span className="ml-2 text-white/80 text-lg">({impact.statecode})</span>
-            ) : null}
           </h2>
           <p className="popup-description text-white mt-2 mb-0">
             Residents of Swiss Descent:{" "}
