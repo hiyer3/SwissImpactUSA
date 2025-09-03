@@ -23,7 +23,7 @@
             <a href="javascript: void(0);" class="bg-white state-selector">
                 By State <span class="text-swissred pl-1 text-xl">+</span>
             </a>
-            <div class="fixed lg:absolute z-[45] state-list-container left-0 top-[10%] lg:top-0 w-60 h-[90%] lg:h-full py-10 px-8 bg-white shadow-[inset_0_0px_6px_rgba(112,112,112,0.75)]">
+            <div class="fixed lg:absolute z-[45] state-list-container left-0 top-[10%] lg:top-0 w-60 h-[90%] py-10 px-8 bg-white shadow-[inset_0_0px_6px_rgba(112,112,112,0.75)]">
                 <p class="font-bold uppercase text-base text-swissred">By State</p>
                 <div class="state-search-wrapper relative">
                     <input id="state-search" type="text" class="w-full border rounded-3xl border-[#707070] px-4 py-1 mb-4" />
@@ -58,7 +58,7 @@
         </div>
     </section>
     <div class="data-popup mb-8 lg:mb-0 overflow-hidden bg-swissred lg:absolute w-full h-full top-0 left-0 z-20 pb-20 max-h-[90%] hidden">
-        <div class="bg-white grid grid-cols-1 xl:grid-cols-[280px_1fr] gap-4">
+        <div class="data-popup-filter-wrapper">
             <div></div>
             <div class="overflow-hidden">
                 <div class="popup-filter-wrapper flex flex-col min-w-0 relative bg-white">
@@ -87,7 +87,7 @@
                 </div>
             </div>
         </div>
-        <div class="grid grid-cols-1 xl:grid-cols-[280px_1fr] gap-4">
+        <div class="popup-width-wrapper">
             <div></div>
             <div class="popup-content-wrapper h-full px-5">
             </div>
