@@ -24,7 +24,7 @@
         </div>
 
         <div class="pt-12 pb-20">
-            <a href="#experience-swiss-impact" class="btn transparent">SWISS IMPACT By the Numbers</a>
+            <a href="/explore-swiss-impact-by-the-numbers/" class="btn transparent">SWISS IMPACT By the Numbers</a>
         </div>
 
         <div class="absolute md:relative bottom-3 md:bottom-0">
