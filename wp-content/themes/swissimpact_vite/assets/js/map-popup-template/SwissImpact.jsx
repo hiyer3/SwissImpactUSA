@@ -108,29 +108,46 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
         let fetchURL = `/wp-json/wp/v2/mapstate?slug=${stateId}`;
 
         if (stateId === "united-states") {
-          fetchURL = `/wp-json/wp/v2/mapstate`;
+          fetchURL = `/wp-json/wp/v2/mapstate?per_page=100`; // all states
         }
         const res = await fetch(fetchURL);
 
         if (!res.ok) throw new Error(`HTTP error ${res.status}`);
         const json = await res.json();
         // ACF swiss_impact is typically an array; we take the first item
-        const totalIndustryClusters = json.map(
-          (item) => item.acf?.industry_clusters
+        const totalIndustryClusters = json.filter(
+          (item) =>
+            item.acf?.industry_clusters &&
+            (Array.isArray(item.acf.industry_clusters)
+              ? item.acf.industry_clusters.length > 0
+              : item.acf.industry_clusters)
         ).length;
-        const totalScienceAcademia = json.map(
-          (item) => item.acf?.["science_&_academia_fields"]
+
+        const totalScienceAcademia = json.filter(
+          (item) =>
+            item.acf?.["science_&_academia_fields"] &&
+            (Array.isArray(item.acf["science_&_academia_fields"])
+              ? item.acf["science_&_academia_fields"].length > 0
+              : item.acf["science_&_academia_fields"])
         ).length;
-        const totalApprenticeshipCompanies = json.map(
-          (item) => item.acf?.apprenticeship_companies
+
+        const totalApprenticeshipCompanies = json.filter(
+          (item) =>
+            item.acf?.apprenticeship_companies &&
+            (Array.isArray(item.acf.apprenticeship_companies)
+              ? item.acf.apprenticeship_companies.length > 0
+              : item.acf.apprenticeship_companies)
         ).length;
+
         const totalSwissRepresentations = json.map(
           (item) => item.acf?.swiss_representations
-        );
-
+        ); 
+        
         const impactArray = {
-          total_jobs: 0,
-          resident: 0,
+          total_jobs: json.filter(item => item.slug === stateId)[0]?.acf?.economic_impact?.esbfa_total_jobs || 0,
+          swiss_residents:
+            json.filter((item) => item.slug === stateId)[0]?.acf
+              ?.economic_impact?.resident_of_swiss_descent || 0,
           science_academia: totalScienceAcademia,
           apprenticeship_companies: totalApprenticeshipCompanies,
           industry_clusters: totalIndustryClusters,
