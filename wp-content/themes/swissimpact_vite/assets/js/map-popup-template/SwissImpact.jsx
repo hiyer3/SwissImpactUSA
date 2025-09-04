@@ -115,43 +115,39 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
         if (!res.ok) throw new Error(`HTTP error ${res.status}`);
         const json = await res.json();
         // ACF swiss_impact is typically an array; we take the first item
+        // Count items that have non-empty/non-null values for each field
         const totalIndustryClusters = json.filter(
           (item) =>
             item.acf?.industry_clusters &&
             (Array.isArray(item.acf.industry_clusters)
               ? item.acf.industry_clusters.length > 0
               : item.acf.industry_clusters)
-        ).length;
+        ).length; 
+
+        console.log("Total Industry Clusters:", totalIndustryClusters);
 
         const totalScienceAcademia = json.filter(
-          (item) =>
-            item.acf?.["science_&_academia_fields"] &&
-            (Array.isArray(item.acf["science_&_academia_fields"])
-              ? item.acf["science_&_academia_fields"].length > 0
-              : item.acf["science_&_academia_fields"])
+          (item) => item.acf?.["science_&_academia_fields"] || []
         ).length;
 
         const totalApprenticeshipCompanies = json.filter(
-          (item) =>
-            item.acf?.apprenticeship_companies &&
-            (Array.isArray(item.acf.apprenticeship_companies)
-              ? item.acf.apprenticeship_companies.length > 0
-              : item.acf.apprenticeship_companies)
+          (item) => item.acf?.apprenticeship_companies || []
         ).length;
 
         const totalSwissRepresentations = json.map(
           (item) => item.acf?.swiss_representations
-        ); 
-        
+        );
         const impactArray = {
-          total_jobs: json.filter(item => item.slug === stateId)[0]?.acf?.economic_impact?.esbfa_total_jobs || 0,
+          total_jobs:
+            json.filter((item) => item.slug === stateId)[0]?.acf
+              ?.economic_impact?.esbfa_total_jobs || 0,
           swiss_residents:
             json.filter((item) => item.slug === stateId)[0]?.acf
               ?.economic_impact?.resident_of_swiss_descent || 0,
           science_academia: totalScienceAcademia,
           apprenticeship_companies: totalApprenticeshipCompanies,
           industry_clusters: totalIndustryClusters,
-          swiss_representations: totalSwissRepresentations.flat(),
+          swiss_representations: totalSwissRepresentations,
         };
 
         const node = impactArray;
@@ -319,7 +315,7 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                   iconWidth={30}
                   iconPadding={40}
                 />
-                <CardContent description="Total number of Industry Clusters in U.S">
+                <CardContent description="Total number of Industry Clusters in U.S.">
                   <CardStatNumber
                     number={formatUSNumber(impact.counts.industryClusters)}
                   />
