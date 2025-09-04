@@ -21,7 +21,7 @@ const SRStateCard = ({ data }) => {
                 )}
               </li>
             ))}
-          </ul>
+          </ul> 
         </div>
       </div>
     </div>
