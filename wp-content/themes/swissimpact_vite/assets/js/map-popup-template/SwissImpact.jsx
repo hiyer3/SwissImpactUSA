@@ -30,21 +30,26 @@ const normalizeImpact = (node) => {
       totalJobs: 0,
       swissRepresentations: [],
       swissRepresentationsDescription: "",
-      counts: { scienceAcademia: 0, apprenticeshipCompanies: 0, industryClusters: 0 },
+      counts: {
+        scienceAcademia: 0,
+        apprenticeshipCompanies: 0,
+        industryClusters: 0,
+      },
       statecode: "",
     };
   }
 
   // Some payloads may have only counts + reps; others include residents/jobs too.
-  const swissResidents =
-    toNumber(node.swiss_residents ?? node.swissResidents ?? 0);
-  const totalJobs =
-    toNumber(node.total_jobs ?? node.totalJobs ?? 0);
+  const swissResidents = toNumber(
+    node.swiss_residents ?? node.swissResidents ?? 0
+  );
+  const totalJobs = toNumber(node.total_jobs ?? node.totalJobs ?? 0);
 
-  const swissRepresentations =
-    Array.isArray(node.swiss_representations ?? node.SwissRepresentations)
-      ? (node.swiss_representations ?? node.SwissRepresentations)
-      : [];
+  const swissRepresentations = Array.isArray(
+    node.swiss_representations ?? node.SwissRepresentations
+  )
+    ? node.swiss_representations ?? node.SwissRepresentations
+    : [];
 
   const swissRepresentationsDescription =
     node.swiss_representations_description ??
@@ -52,11 +57,15 @@ const normalizeImpact = (node) => {
     "";
 
   const counts = {
-    scienceAcademia: toNumber(node.science_academia ?? node.scienceAcademia ?? 0),
+    scienceAcademia: toNumber(
+      node.science_academia ?? node.scienceAcademia ?? 0
+    ),
     apprenticeshipCompanies: toNumber(
       node.apprenticeship_companies ?? node.apprenticeshipCompanies ?? 0
     ),
-    industryClusters: toNumber(node.industry_clusters ?? node.industryClusters ?? 0),
+    industryClusters: toNumber(
+      node.industry_clusters ?? node.industryClusters ?? 0
+    ),
   };
 
   const statecode = node.statecode ?? node.stateCode ?? "";
@@ -76,13 +85,15 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
   const [dataNode, setDataNode] = useState(null);
   const [loading, setLoading] = useState(!!preloadedData?.loading);
   const [error, setError] = useState(preloadedData?.error ?? null);
-  
+
   // Prefer preloadedData; else fetch from WP
   useEffect(() => {
     let cancelled = false;
 
     const applyPreloaded = () => {
-      const node = Array.isArray(preloadedData?.data) ? preloadedData.data[0] : null;
+      const node = Array.isArray(preloadedData?.data)
+        ? preloadedData.data[0]
+        : null;
       setDataNode(node || null);
       setLoading(!!preloadedData?.loading);
       setError(preloadedData?.error ?? null);
@@ -93,12 +104,40 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
       try {
         setLoading(true);
         setError(null);
-        const res = await fetch(`/wp-json/wp/v2/mapstate?slug=${stateId}`);
+
+        let fetchURL = `/wp-json/wp/v2/mapstate?slug=${stateId}`;
+
+        if (stateId === "united-states") {
+          fetchURL = `/wp-json/wp/v2/mapstate`;
+        }
+        const res = await fetch(fetchURL);
+
         if (!res.ok) throw new Error(`HTTP error ${res.status}`);
         const json = await res.json();
         // ACF swiss_impact is typically an array; we take the first item
-        const impactArray = json?.[0]?.acf?.swiss_impact;
-        const node = Array.isArray(impactArray) ? impactArray[0] : null;
+        const totalIndustryClusters = json.map(
+          (item) => item.acf?.industry_clusters
+        ).length;
+        const totalScienceAcademia = json.map(
+          (item) => item.acf?.["science_&_academia_fields"]
+        ).length;
+        const totalApprenticeshipCompanies = json.map(
+          (item) => item.acf?.apprenticeship_companies
+        ).length;
+        const totalSwissRepresentations = json.map(
+          (item) => item.acf?.swiss_representations
+        );
+
+        const impactArray = {
+          total_jobs: 0,
+          resident: 0,
+          science_academia: totalScienceAcademia,
+          apprenticeship_companies: totalApprenticeshipCompanies,
+          industry_clusters: totalIndustryClusters,
+          swiss_representations: totalSwissRepresentations.flat(),
+        };
+
+        const node = impactArray;
         if (!cancelled) setDataNode(node || null);
       } catch (e) {
         if (!cancelled) {
@@ -110,7 +149,7 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
       }
     };
 
-    if (preloadedData) {
+    if (preloadedData && stateId !== "united-states") {
       applyPreloaded();
     } else {
       fetchLive();
@@ -149,7 +188,9 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
       <div className="flex justify-center items-center py-20">
         <div className="text-white text-center">
           <p className="text-lg font-semibold">No Swiss Impact Data</p>
-          <p className="text-sm">No Swiss impact information available for {name}</p>
+          <p className="text-sm">
+            No Swiss impact information available for {name}
+          </p>
         </div>
       </div>
     </div>
@@ -161,7 +202,8 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     impact.counts.scienceAcademia > 0 ||
     impact.counts.apprenticeshipCompanies > 0 ||
     impact.counts.industryClusters > 0 ||
-    (Array.isArray(impact.swissRepresentations) && impact.swissRepresentations.length > 0);
+    (Array.isArray(impact.swissRepresentations) &&
+      impact.swissRepresentations.length > 0);
 
   // ---------- render ----------
   return (
@@ -172,12 +214,12 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
         style={{ justifyContent: "space-between" }}
       >
         <div>
-          <h2 className="popup-title text-white">
-            {name}
-          </h2>
+          <h2 className="popup-title text-white">{name}</h2>
           <p className="popup-description text-white mt-2 mb-0">
             Residents of Swiss Descent:{" "}
-            <strong>{loading ? "Loading..." : formatUSNumber(impact.swissResidents)}</strong>
+            <strong>
+              {loading ? "Loading..." : formatUSNumber(impact.swissResidents)}
+            </strong>
           </p>
         </div>
         <BackToMapButton />
@@ -203,7 +245,10 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                   iconWidth={70}
                   iconPadding={10}
                 />
-                <CardContent type="fullWidth" description="Total Jobs Supported in U.S">
+                <CardContent
+                  type="fullWidth"
+                  description="Total Jobs Supported in U.S"
+                >
                   <CardStatNumber
                     style={{ marginLeft: "0", marginRight: "auto" }}
                     number={formatUSNumber(impact.totalJobs)}
@@ -222,7 +267,9 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                   iconPadding={20}
                 />
                 <CardContent description="Total Academic Institutions in U.S">
-                  <CardStatNumber number={formatUSNumber(impact.counts.scienceAcademia)} />
+                  <CardStatNumber
+                    number={formatUSNumber(impact.counts.scienceAcademia)}
+                  />
                 </CardContent>
               </Card>
             )}
@@ -237,7 +284,11 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                   iconPadding={0}
                 />
                 <CardContent description="Total Apprenticeships in U.S">
-                  <CardStatNumber number={formatUSNumber(impact.counts.apprenticeshipCompanies)} />
+                  <CardStatNumber
+                    number={formatUSNumber(
+                      impact.counts.apprenticeshipCompanies
+                    )}
+                  />
                 </CardContent>
               </Card>
             )}
@@ -252,7 +303,9 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                   iconPadding={40}
                 />
                 <CardContent description="Total number of Industry Clusters in U.S">
-                  <CardStatNumber number={formatUSNumber(impact.counts.industryClusters)} />
+                  <CardStatNumber
+                    number={formatUSNumber(impact.counts.industryClusters)}
+                  />
                 </CardContent>
               </Card>
             )}
@@ -276,17 +329,10 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
               />
             </Card>
 
-            {stateId === "united-states" ? (
-              <SRUSCard
-                description={impact.swissRepresentationsDescription}
-                data={impact.swissRepresentations}
-              />
-            ) : (
-              <SRStateCard
-                description={impact.swissRepresentationsDescription}
-                data={impact.swissRepresentations}
-              />
-            )}
+            <SRStateCard
+              description={impact.swissRepresentationsDescription}
+              data={impact.swissRepresentations}
+            />
           </CardWrapper>
         </div>
       )}
@@ -294,4 +340,4 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
   );
 };
 
-export default SwissImpact; 
+export default SwissImpact;
