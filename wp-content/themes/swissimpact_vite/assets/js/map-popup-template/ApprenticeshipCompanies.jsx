@@ -11,7 +11,7 @@ const ApprenticeshipCompanies = (props) => {
 
   useEffect(() => {
     // If preloaded data is available, use it instead of fetching
-    if (props.preloadedData) {
+    if (props.preloadedData.length > 0) {
       setApprenticeshipData(props.preloadedData.data || []);
       setLoading(props.preloadedData.loading || false);
       setError(props.preloadedData.error || null);
@@ -38,7 +38,7 @@ const ApprenticeshipCompanies = (props) => {
         data.forEach((item) => {
           const fields = item.acf?.apprenticeship_companies || [];
           apprenticeshipFields.push(...fields);
-        });
+        }); 
 
         setApprenticeshipData(
           Array.isArray(apprenticeshipFields) ? apprenticeshipFields : []
