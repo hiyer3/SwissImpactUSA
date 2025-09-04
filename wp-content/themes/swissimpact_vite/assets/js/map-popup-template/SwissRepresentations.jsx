@@ -11,7 +11,7 @@ const SwissRepresentations = (props) => {
 
   useEffect(() => {
     // If preloaded data is available, use it instead of fetching
-    if (props.preloadedData) {
+    if (props.preloadedData.length > 0) {
       setSwissRepresentationsData(props.preloadedData.data || []);
       setLoading(props.preloadedData.loading || false);
       setError(props.preloadedData.error || null);
