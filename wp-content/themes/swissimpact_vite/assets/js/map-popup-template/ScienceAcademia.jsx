@@ -11,7 +11,7 @@ const ScienceAcademia = (props) => {
 
   useEffect(() => {
     // If preloaded data is available, use it instead of fetching
-    if (props.preloadedData.length > 0) {
+    if (props.preloadedData && typeof props.preloadedData === "object") {
       setScienceAcademiaData(props.preloadedData.data || []);
       setLoading(props.preloadedData.loading || false);
       setError(props.preloadedData.error || null);
@@ -77,17 +77,23 @@ const ScienceAcademia = (props) => {
     });
   };
 
+  // Helper function to construct link with optional title
+  const constructLink = (title, link) => {
+    return link
+      ? `<a href="${link}" target="_blank" rel="noopener noreferrer">${title}</a>`
+      : title;
+  };
+
   // Memoize the transformed data to avoid recalculation on every render
   const transformedData = useMemo(() => {
     return scienceAcademiaData.map((item, index) => ({
       id: index + 1,
       institution: item?.institution || "",
-      name: item?.name || "",
+      name: constructLink(item?.name, item?.department_link?.url) || "",
       position: item?.position || "",
       field: item?.department || "",
     }));
   }, [scienceAcademiaData]);
-
   // Loading component for DataTable
   const LoadingDataTable = () => (
     <div className="flex justify-center items-center py-20">
@@ -122,10 +128,10 @@ const ScienceAcademia = (props) => {
         <BackToMapButton />
       </div>
 
-      <div className="bg-white mt-5 rounded-3xl popup-table-content">
-        <div className="mt-4 p-8 w-full flex justify-between gap-6 sm:gap-9 sm:items-center flex-col sm:flex-row">
+      <div className="bg-white mt-5 rounded-3xl popup-table-content overflow-hidden">
+        <div className="mt-2 p-8 w-full flex justify-between gap-6 sm:gap-9 sm:items-center flex-col sm:flex-row">
           <p className="text-xl font-black pb-0">
-            Creating Positive Impact in U.S. Academia and Science.
+            Creating Positive Impact in U.S. Academia and Science
           </p>
           <PopupSearchInput onChange={handleInputChange} />
         </div>
@@ -140,7 +146,7 @@ const ScienceAcademia = (props) => {
             data={transformedData}
             columns={[
               { key: "institution", label: "Institution" },
-              { key: "name", label: "Name" },
+              { key: "name", label: "Name", allowHTML: true },
               { key: "position", label: "Position" },
               { key: "field", label: "Field/Department" },
             ]}

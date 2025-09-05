@@ -10,8 +10,8 @@ const IndustryClusters = (props) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // If preloaded data is available, use it instead of fetching
-    if (props.preloadedData.length > 0) {
+    // FIXED: Check if preloadedData exists and use it
+    if (props.preloadedData && typeof props.preloadedData === 'object') {
       setIndustryClustersData(props.preloadedData.data || []);
       setLoading(props.preloadedData.loading || false);
       setError(props.preloadedData.error || null);
@@ -145,7 +145,8 @@ const IndustryClusters = (props) => {
         <div>
           <h2 className="popup-title text-white">{props.name}</h2>
           <p className="popup-description text-white mt-2 mb-0">
-            Industry clusters driving economic growth in {props.name}.
+            Industry clusters in{" "}
+            {props.name === "united-states" ? "the United States" : props.name} per GDP.
           </p>
         </div>
         <BackToMapButton />

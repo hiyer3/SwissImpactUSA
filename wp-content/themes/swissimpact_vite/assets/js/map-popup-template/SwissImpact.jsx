@@ -116,13 +116,17 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
         const json = await res.json();
         // ACF swiss_impact is typically an array; we take the first item
         // Count items that have non-empty/non-null values for each field
+        
+
+        json.filter((item) => Object.values(item.acf?.industry_clusters));
+
         const totalIndustryClusters = json.filter(
           (item) =>
             item.acf?.industry_clusters &&
             (Array.isArray(item.acf.industry_clusters)
               ? item.acf.industry_clusters.length > 0
               : item.acf.industry_clusters)
-        ).length; 
+        ).length;
 
         console.log("Total Industry Clusters:", totalIndustryClusters);
 
@@ -147,7 +151,7 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
           science_academia: totalScienceAcademia,
           apprenticeship_companies: totalApprenticeshipCompanies,
           industry_clusters: totalIndustryClusters,
-          swiss_representations: totalSwissRepresentations,
+          swiss_representations: totalSwissRepresentations.flat(),
         };
 
         const node = impactArray;
@@ -260,7 +264,9 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                 />
                 <CardContent
                   type="fullWidth"
-                  description="Total Jobs Supported in U.S"
+                  description={`Total Jobs Supported in ${
+                    name === "united-states" ? "the U.S." : name
+                  }`}
                 >
                   <CardStatNumber
                     style={{ marginLeft: "0", marginRight: "auto" }}
@@ -279,7 +285,11 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                   iconWidth={60}
                   iconPadding={20}
                 />
-                <CardContent description="Total Academic Institutions in U.S">
+                <CardContent
+                  description={`Total Academic Institutions in ${
+                    name === "united-states" ? "the U.S." : name
+                  }`}
+                >
                   <CardStatNumber
                     number={formatUSNumber(impact.counts.scienceAcademia)}
                   />
@@ -296,7 +306,7 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                   iconWidth={80}
                   iconPadding={0}
                 />
-                <CardContent description="Total Apprenticeships in U.S">
+                <CardContent description={`Total Apprenticeships in ${name === "united-states" ? "the U.S." : name}`}>
                   <CardStatNumber
                     number={formatUSNumber(
                       impact.counts.apprenticeshipCompanies
@@ -315,7 +325,7 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                   iconWidth={30}
                   iconPadding={40}
                 />
-                <CardContent description="Total number of Industry Clusters in U.S.">
+                <CardContent description={`Total number of Industry Clusters in ${name === "united-states" ? "the U.S." : name}`}>
                   <CardStatNumber
                     number={formatUSNumber(impact.counts.industryClusters)}
                   />

@@ -72,8 +72,6 @@ export default function SIMapControl() {
   // Force component updates when needed
   const [updateTrigger, setUpdateTrigger] = useState(0);
 
-  const hasValidData = (data) => Array.isArray(data) && data.length > 0;
-
   // ---- Fetch & cache - NO dependencies to prevent infinite loops
   const fetchStateData = useCallback(async (stateId, dataType) => {
     const cache = dataCacheRef.current;
@@ -355,6 +353,9 @@ export default function SIMapControl() {
   // ---- One-time DOM wiring for SVG + state list + search + popup filters
   useEffect(() => {
     let svgEl;
+    const ac = new AbortController();
+    const { signal } = ac;
+
     const holder = document.getElementById("si-map");
 
     inlineSVG(
@@ -366,8 +367,12 @@ export default function SIMapControl() {
 
       const onSvgClick = (e) => {
         let stateGroup =
-          e.target.closest(".single-state") || e.target.closest(".singe-state");
-
+          e.target.closest(".single-state") ||
+          e.target.closest(".single-state");
+        if (stateGroup == null) {
+          return;
+        }
+        
         if (stateGroup) {
           const firstChild = stateGroup.firstElementChild;
           const stateName = firstChild?.getAttribute("data-name");
@@ -410,28 +415,43 @@ export default function SIMapControl() {
         }
       };
 
-      svgEl.addEventListener("click", onSvgClick);
-      svgEl.__onSvgClick = onSvgClick;
+      svgEl.addEventListener("click", onSvgClick, { signal });
 
       const mapFilters = document.querySelectorAll(
         "#si-map-filter .single-filter-item"
       );
+
       mapFilters.forEach((item) => {
-        item.addEventListener("click", (e) => {
-          const filterId = e.currentTarget.getAttribute("id");
-          for (const child of svgEl.querySelectorAll(
-            "g:not(#KEY) image, g:not(#KEY) use"
-          )) {
-            if (filterId === "si-filter-see-all") {
-              child.style.opacity = "1";
-              continue;
+        item.addEventListener(
+          "click",
+          (e) => {
+            const filterId = e.currentTarget.getAttribute("id");
+            for (const child of svgEl.querySelectorAll(
+              "g:not(#KEY) image, g:not(#KEY) use"
+            )) {
+              if (filterId === "si-filter-see-all") {
+                child.style.opacity = "1";
+                continue;
+              }
+              const imageFilterId = child.classList.contains(filterId);
+              child.style.opacity = imageFilterId ? "1" : "0";
             }
-            const imageFilterId = child.classList.contains(filterId);
-            child.style.opacity = imageFilterId ? "1" : "0";
-          }
-          mapFilters.forEach((f) => f.classList.remove("active"));
-          e.currentTarget.classList.add("active");
-        });
+            mapFilters.forEach((f) => f.classList.remove("active"));
+            e.currentTarget.classList.add("active");
+
+            // hide the map legend when not "see all"
+            const legend = document.getElementById("KEY");
+            if (
+              filterId !== "si-filter-see-all" &&
+              filterId !== "si-filter-swiss-representatives"
+            ) {
+              legend?.classList.add("hidden");
+            } else {
+              legend?.classList.remove("hidden");
+            }
+          },
+          { signal }
+        );
       });
     });
 
@@ -508,7 +528,6 @@ export default function SIMapControl() {
     const listC = document.querySelector(
       ".si-map-wrapper .state-list-container"
     );
-    // adding this to accomodate map width change.
     const mapWrapper = document.querySelector(".si-map-wrapper");
     const popupWidthWrapper = document.querySelector(
       ".data-popup .popup-width-wrapper"
@@ -523,7 +542,7 @@ export default function SIMapControl() {
       popupWidthWrapper?.classList.toggle("active");
       popupFilterWrapper?.classList.toggle("active");
     };
-    btn?.addEventListener("click", onToggle);
+    btn?.addEventListener("click", onToggle, { signal });
 
     const search = document.querySelector("#state-search");
     const onSearch = (e) => {
@@ -535,7 +554,7 @@ export default function SIMapControl() {
         item.style.display = nm.includes(q) ? "block" : "none";
       });
     };
-    search?.addEventListener("input", onSearch);
+    search?.addEventListener("input", onSearch, { signal });
 
     const onStateClick = (e) => {
       e.preventDefault();
@@ -560,7 +579,7 @@ export default function SIMapControl() {
     };
 
     const links = document.querySelectorAll(".state-link");
-    links.forEach((a) => a.addEventListener("click", onStateClick));
+    links.forEach((a) => a.addEventListener("click", onStateClick, { signal }));
 
     const popupFilterRoot = document.querySelector("#si-map-popup-filter");
     const onFilter = (e) => {
@@ -570,16 +589,10 @@ export default function SIMapControl() {
       if (!id) return;
       setSingleStateData((prev) => ({ ...prev, selectedFilter: id }));
     };
-    popupFilterRoot?.addEventListener("click", onFilter);
+    popupFilterRoot?.addEventListener("click", onFilter, { signal });
 
-    return () => {
-      if (svgEl && svgEl.__onSvgClick)
-        svgEl.removeEventListener("click", svgEl.__onSvgClick);
-      btn?.removeEventListener("click", onToggle);
-      search?.removeEventListener("input", onSearch);
-      links.forEach((a) => a.removeEventListener("click", onStateClick));
-      popupFilterRoot?.removeEventListener("click", onFilter);
-    };
+    // Single, reliable cleanup for every listener above
+    return () => ac.abort();
   }, []);
 
   // Reflect active class on selectedFilter change

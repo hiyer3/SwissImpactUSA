@@ -191,3 +191,7 @@
 .ei-donut-legend li:last-child::before {
   @apply content-[''] absolute w-2.5 h-2.5 rounded-full bg-[#F9C5AF] top-1 left-[-1.1rem];
 }
+
+.representation-legend{
+  @apply pointer-events-none;
+}

@@ -11,7 +11,7 @@ const SwissRepresentations = (props) => {
 
   useEffect(() => {
     // If preloaded data is available, use it instead of fetching
-    if (props.preloadedData.length > 0) {
+    if (props.preloadedData && typeof props.preloadedData === "object") {
       setSwissRepresentationsData(props.preloadedData.data || []);
       setLoading(props.preloadedData.loading || false);
       setError(props.preloadedData.error || null);
@@ -154,7 +154,9 @@ const SwissRepresentations = (props) => {
         <div>
           <h2 className="popup-title text-white">{props.name}</h2>
           <p className="popup-description text-white mt-2 mb-0">
-            Swiss diplomatic and consular representations in {props.name}.
+            Swiss Representations in{" "}
+            {props.name === "united-states" ? "the United States" : props.name}:{" "}
+            <strong>{transformedData.length}</strong>.
           </p>
         </div>
         <BackToMapButton />
