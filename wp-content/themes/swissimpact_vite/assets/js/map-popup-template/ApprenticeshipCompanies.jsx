@@ -10,8 +10,8 @@ const ApprenticeshipCompanies = (props) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // If preloaded data is available, use it instead of fetching
-    if (props.preloadedData.length > 0) {
+    // FIXED: Check if preloadedData exists and use it
+    if (props.preloadedData && typeof props.preloadedData === 'object') {
       setApprenticeshipData(props.preloadedData.data || []);
       setLoading(props.preloadedData.loading || false);
       setError(props.preloadedData.error || null);
@@ -38,7 +38,7 @@ const ApprenticeshipCompanies = (props) => {
         data.forEach((item) => {
           const fields = item.acf?.apprenticeship_companies || [];
           apprenticeshipFields.push(...fields);
-        }); 
+        });
 
         setApprenticeshipData(
           Array.isArray(apprenticeshipFields) ? apprenticeshipFields : []
@@ -145,7 +145,8 @@ const ApprenticeshipCompanies = (props) => {
         <div>
           <h2 className="popup-title text-white">{props.name}</h2>
           <p className="popup-description text-white mt-2 mb-0">
-            Apprenticeship opportunities and companies in {props.name}.
+            Apprenticeship Programs in{" "}
+            {props.name === "united-states" ? "the United States" : props.name}.
           </p>
         </div>
         <BackToMapButton />

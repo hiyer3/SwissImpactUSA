@@ -15,7 +15,7 @@ const DataTable = ({
   }; 
 
   return ( 
-    <div className="mt-4 pb-8 min-w-0 h-[350px] xl:h-full min-h-[350px] max-h-[650px] overflow-y-auto popup-table-content">
+    <div className="mt-4 pb-8 min-w-0 xl:h-full min-h-[350px] max-h-[650px] overflow-y-auto popup-table-content">
       <div className="w-full overflow-x-auto">
         <table className="border-separate data-table border-spacing-y-1 table-fixed w-full sa-table-data">
           <thead>
@@ -26,7 +26,6 @@ const DataTable = ({
                 style={{ width: idColumnWidth, minWidth: idColumnWidth }}
                 onClick={() => handleSort("id")}
               >
-                ID
                 {sortConfig && sortConfig.key === "id" && (
                   <span className={`sort-icon ${sortConfig.direction} ml-1`}>
                     {sortConfig.direction === "asc" ? "▲" : "▼"}

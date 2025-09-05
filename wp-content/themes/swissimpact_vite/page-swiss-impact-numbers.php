@@ -57,7 +57,7 @@
             <div id="si-map"></div>
         </div>
     </section>
-    <div class="data-popup mb-8 lg:mb-0 overflow-hidden bg-swissred lg:absolute w-full h-full top-0 left-0 z-20 pb-20 max-h-[90%] hidden">
+    <div class="data-popup mb-8 lg:mb-0 overflow-hidden bg-swissred lg:absolute w-full h-full top-0 left-0 z-20 pb-20 hidden">
         <div class="data-popup-filter-wrapper">
             <div></div>
             <div class="overflow-hidden">
