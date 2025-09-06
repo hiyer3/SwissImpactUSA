@@ -568,6 +568,10 @@ export default function SIMapControl() {
         let stateGroup =
           e.target.closest(".single-state") || e.target.closest(".singe-state");
 
+        if (stateGroup === null) {
+          return;
+        }
+        
         if (stateGroup) {
           const firstChild = stateGroup.firstElementChild;
           const stateName = firstChild?.getAttribute("data-name");
