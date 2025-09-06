@@ -7,6 +7,7 @@ const BackToMapButton = () => {
         className="flex items-center gap-2 text-white bg-swissred px-4 py-2 rounded hover:bg-swissred-dark transition-colors"
         onClick={() => {
           document.querySelector(".data-popup").classList.add("hidden");
+          
         }}
       >
         <svg

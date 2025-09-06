@@ -11,7 +11,7 @@ const ApprenticeshipCompanies = (props) => {
 
   useEffect(() => {
     // FIXED: Check if preloadedData exists and use it
-    if (props.preloadedData && typeof props.preloadedData === 'object') {
+    if (props.preloadedData && typeof props.preloadedData === "object") {
       setApprenticeshipData(props.preloadedData.data || []);
       setLoading(props.preloadedData.loading || false);
       setError(props.preloadedData.error || null);
@@ -145,7 +145,7 @@ const ApprenticeshipCompanies = (props) => {
         <div>
           <h2 className="popup-title text-white">{props.name}</h2>
           <p className="popup-description text-white mt-2 mb-0">
-            Apprenticeship Programs in{" "}
+            Apprenticeship opportunities and companies in{" "}
             {props.name === "united-states" ? "the United States" : props.name}.
           </p>
         </div>
@@ -155,7 +155,9 @@ const ApprenticeshipCompanies = (props) => {
       <div className="bg-white mt-5 rounded-3xl popup-table-content">
         <div className="mt-4 p-8 w-full flex justify-between gap-6 sm:gap-9 sm:items-center flex-col sm:flex-row">
           <p className="text-xl font-black pb-0">
-            U.S. Apprenticeship Companies
+            Apprenticeship opportunities and companies in{" "}
+            {props.name === "united-states" ? "the United States" : props.name}:{" "}
+            {transformedData.length}
           </p>
           <PopupSearchInput onChange={handleInputChange} />
         </div>

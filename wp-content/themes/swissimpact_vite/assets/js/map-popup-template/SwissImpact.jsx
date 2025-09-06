@@ -1,15 +1,13 @@
 import { h } from "preact";
-import { useEffect, useState, useMemo } from "preact/hooks";
 import BackToMapButton from "./components/backToMapButton";
 import CardTitle from "./components/SwissImpactCard/CardTitle";
 import CardStatNumber from "./components/SwissImpactCard/CardStatNumber";
 import Card from "./components/SwissImpactCard/Card";
 import CardContent from "./components/SwissImpactCard/CardContent";
 import CardWrapper from "./components/SwissImpactCard/CardWrapper";
-import SRUSCard from "./components/SwissImpactCard/SRUSCard";
 import SRStateCard from "./components/SwissImpactCard/SRStateCard";
 
-// ---------- helpers ----------
+// ---- tiny helpers ----
 const toNumber = (v) => {
   if (v == null) return 0;
   if (typeof v === "number") return v;
@@ -19,215 +17,53 @@ const toNumber = (v) => {
   }
   return 0;
 };
+const formatUS = (n) => toNumber(n).toLocaleString("en-US");
 
-const formatUSNumber = (n) => toNumber(n).toLocaleString("en-US");
-
-// Normalize a swiss impact record from either ACF snake_case or camelCase / custom shapes
-const normalizeImpact = (node) => {
-  if (!node || typeof node !== "object") {
-    return {
-      swissResidents: 0,
-      totalJobs: 0,
-      swissRepresentations: [],
-      swissRepresentationsDescription: "",
-      counts: {
-        scienceAcademia: 0,
-        apprenticeshipCompanies: 0,
-        industryClusters: 0,
-      },
-      statecode: "",
-    };
-  }
-
-  // Some payloads may have only counts + reps; others include residents/jobs too.
-  const swissResidents = toNumber(
-    node.swiss_residents ?? node.swissResidents ?? 0
-  );
-  const totalJobs = toNumber(node.total_jobs ?? node.totalJobs ?? 0);
-
-  const swissRepresentations = Array.isArray(
-    node.swiss_representations ?? node.SwissRepresentations
-  )
-    ? node.swiss_representations ?? node.SwissRepresentations
-    : [];
-
-  const swissRepresentationsDescription =
-    node.swiss_representations_description ??
-    node.SwissRepresentationsDescription ??
-    "";
-
-  const counts = {
-    scienceAcademia: toNumber(
-      node.science_academia ?? node.scienceAcademia ?? 0
-    ),
-    apprenticeshipCompanies: toNumber(
-      node.apprenticeship_companies ?? node.apprenticeshipCompanies ?? 0
-    ),
-    industryClusters: toNumber(
-      node.industry_clusters ?? node.industryClusters ?? 0
-    ),
-  };
-
-  const statecode = node.statecode ?? node.stateCode ?? "";
-
-  return {
-    swissResidents,
-    totalJobs,
-    swissRepresentations,
-    swissRepresentationsDescription,
-    counts,
-    statecode,
-  };
-};
-
-// ---------- component ----------
 const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
-  const [dataNode, setDataNode] = useState(null);
-  const [loading, setLoading] = useState(!!preloadedData?.loading);
-  const [error, setError] = useState(preloadedData?.error ?? null);
+  const loading = !!preloadedData?.loading;
+  const error = preloadedData?.error ?? null;
+  const node = Array.isArray(preloadedData?.data)
+    ? preloadedData.data[0]
+    : null;
 
-  // Prefer preloadedData; else fetch from WP
-  useEffect(() => {
-    let cancelled = false;
-
-    const applyPreloaded = () => {
-      const node = Array.isArray(preloadedData?.data)
-        ? preloadedData.data[0]
-        : null;
-      setDataNode(node || null);
-      setLoading(!!preloadedData?.loading);
-      setError(preloadedData?.error ?? null);
-    };
-
-    const fetchLive = async () => {
-      if (!stateId) return;
-      try {
-        setLoading(true);
-        setError(null);
-
-        let fetchURL = `/wp-json/wp/v2/mapstate?slug=${stateId}`;
-
-        if (stateId === "united-states") {
-          fetchURL = `/wp-json/wp/v2/mapstate?per_page=100`; // all states
-        }
-        const res = await fetch(fetchURL);
-
-        if (!res.ok) throw new Error(`HTTP error ${res.status}`);
-        const json = await res.json();
-        // ACF swiss_impact is typically an array; we take the first item
-        // Count items that have non-empty/non-null values for each field
-        
-
-        json.filter((item) => Object.values(item.acf?.industry_clusters));
-
-        const totalIndustryClusters = json.filter(
-          (item) =>
-            item.acf?.industry_clusters &&
-            (Array.isArray(item.acf.industry_clusters)
-              ? item.acf.industry_clusters.length > 0
-              : item.acf.industry_clusters)
-        ).length;
-
-        console.log("Total Industry Clusters:", totalIndustryClusters);
-
-        const totalScienceAcademia = json.filter(
-          (item) => item.acf?.["science_&_academia_fields"] || []
-        ).length;
-
-        const totalApprenticeshipCompanies = json.filter(
-          (item) => item.acf?.apprenticeship_companies || []
-        ).length;
-
-        const totalSwissRepresentations = json.map(
-          (item) => item.acf?.swiss_representations
-        );
-        const impactArray = {
-          total_jobs:
-            json.filter((item) => item.slug === stateId)[0]?.acf
-              ?.economic_impact?.esbfa_total_jobs || 0,
-          swiss_residents:
-            json.filter((item) => item.slug === stateId)[0]?.acf
-              ?.economic_impact?.resident_of_swiss_descent || 0,
-          science_academia: totalScienceAcademia,
-          apprenticeship_companies: totalApprenticeshipCompanies,
-          industry_clusters: totalIndustryClusters,
-          swiss_representations: totalSwissRepresentations.flat(),
-        };
-
-        const node = impactArray;
-        if (!cancelled) setDataNode(node || null);
-      } catch (e) {
-        if (!cancelled) {
-          setError(e?.message || "Failed to load Swiss impact data.");
-          setDataNode(null);
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
+  const impact = node
+    ? {
+        totalJobs: toNumber(node.total_jobs),
+        swissResidents: toNumber(node.swiss_residents),
+        counts: {
+          scienceAcademia: toNumber(node.science_academia),
+          apprenticeshipCompanies: toNumber(node.apprenticeship_companies),
+        },
+        industryClusters: Array.isArray(node.industry_clusters)
+          ? node.industry_clusters // array of strings per your sample
+          : [],
+        swissRepresentations: Array.isArray(node.swiss_representations)
+          ? node.swiss_representations
+          : [],
       }
-    };
+    : {
+        totalJobs: 0,
+        swissResidents: 0,
+        counts: { scienceAcademia: 0, apprenticeshipCompanies: 0 },
+        industryClusters: [],
+        swissRepresentations: [],
+      };
 
-    if (preloadedData && stateId !== "united-states") {
-      applyPreloaded();
-    } else {
-      fetchLive();
-    }
-
-    return () => {
-      cancelled = true;
-    };
-  }, [stateId, preloadedData]);
-
-  const impact = useMemo(() => normalizeImpact(dataNode), [dataNode]);
-
-  // ---------- subviews ----------
-  const LoadingView = () => (
-    <div className="bg-swissred rounded-3xl popup-table-content mt-5">
-      <div className="flex justify-center items-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-        <span className="ml-3 text-white">Loading Swiss impact data...</span>
-      </div>
-    </div>
-  );
-
-  const ErrorView = () => (
-    <div className="bg-swissred rounded-3xl popup-table-content mt-5">
-      <div className="flex justify-center items-center py-20">
-        <div className="text-white text-center">
-          <p className="text-lg font-semibold">Error loading data</p>
-          <p className="text-sm">{String(error)}</p>
-        </div>
-      </div>
-    </div>
-  );
-
-  const EmptyView = () => (
-    <div className="bg-swissred rounded-3xl popup-table-content mt-5">
-      <div className="flex justify-center items-center py-20">
-        <div className="text-white text-center">
-          <p className="text-lg font-semibold">No Swiss Impact Data</p>
-          <p className="text-sm">
-            No Swiss impact information available for {name}
-          </p>
-        </div>
-      </div>
-    </div>
-  );
+  const placeLabel = stateId === "united-states" ? "the U.S." : name;
 
   const hasAnyContent =
     impact.swissResidents > 0 ||
     impact.totalJobs > 0 ||
     impact.counts.scienceAcademia > 0 ||
     impact.counts.apprenticeshipCompanies > 0 ||
-    impact.counts.industryClusters > 0 ||
-    (Array.isArray(impact.swissRepresentations) &&
-      impact.swissRepresentations.length > 0);
+    (impact.industryClusters && impact.industryClusters.length > 0) ||
+    (impact.swissRepresentations && impact.swissRepresentations.length > 0);
 
-  // ---------- render ----------
   return (
     <div className="pt-12 pb-5">
       {/* Header */}
       <div
-        className="flex flex-row items-end space-evenly"
+        className="flex flex-row items-end"
         style={{ justifyContent: "space-between" }}
       >
         <div>
@@ -235,7 +71,7 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
           <p className="popup-description text-white mt-2 mb-0">
             Residents of Swiss Descent:{" "}
             <strong>
-              {loading ? "Loading..." : formatUSNumber(impact.swissResidents)}
+              {loading ? "Loading..." : formatUS(impact.swissResidents)}
             </strong>
           </p>
         </div>
@@ -244,11 +80,34 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
 
       {/* Body */}
       {loading ? (
-        <LoadingView />
+        <div className="bg-swissred rounded-3xl popup-table-content mt-5">
+          <div className="flex justify-center items-center py-20">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white" />
+            <span className="ml-3 text-white">
+              Loading Swiss impact data...
+            </span>
+          </div>
+        </div>
       ) : error ? (
-        <ErrorView />
+        <div className="bg-swissred rounded-3xl popup-table-content mt-5">
+          <div className="flex justify-center items-center py-20">
+            <div className="text-white text-center">
+              <p className="text-lg font-semibold">Error loading data</p>
+              <p className="text-sm">{String(error)}</p>
+            </div>
+          </div>
+        </div>
       ) : !hasAnyContent ? (
-        <EmptyView />
+        <div className="bg-swissred rounded-3xl popup-table-content mt-5">
+          <div className="flex justify-center items-center py-20">
+            <div className="text-white text-center">
+              <p className="text-lg font-semibold">No Swiss Impact Data</p>
+              <p className="text-sm">
+                No Swiss impact information available for {name}
+              </p>
+            </div>
+          </div>
+        </div>
       ) : (
         <div className="bg-swissred rounded-3xl popup-table-content mt-5">
           {/* Top metrics */}
@@ -264,13 +123,11 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                 />
                 <CardContent
                   type="fullWidth"
-                  description={`Total Jobs Supported in ${
-                    name === "united-states" ? "the U.S." : name
-                  }`}
+                  description={`Total Jobs Supported in ${placeLabel}`}
                 >
                   <CardStatNumber
                     style={{ marginLeft: "0", marginRight: "auto" }}
-                    number={formatUSNumber(impact.totalJobs)}
+                    number={formatUS(impact.totalJobs)}
                   />
                 </CardContent>
               </Card>
@@ -286,12 +143,10 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                   iconPadding={20}
                 />
                 <CardContent
-                  description={`Total Academic Institutions in ${
-                    name === "united-states" ? "the U.S." : name
-                  }`}
+                  description={`Total Academic Institutions in ${placeLabel}`}
                 >
                   <CardStatNumber
-                    number={formatUSNumber(impact.counts.scienceAcademia)}
+                    number={formatUS(impact.counts.scienceAcademia)}
                   />
                 </CardContent>
               </Card>
@@ -306,17 +161,17 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                   iconWidth={80}
                   iconPadding={0}
                 />
-                <CardContent description={`Total Apprenticeships in ${name === "united-states" ? "the U.S." : name}`}>
+                <CardContent
+                  description={`Total Apprenticeships in ${placeLabel}`}
+                >
                   <CardStatNumber
-                    number={formatUSNumber(
-                      impact.counts.apprenticeshipCompanies
-                    )}
+                    number={formatUS(impact.counts.apprenticeshipCompanies)}
                   />
                 </CardContent>
               </Card>
             )}
 
-            {impact.counts.industryClusters > 0 && (
+            {impact.industryClusters && impact.industryClusters.length > 0 && (
               <Card>
                 <CardTitle
                   title="Industry Clusters"
@@ -325,38 +180,46 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                   iconWidth={30}
                   iconPadding={40}
                 />
-                <CardContent description={`Total number of Industry Clusters in ${name === "united-states" ? "the U.S." : name}`}>
-                  <CardStatNumber
-                    number={formatUSNumber(impact.counts.industryClusters)}
-                  />
-                </CardContent>
+                <CardContent
+                  description={`Top industry cluster in ${placeLabel}`} type="fullWidth"
+                ></CardContent>
+                <div className="flex">
+                  <div className="w-20"></div>
+                  <div className={`flex flex-col mt-4`}>
+                    <p
+                      style={{ lineHeight: "1.1" }}
+                      className={`text-[30px] lg:text-[40px] xl:text-[40px] leading-[1.1] font-bold`}
+                    >
+                      {impact.industryClusters[0]}
+                    </p>
+                  </div>
+                </div>
               </Card>
             )}
           </CardWrapper>
 
           {/* Swiss Representations */}
-          <CardWrapper style={{ gap: 0 }}>
-            <Card
-              style={{
-                paddingBottom: "0px",
-                borderBottomLeftRadius: "0px",
-                borderBottomRightRadius: "0px",
-              }}
-            >
-              <CardTitle
-                title="Swiss Representations"
-                imageURL="/wp-content/themes/swissimpact_vite/assets/img/si-number-map/icon-sr-2x.png"
-                alt="Swiss Representations Icon"
-                iconWidth={50}
-                iconPadding={30}
-              />
-            </Card>
-
-            <SRStateCard
-              description={impact.swissRepresentationsDescription}
-              data={impact.swissRepresentations}
-            />
-          </CardWrapper>
+          {impact.swissRepresentations &&
+            impact.swissRepresentations.length > 0 && (
+              <CardWrapper style={{ gap: 0 }}>
+                <Card
+                  style={{
+                    paddingBottom: "0px",
+                    borderBottomLeftRadius: "0px",
+                    borderBottomRightRadius: "0px",
+                  }}
+                >
+                  <CardTitle
+                    title="Swiss Representations"
+                    imageURL="/wp-content/themes/swissimpact_vite/assets/img/si-number-map/icon-sr-2x.png"
+                    alt="Swiss Representations Icon"
+                    iconWidth={50}
+                    iconPadding={30}
+                  />
+                </Card>
+                <SRStateCard data={impact.swissRepresentations} />
+              </CardWrapper>
+            )}
         </div>
       )}
     </div>

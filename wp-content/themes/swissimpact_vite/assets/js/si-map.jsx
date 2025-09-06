@@ -1,4 +1,4 @@
-// SIMapControl.jsx - Fixed infinite re-render issue
+// SIMapControl.jsx — Single fetch + heatmap overlay + map-filter-aware popup tabs + tab persistence + back-to-map reset
 import { h } from "preact";
 import {
   useEffect,
@@ -33,13 +33,138 @@ const DATA_TYPE_TO_FILTER = {
   economicImpact: FILTERS.ECON,
 };
 
-const isMobile = () => {
-  return (
-    window.innerWidth <= 768 ||
-    /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-      navigator.userAgent
-    )
-  );
+// Map (left-panel) filter id -> Popup tab id
+const MAP_FILTER_TO_POPUP = {
+  "si-filter-see-all": FILTERS.SEE_ALL,
+  "si-filter-economic-impact": FILTERS.ECON,
+  "si-filter-science-academia": FILTERS.SCIENCE,
+  "si-filter-apprenticeship-companies": FILTERS.APPRENTICESHIP,
+  "si-filter-industry-clusters": FILTERS.INDUSTRY,
+  "si-filter-swiss-representatives": FILTERS.SWISS_REPRESENTATIVES,
+};
+
+const normId = (id) =>
+  String(id || "")
+    .toLowerCase()
+    .replace(/\s+/g, "-");
+
+// ---------- derive specific slices from ACF ----------
+const deriveFromAcf = (acf, dataType) => {
+  if (!acf) return [];
+  switch (dataType) {
+    case "scienceAcademia":
+      return acf["science_&_academia_fields"] || [];
+
+    case "apprenticeshipCompanies":
+      return acf.apprenticeship_companies || [];
+
+    case "industryClusters":
+      return acf.industry_clusters || [];
+
+    case "swissRepresentations": {
+      // Preserve per-rep statecode if it already exists; otherwise fall back to ACF's state_short_code
+      const reps = acf.swiss_representations || [];
+      const statecodeDefault = acf.state_short_code || "";
+      return reps.length
+        ? reps.map((rep) => ({
+            ...rep,
+            statecode: rep?.statecode ?? statecodeDefault,
+          }))
+        : [];
+    }
+
+    case "swissImpact": {
+      const econ = acf.economic_impact || {};
+      const sciArr = Array.isArray(acf["science_&_academia_fields"])
+        ? acf["science_&_academia_fields"]
+        : [];
+      const apprArr = Array.isArray(acf.apprenticeship_companies)
+        ? acf.apprenticeship_companies
+        : [];
+      const clustersArr = Array.isArray(acf.industry_clusters)
+        ? acf.industry_clusters
+        : [];
+      const repsArr = Array.isArray(acf.swiss_representations)
+        ? acf.swiss_representations
+        : [];
+
+      // Make first cluster label robust (string or object)
+      let firstClusterLabel = null;
+      if (clustersArr.length) {
+        const c0 = clustersArr[0];
+        if (typeof c0 === "string") firstClusterLabel = c0;
+        else if (c0 && typeof c0 === "object") {
+          firstClusterLabel =
+            c0.cluster_1 ||
+            c0.name ||
+            c0.cluster_name ||
+            c0.title ||
+            c0.label ||
+            c0.value ||
+            c0.post_title ||
+            null;
+        }
+      }
+
+      const payload = {
+        ...(econ.esbfa_total_jobs > 0 && { total_jobs: econ.esbfa_total_jobs }),
+        ...(econ.resident_of_swiss_descent > 0 && {
+          swiss_residents: econ.resident_of_swiss_descent,
+        }),
+        ...(sciArr.length > 0 && { science_academia: sciArr.length }),
+        ...(apprArr.length > 0 && { apprenticeship_companies: apprArr.length }),
+        ...(firstClusterLabel && { industry_clusters: [firstClusterLabel] }),
+        ...(repsArr.length > 0 && { swiss_representations: repsArr }),
+        statecode: acf.state_short_code || "",
+      };
+
+      return Object.keys(payload).length > 1 ? [payload] : [];
+    }
+
+    case "economicImpact": {
+      const econ = acf.economic_impact;
+      if (!econ) return [];
+      const hasMeaningful =
+        (econ.esbfa_total_jobs || 0) > 0 ||
+        (econ.resident_of_swiss_descent || 0) > 0 ||
+        Object.keys(econ).some((k) => econ[k] && econ[k] !== 0);
+      return hasMeaningful ? [econ] : [];
+    }
+
+    default:
+      return [];
+  }
+};
+
+const computeActiveTabsForAcf = (acf) => {
+  const result = {
+    [FILTERS.SEE_ALL]: true,
+    [FILTERS.ECON]: false,
+    [FILTERS.SCIENCE]: false,
+    [FILTERS.APPRENTICESHIP]: false,
+    [FILTERS.INDUSTRY]: false,
+    [FILTERS.SWISS_REPRESENTATIVES]: false,
+  };
+  if (!acf) return result;
+  Object.entries(DATA_TYPE_TO_FILTER).forEach(([dataType, filterId]) => {
+    const d = deriveFromAcf(acf, dataType);
+    if (Array.isArray(d) && d.length > 0) result[filterId] = true;
+  });
+  return result;
+};
+
+const pickSelectedFilter = (preferredTab, lastTab, activeTabs) => {
+  if (preferredTab && activeTabs[preferredTab]) return preferredTab;
+  if (lastTab && activeTabs[lastTab]) return lastTab;
+  const PRIORITY = [
+    FILTERS.SEE_ALL,
+    FILTERS.ECON,
+    FILTERS.SCIENCE,
+    FILTERS.APPRENTICESHIP,
+    FILTERS.INDUSTRY,
+    FILTERS.SWISS_REPRESENTATIVES,
+  ];
+  return PRIORITY.find((id) => activeTabs[id]) || FILTERS.SEE_ALL;
 };
 
 export default function SIMapControl() {
@@ -59,230 +184,264 @@ export default function SIMapControl() {
     isLoadingTabs: false,
   });
 
-  // Use ref to store cache - prevents re-renders when cache updates
-  const dataCacheRef = useRef({
-    scienceAcademia: {},
-    apprenticeshipCompanies: {},
-    industryClusters: {},
-    swissRepresentations: {},
-    swissImpact: {},
-    economicImpact: {},
+  // ---- global cache (slug -> acf) and loading/errors
+  const rawStateCacheRef = useRef({});
+  const [isAllLoaded, setIsAllLoaded] = useState(false);
+  const [prefetchError, setPrefetchError] = useState(null);
+  const [, forceUpdate] = useState(0);
+
+  // ---- persist last popup tab (used when map filter is "see all")
+  const lastSelectedFilterRef = useRef(FILTERS.SEE_ALL);
+  useEffect(() => {
+    lastSelectedFilterRef.current = singleStateData.selectedFilter;
+  }, [singleStateData.selectedFilter]);
+
+  // ---- track current MAP filter (controls initial popup tab & heatmap)
+  const currentMapFilterRef = useRef("si-filter-see-all");
+
+  // ---- heatmap data (built once after fetch)
+  const [heatmapArray, setHeatmapArray] = useState([]);
+  const heatmapByStateRef = useRef({});
+  const [heatmapStats, setHeatmapStats] = useState({
+    maxApprenticeship: 0,
+    maxScience: 0,
+    maxTotal: 0,
   });
 
-  // Force component updates when needed
-  const [updateTrigger, setUpdateTrigger] = useState(0);
+  // ===== Heatmap painters =====
+  const paintHeatmap = useCallback(
+    (svgRoot, category /* "science" | "apprenticeship" */) => {
+      if (!svgRoot) return;
+      const byState = heatmapByStateRef.current || {};
+      const max =
+        category === "science"
+          ? heatmapStats.maxScience || 1
+          : heatmapStats.maxApprenticeship || 1;
 
-  // ---- Fetch & cache - NO dependencies to prevent infinite loops
-  const fetchStateData = useCallback(async (stateId, dataType) => {
-    const cache = dataCacheRef.current;
+      svgRoot.querySelectorAll(".single-state").forEach((group) => {
+        const first = group.firstElementChild;
+        const slug =
+          first?.classList?.[0]?.toLowerCase()?.replace(/\s+/g, "-") || "";
 
-    if (cache[dataType][stateId]) {
-      return cache[dataType][stateId];
-    }
+        const row = byState[slug];
+        const value = row
+          ? category === "science"
+            ? row.scienceAcademia
+            : row.apprenticeshipCompanies
+          : 0;
 
-    // Set loading state
-    cache[dataType] = {
-      ...cache[dataType],
-      [stateId]: { data: [], loading: true, error: null },
-    };
+        const t = Math.max(0, Math.min(1, value / max)); // 0..1
+        const fill = `rgba(255, 92, 92, ${0.12 + 0.88 * t})`; // Swiss red intensity
 
-    // Trigger update for loading state
-    setUpdateTrigger((prev) => prev + 1);
-
-    try {
-      const response = await fetch(`/wp-json/wp/v2/mapstate?slug=${stateId}`);
-      if (!response.ok)
-        throw new Error(`HTTP error! status: ${response.status}`);
-
-      const data = await response.json();
-      const acf = data?.[0]?.acf || {};
-      let extractedData = [];
-
-      switch (dataType) {
-        case "scienceAcademia":
-          extractedData = acf["science_&_academia_fields"] || [];
-          break;
-
-        case "apprenticeshipCompanies":
-          extractedData = acf.apprenticeship_companies || [];
-          break;
-
-        case "industryClusters":
-          extractedData = acf.industry_clusters || [];
-          break;
-
-        case "swissRepresentations":
-          extractedData = acf.swiss_representations || [];
-          if (extractedData.length > 0) {
-            const statecode = acf.state_short_code || "";
-            extractedData = extractedData.map((rep) => ({
-              ...rep,
-              statecode,
-            }));
+        group.querySelectorAll("path, polygon, rect").forEach((shape) => {
+          if (!shape.dataset.origFill) {
+            const orig = shape.getAttribute("fill");
+            shape.dataset.origFill = orig !== null ? orig : "none";
           }
-          break;
+          shape.setAttribute("fill", fill);
+        });
+      });
+    },
+    [heatmapStats.maxApprenticeship, heatmapStats.maxScience]
+  );
 
-        case "swissImpact": {
-          const counts = {
-            total_jobs: acf.economic_impact?.esbfa_total_jobs || 0,
-            resident: acf.economic_impact?.resident_of_swiss_descent || 0,
-            science_academia:
-              (acf["science_&_academia_fields"] || []).length || 0,
-            apprenticeship_companies:
-              (acf.apprenticeship_companies || []).length || 0,
-            industry_clusters: (acf.industry_clusters || []).length || 0,
-          };
+  const clearHeatmap = useCallback((svgRoot) => {
+    if (!svgRoot) return;
+    svgRoot
+      .querySelectorAll(
+        ".single-state path, .single-state polygon, .single-state rect"
+      )
+      .forEach((shape) => {
+        const orig = shape.dataset.origFill;
+        if (orig !== undefined) {
+          if (orig === "none") shape.removeAttribute("fill");
+          else shape.setAttribute("fill", orig);
+        }
+      });
+  }, []);
 
-          const reps = Array.isArray(acf.swiss_representations)
-            ? acf.swiss_representations
-            : [];
+  // -------- one API call on mount + build US aggregate --------
+  useEffect(() => {
+    const ac = new AbortController();
+    (async () => {
+      try {
+        const url = "/wp-json/wp/v2/mapstate?per_page=100&_fields=slug,acf";
+        const r = await fetch(url, { signal: ac.signal });
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        const arr = await r.json();
 
-          const payload = {
-            ...(counts.total_jobs > 0 && { total_jobs: counts.total_jobs }),
-            ...(counts.resident > 0 && { swiss_residents: counts.resident }),
-            ...(counts.science_academia > 0 && {
-              science_academia: counts.science_academia,
-            }),
-            ...(counts.apprenticeship_companies > 0 && {
-              apprenticeship_companies: counts.apprenticeship_companies,
-            }),
-            ...(counts.industry_clusters > 0 && {
-              industry_clusters: counts.industry_clusters,
-            }),
-            ...(reps.length > 0 && { swiss_representations: reps }),
-            statecode: acf.state_short_code || "",
-          };
-
-          extractedData = Object.keys(payload).length > 1 ? [payload] : [];
-          break;
+        // Build base cache
+        const cache = {};
+        for (const post of arr) {
+          cache[normId(post.slug)] = post?.acf || {};
         }
 
-        case "economicImpact": {
-          const economicData = acf.economic_impact;
-          // Only include if economic_impact exists and has meaningful data
-          if (
-            economicData &&
-            (economicData.esbfa_total_jobs > 0 ||
-              economicData.resident_of_swiss_descent > 0 ||
-              Object.keys(economicData).some(
-                (key) => economicData[key] && economicData[key] !== 0
-              ))
-          ) {
-            extractedData = [economicData];
-          } else {
-            extractedData = [];
-          }
-          break;
-        }
+        // ---- Aggregate into united-states (except economic_impact) ----
+        // Gather from all *non-US* states
+        const nonUsEntries = Object.entries(cache).filter(
+          ([slug]) => slug !== "united-states"
+        );
 
-        default:
-          extractedData = [];
+        const aggSci = [];
+        const aggAppr = [];
+        const aggClusters = [
+          {
+            cluster_1: "Mining",
+            cluster_2: "Real Estate and Rental and Leasing",
+            cluster_3: "Manufacturing",
+            cluster_4: "Transportation and Warehousing",
+            cluster_5: "Retail Trade",
+            cluster_6: "Healthcare and Social Assistance",
+            cluster_7: "Construction",
+          },
+        ];
+        const aggReps = [];
+
+        nonUsEntries.forEach(([slug, acf]) => {
+          if (Array.isArray(acf?.["science_&_academia_fields"])) {
+            aggSci.push(...acf["science_&_academia_fields"]);
+          }
+          if (Array.isArray(acf?.apprenticeship_companies)) {
+            aggAppr.push(...acf.apprenticeship_companies);
+          }
+          if (Array.isArray(acf?.swiss_representations)) {
+            const sc = acf?.state_short_code || "";
+            // Ensure each rep carries its originating statecode
+            aggReps.push(
+              ...acf.swiss_representations.map((rep) => ({
+                ...rep,
+                statecode: rep?.statecode ?? sc,
+              }))
+            );
+          }
+        });
+
+        // Merge into existing US ACF, preserving economic_impact if present
+        const usACF = {
+          ...(cache["united-states"] || {}),
+          ["science_&_academia_fields"]: aggSci,
+          apprenticeship_companies: aggAppr,
+          industry_clusters: aggClusters,
+          swiss_representations: aggReps,
+          // DO NOT touch economic_impact here
+        };
+        cache["united-states"] = usACF;
+
+        rawStateCacheRef.current = cache;
+
+        // ---- build heatmap array (skip united-states) ----
+        const rows = Object.entries(cache)
+          .filter(([slug]) => slug !== "united-states")
+          .map(([slug, acf]) => {
+            const apprenticeship = Array.isArray(acf?.apprenticeship_companies)
+              ? acf.apprenticeship_companies.length
+              : 0;
+            const science = Array.isArray(acf?.["science_&_academia_fields"])
+              ? acf["science_&_academia_fields"].length
+              : 0;
+            return {
+              stateId: slug, // e.g., "virginia"
+              statecode: acf?.state_short_code || "",
+              apprenticeshipCompanies: apprenticeship,
+              scienceAcademia: science,
+              total: apprenticeship + science,
+            };
+          });
+
+        setHeatmapArray(rows);
+        const byState = {};
+        rows.forEach((r) => (byState[r.stateId] = r));
+        heatmapByStateRef.current = byState;
+
+        const maxApprenticeship = rows.reduce(
+          (m, r) => Math.max(m, r.apprenticeshipCompanies),
+          0
+        );
+        const maxScience = rows.reduce(
+          (m, r) => Math.max(m, r.scienceAcademia),
+          0
+        );
+        const maxTotal = rows.reduce((m, r) => Math.max(m, r.total), 0);
+        setHeatmapStats({ maxApprenticeship, maxScience, maxTotal });
+
+        // Ready
+        setIsAllLoaded(true);
+        forceUpdate((n) => n + 1);
+      } catch (e) {
+        if (e.name !== "AbortError") {
+          setPrefetchError(String(e?.message || e));
+          setIsAllLoaded(true);
+        }
       }
+    })();
+    return () => ac.abort();
+  }, []);
 
-      const result = {
-        data: Array.isArray(extractedData) ? extractedData : [],
-        loading: false,
-        error: null,
-      };
+  // -------- recompute active tabs when state changes or data loaded --------
+  const updateActiveTabs = useCallback((stateId, preferredFilter) => {
+    if (!stateId) return;
 
-      cache[dataType][stateId] = result;
-      setUpdateTrigger((prev) => prev + 1);
-
-      return result;
-    } catch (error) {
-      const errorResult = { data: [], loading: false, error: error.message };
-      cache[dataType][stateId] = errorResult;
-      setUpdateTrigger((prev) => prev + 1);
-      return errorResult;
-    }
-  }, []); // NO dependencies
-
-  // ---- Tabs activation - NO dependencies to prevent infinite loops
-  const updateActiveTabs = useCallback((stateId) => {
-    // If it's the nationwide view, force all tabs visible
     if (stateId === "united-states") {
+      // You could compute from US ACF now (since it's aggregated). Keeping all true is fine UX-wise.
+      const allTrue = {
+        [FILTERS.SEE_ALL]: true,
+        [FILTERS.ECON]: true,
+        [FILTERS.SCIENCE]: true,
+        [FILTERS.APPRENTICESHIP]: true,
+        [FILTERS.INDUSTRY]: true,
+        [FILTERS.SWISS_REPRESENTATIVES]: true,
+      };
+      const nextSel = pickSelectedFilter(
+        preferredFilter,
+        lastSelectedFilterRef.current,
+        allTrue
+      );
       setSingleStateData((prev) => ({
         ...prev,
-        activeTabs: {
-          [FILTERS.SEE_ALL]: true,
-          [FILTERS.ECON]: true,
-          [FILTERS.SCIENCE]: true,
-          [FILTERS.APPRENTICESHIP]: true,
-          [FILTERS.INDUSTRY]: true,
-          [FILTERS.SWISS_REPRESENTATIVES]: true,
-        },
+        activeTabs: allTrue,
+        selectedFilter: nextSel,
       }));
       return;
     }
 
-    const cache = dataCacheRef.current;
-    const newActiveTabs = {
-      [FILTERS.SEE_ALL]: true,
-      [FILTERS.ECON]: false,
-      [FILTERS.SCIENCE]: false,
-      [FILTERS.APPRENTICESHIP]: false,
-      [FILTERS.INDUSTRY]: false,
-      [FILTERS.SWISS_REPRESENTATIVES]: false,
-    };
+    const acf = rawStateCacheRef.current[normId(stateId)];
+    const newActiveTabs = computeActiveTabsForAcf(acf);
+    const nextSel = pickSelectedFilter(
+      preferredFilter,
+      lastSelectedFilterRef.current,
+      newActiveTabs
+    );
 
-    Object.entries(DATA_TYPE_TO_FILTER).forEach(([dataType, filterId]) => {
-      const cached = cache[dataType][stateId];
-      if (
-        cached &&
-        !cached.loading &&
-        !cached.error &&
-        Array.isArray(cached.data) &&
-        cached.data.length > 0
-      ) {
-        newActiveTabs[filterId] = true;
-      }
-    });
+    setSingleStateData((prev) => ({
+      ...prev,
+      activeTabs: newActiveTabs,
+      selectedFilter: nextSel,
+    }));
+  }, []);
 
-    setSingleStateData((prev) => ({ ...prev, activeTabs: newActiveTabs }));
-  }, []); // NO dependencies
-
-  // ---- Prefetch all data types for the selected state
   useEffect(() => {
-    if (!singleStateData.stateId) return;
+    if (!singleStateData.stateId || !isAllLoaded) return;
+    updateActiveTabs(singleStateData.stateId, lastSelectedFilterRef.current);
+    setSingleStateData((prev) => ({ ...prev, isLoadingTabs: false }));
+  }, [singleStateData.stateId, isAllLoaded, updateActiveTabs]);
 
-    setSingleStateData((prev) => ({ ...prev, isLoadingTabs: true }));
-
-    const dataTypes = [
-      "scienceAcademia",
-      "apprenticeshipCompanies",
-      "industryClusters",
-      "swissRepresentations",
-      "swissImpact",
-      "economicImpact",
-    ];
-
-    const cache = dataCacheRef.current;
-
-    Promise.all(
-      dataTypes.map((t) =>
-        cache[t][singleStateData.stateId]
-          ? Promise.resolve(cache[t][singleStateData.stateId])
-          : fetchStateData(singleStateData.stateId, t)
-      )
-    ).then(() => {
-      updateActiveTabs(singleStateData.stateId);
-      setSingleStateData((prev) => ({ ...prev, isLoadingTabs: false }));
-    });
-  }, [singleStateData.stateId]); // Only depend on stateId
-
-  // Get current data - depends on updateTrigger to force re-renders when cache changes
+  // -------- provide preloadedData to child components --------
   const getCurrentData = useCallback(
     (dataType) => {
-      const cache = dataCacheRef.current;
-      return (
-        cache[dataType][singleStateData.stateId] || {
-          data: [],
-          loading: true,
-          error: null,
-        }
-      );
+      if (!singleStateData.stateId) {
+        return { data: [], loading: false, error: null };
+      }
+      if (!isAllLoaded) {
+        return { data: [], loading: true, error: null };
+      }
+      const acf = rawStateCacheRef.current[normId(singleStateData.stateId)];
+      if (!acf) {
+        return { data: [], loading: false, error: prefetchError || null };
+      }
+      const derived = deriveFromAcf(acf, dataType);
+      return { data: derived, loading: false, error: null };
     },
-    [singleStateData.stateId, updateTrigger]
+    [singleStateData.stateId, isAllLoaded, prefetchError]
   );
 
   const memoizedComponents = useMemo(() => {
@@ -290,7 +449,6 @@ export default function SIMapControl() {
       name: singleStateData.name,
       stateId: singleStateData.stateId,
     };
-
     return {
       swissImpact: (
         <SwissImpact
@@ -350,7 +508,7 @@ export default function SIMapControl() {
     }
   }, [singleStateData.selectedFilter, memoizedComponents]);
 
-  // ---- One-time DOM wiring for SVG + state list + search + popup filters
+  // -------- wiring: SVG, map filters, state list, popup tabs --------
   useEffect(() => {
     let svgEl;
     const ac = new AbortController();
@@ -365,29 +523,57 @@ export default function SIMapControl() {
       svgEl = el;
       if (!svgEl) return;
 
+      const openState = (name, id) => {
+        const mapFilterId = currentMapFilterRef.current;
+        const preferredFromMap =
+          MAP_FILTER_TO_POPUP[mapFilterId] || FILTERS.SEE_ALL;
+
+        // If map filter is "see all", preserve user's last tab; else use mapped tab
+        const requestedTab =
+          mapFilterId === "si-filter-see-all"
+            ? lastSelectedFilterRef.current
+            : preferredFromMap;
+
+        const activeTabs =
+          normId(id) === "united-states"
+            ? {
+                [FILTERS.SEE_ALL]: true,
+                [FILTERS.ECON]: true,
+                [FILTERS.SCIENCE]: true,
+                [FILTERS.APPRENTICESHIP]: true,
+                [FILTERS.INDUSTRY]: true,
+                [FILTERS.SWISS_REPRESENTATIVES]: true,
+              }
+            : computeActiveTabsForAcf(rawStateCacheRef.current[normId(id)]);
+
+        const nextSelected = pickSelectedFilter(
+          requestedTab,
+          lastSelectedFilterRef.current,
+          activeTabs
+        );
+
+        setSingleStateData((prev) => ({
+          ...prev,
+          name,
+          stateId: normId(id),
+          isLoadingTabs: true,
+          selectedFilter: nextSelected,
+        }));
+        lastSelectedFilterRef.current = nextSelected;
+
+        document.querySelector(".data-popup")?.classList.remove("hidden");
+      };
+
       const onSvgClick = (e) => {
         let stateGroup =
-          e.target.closest(".single-state") ||
-          e.target.closest(".single-state");
-        if (stateGroup == null) {
-          return;
-        }
-        
+          e.target.closest(".single-state") || e.target.closest(".singe-state");
+
         if (stateGroup) {
           const firstChild = stateGroup.firstElementChild;
           const stateName = firstChild?.getAttribute("data-name");
           const stateId = firstChild?.classList[0];
-
           if (stateId && stateName) {
-            setSingleStateData((prev) => ({
-              ...prev,
-              name: stateName,
-              stateId: stateId.toLowerCase().replace(/\s+/g, "-"),
-              selectedFilter: FILTERS.SEE_ALL,
-              isLoadingTabs: true,
-            }));
-
-            document.querySelector(".data-popup")?.classList.remove("hidden");
+            openState(stateName, stateId);
             return;
           }
         }
@@ -402,30 +588,24 @@ export default function SIMapControl() {
           return null;
         };
 
-        let stateInfo = getStateInfo(e.target);
-        if (stateInfo) {
-          setSingleStateData((prev) => ({
-            ...prev,
-            name: stateInfo.stateName,
-            stateId: stateInfo.stateId.toLowerCase().replace(/\s+/g, "-"),
-            selectedFilter: FILTERS.SEE_ALL,
-            isLoadingTabs: true,
-          }));
-          document.querySelector(".data-popup")?.classList.remove("hidden");
-        }
+        const info = getStateInfo(e.target);
+        if (info) openState(info.stateName, info.stateId);
       };
 
       svgEl.addEventListener("click", onSvgClick, { signal });
 
+      // Map filter buttons: remember current filter, toggle markers/legend, and manage heatmap
       const mapFilters = document.querySelectorAll(
         "#si-map-filter .single-filter-item"
       );
-
       mapFilters.forEach((item) => {
         item.addEventListener(
           "click",
           (e) => {
             const filterId = e.currentTarget.getAttribute("id");
+            currentMapFilterRef.current = filterId;
+
+            // marker visibility
             for (const child of svgEl.querySelectorAll(
               "g:not(#KEY) image, g:not(#KEY) use"
             )) {
@@ -439,7 +619,7 @@ export default function SIMapControl() {
             mapFilters.forEach((f) => f.classList.remove("active"));
             e.currentTarget.classList.add("active");
 
-            // hide the map legend when not "see all"
+            // legend
             const legend = document.getElementById("KEY");
             if (
               filterId !== "si-filter-see-all" &&
@@ -449,12 +629,24 @@ export default function SIMapControl() {
             } else {
               legend?.classList.remove("hidden");
             }
+
+            // HEATMAP overlay: paint for science/apprenticeship, clear otherwise
+            if (filterId === "si-filter-science-academia") {
+              clearHeatmap(svgEl);
+              paintHeatmap(svgEl, "science");
+            } else if (filterId === "si-filter-apprenticeship-companies") {
+              clearHeatmap(svgEl);
+              paintHeatmap(svgEl, "apprenticeship");
+            } else {
+              clearHeatmap(svgEl);
+            }
           },
           { signal }
         );
       });
     });
 
+    // State list build & interactions
     const states = [
       "United States",
       "Alabama",
@@ -561,13 +753,43 @@ export default function SIMapControl() {
       const a = e.currentTarget;
       const id = a.getAttribute("href")?.substring(1) || "";
       const name = a.textContent || "";
+
+      const mapFilterId = currentMapFilterRef.current;
+      const preferredFromMap =
+        MAP_FILTER_TO_POPUP[mapFilterId] || FILTERS.SEE_ALL;
+
+      const requestedTab =
+        mapFilterId === "si-filter-see-all"
+          ? lastSelectedFilterRef.current
+          : preferredFromMap;
+
+      const activeTabs =
+        normId(id) === "united-states"
+          ? {
+              [FILTERS.SEE_ALL]: true,
+              [FILTERS.ECON]: true,
+              [FILTERS.SCIENCE]: true,
+              [FILTERS.APPRENTICESHIP]: true,
+              [FILTERS.INDUSTRY]: true,
+              [FILTERS.SWISS_REPRESENTATIVES]: true,
+            }
+          : computeActiveTabsForAcf(rawStateCacheRef.current[normId(id)]);
+
+      const nextSelected = pickSelectedFilter(
+        requestedTab,
+        lastSelectedFilterRef.current,
+        activeTabs
+      );
+
       setSingleStateData((prev) => ({
         ...prev,
-        stateId: id,
+        stateId: normId(id),
         name,
-        selectedFilter: FILTERS.SEE_ALL,
         isLoadingTabs: true,
+        selectedFilter: nextSelected,
       }));
+      lastSelectedFilterRef.current = nextSelected;
+
       document.querySelector(".data-popup")?.classList.remove("hidden");
       document.querySelector(".state-selector")?.classList.remove("active");
       document
@@ -591,11 +813,47 @@ export default function SIMapControl() {
     };
     popupFilterRoot?.addEventListener("click", onFilter, { signal });
 
-    // Single, reliable cleanup for every listener above
     return () => ac.abort();
-  }, []);
+  }, [paintHeatmap, clearHeatmap]);
 
-  // Reflect active class on selectedFilter change
+  // If data loads after the user already selected a heatmap filter, reapply
+  useEffect(() => {
+    if (!isAllLoaded) return;
+    const svgRoot =
+      document.querySelector("#si-map svg") ||
+      document.querySelector("#si-map");
+    if (!svgRoot) return;
+
+    const filterId = currentMapFilterRef.current;
+    if (filterId === "si-filter-science-academia") {
+      clearHeatmap(svgRoot);
+      paintHeatmap(svgRoot, "science");
+    } else if (filterId === "si-filter-apprenticeship-companies") {
+      clearHeatmap(svgRoot);
+      paintHeatmap(svgRoot, "apprenticeship");
+    } else {
+      clearHeatmap(svgRoot);
+    }
+  }, [isAllLoaded, paintHeatmap, clearHeatmap]);
+
+  // back-to-map: reset popup tab and clear any heat overlay
+  useEffect(() => {
+    const onBackToMap = () => {
+      setSingleStateData((prev) => ({
+        ...prev,
+        selectedFilter: FILTERS.SEE_ALL,
+      }));
+      lastSelectedFilterRef.current = FILTERS.SEE_ALL;
+      const svgRoot =
+        document.querySelector("#si-map svg") ||
+        document.querySelector("#si-map");
+      if (svgRoot) clearHeatmap(svgRoot);
+    };
+    window.addEventListener("si:back-to-map", onBackToMap);
+    return () => window.removeEventListener("si:back-to-map", onBackToMap);
+  }, [clearHeatmap]);
+
+  // reflect active class on popup pills
   useEffect(() => {
     const items = document.querySelectorAll(
       "#si-map-popup-filter .single-popup-filter"
@@ -605,7 +863,7 @@ export default function SIMapControl() {
     );
   }, [singleStateData.selectedFilter]);
 
-  // Toggle tab availability + loading indicator
+  // toggle tab availability + loading indicator
   useEffect(() => {
     const items = document.querySelectorAll(
       "#si-map-popup-filter .single-popup-filter"
@@ -624,6 +882,22 @@ export default function SIMapControl() {
 
   return (
     <div>
+      {prefetchError && (
+        <div
+          style={{
+            padding: "10px",
+            textAlign: "center",
+            fontSize: "14px",
+            color: "#b91c1c",
+            backgroundColor: "#fee2e2",
+            borderRadius: "4px",
+            margin: "10px 0",
+          }}
+        >
+          Error loading state data: {prefetchError}
+        </div>
+      )}
+
       {singleStateData.isLoadingTabs && (
         <div
           className="tabs-loading-indicator"
@@ -640,6 +914,7 @@ export default function SIMapControl() {
           Loading state data and tabs...
         </div>
       )}
+
       {selectedComponent}
     </div>
   );

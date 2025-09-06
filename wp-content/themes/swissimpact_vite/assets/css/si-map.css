@@ -65,6 +65,10 @@
   @apply shadow-[inset_0_0px_6px_rgba(112,112,112,0.5)];
 }
 
+.si-map-wrapper svg {
+  @apply max-h-[70vh] xl:max-h-[75vh];
+}
+
 .si-map-wrapper svg * {
   @apply transition-all duration-200 ease-in-out;
 }
