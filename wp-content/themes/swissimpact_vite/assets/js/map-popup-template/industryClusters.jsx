@@ -161,7 +161,7 @@ const IndustryClusters = (props) => {
           <p className="popup-description text-white mt-2 mb-0">
             Industry clusters in{" "}
             {props.name === "united-states" ? "the United States" : props.name}{" "}
-            per GDP.
+            per GDP
           </p>
         </div>
         <BackToMapButton />

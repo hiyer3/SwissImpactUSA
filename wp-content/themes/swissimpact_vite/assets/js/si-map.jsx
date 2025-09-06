@@ -517,11 +517,79 @@ export default function SIMapControl() {
     const holder = document.getElementById("si-map");
 
     inlineSVG(
-      "/wp-content/themes/swissimpact_vite/assets/img/si-number-map/map.svg?ver=1.0",
+      "/wp-content/themes/swissimpact_vite/assets/img/si-number-map/map.svg?ver=1.60",
       holder
     ).then((el) => {
       svgEl = el;
       if (!svgEl) return;
+
+      const holderEl = document.getElementById("si-map");
+
+      // Ensure the container can anchor an absolutely-positioned child
+      if (holderEl && getComputedStyle(holderEl).position === "static") {
+        holderEl.style.position = "relative";
+      }
+
+      // Create tooltip once
+      const tip = document.createElement("div");
+      tip.className = "si-map-tooltip";
+      Object.assign(tip.style, {
+        position: "absolute",
+        pointerEvents: "none",
+        zIndex: "50",
+        transform: "translate(-50%, -120%)",
+        background: "rgba(17,17,17,0.92)",
+        color: "#fff",
+        padding: "6px 10px",
+        borderRadius: "6px",
+        fontSize: "12px",
+        lineHeight: "1",
+        whiteSpace: "nowrap",
+        boxShadow: "0 6px 18px rgba(0,0,0,0.15)",
+        opacity: "0",
+        transition: "opacity 120ms ease",
+      });
+      holderEl.appendChild(tip);
+
+      const showTip = (text, clientX, clientY) => {
+        tip.textContent = text;
+        const rect = holderEl.getBoundingClientRect();
+        const x = clientX - rect.left + 14;
+        const y = clientY - rect.top - 14;
+        tip.style.left = `${x}px`;
+        tip.style.top = `${y}px`;
+        tip.style.opacity = "1";
+      };
+      const hideTip = () => (tip.style.opacity = "0");
+
+      const isTouch =
+        "ontouchstart" in window ||
+        navigator.maxTouchPoints > 0 ||
+        navigator.msMaxTouchPoints > 0;
+
+      const onMove = (e) => {
+        if (isTouch) return;
+        const stateGroup =
+          e.target.closest(".single-state") || e.target.closest(".singe-state");
+        if (!stateGroup) {
+          hideTip();
+          return;
+        }
+        const first = stateGroup.firstElementChild;
+        const stateName =
+          first?.getAttribute?.("data-name") ||
+          first?.classList?.[0] ||
+          "State";
+        showTip(stateName, e.clientX, e.clientY);
+      };
+
+      const onLeave = () => hideTip();
+
+      svgEl.addEventListener("mousemove", onMove, { signal });
+      svgEl.addEventListener("mouseleave", onLeave, { signal });
+
+      // Optional: avoid default browser <title> popups overlapping your tooltip
+      svgEl.querySelectorAll("title").forEach((n) => n.remove());
 
       const openState = (name, id) => {
         const mapFilterId = currentMapFilterRef.current;
@@ -571,7 +639,7 @@ export default function SIMapControl() {
         if (stateGroup === null) {
           return;
         }
-        
+
         if (stateGroup) {
           const firstChild = stateGroup.firstElementChild;
           const stateName = firstChild?.getAttribute("data-name");
@@ -611,7 +679,7 @@ export default function SIMapControl() {
 
             // marker visibility
             for (const child of svgEl.querySelectorAll(
-              "g:not(#KEY) image, g:not(#KEY) use"
+              "[class*='si-']"
             )) {
               if (filterId === "si-filter-see-all") {
                 child.style.opacity = "1";

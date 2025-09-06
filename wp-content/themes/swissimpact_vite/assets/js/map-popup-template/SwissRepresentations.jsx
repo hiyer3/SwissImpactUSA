@@ -156,7 +156,7 @@ const SwissRepresentations = (props) => {
           <p className="popup-description text-white mt-2 mb-0">
             Swiss Representations of Switzerland in{" "}
             {props.name === "united-states" ? "the United States" : props.name}:{" "}
-            <strong>{transformedData.length}</strong>.
+            <strong>{transformedData.length}</strong>
           </p>
         </div>
         <BackToMapButton />
