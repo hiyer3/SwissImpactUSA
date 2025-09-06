@@ -9,9 +9,10 @@ const IndustryClusters = (props) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  console.log("Props in IndustryClusters:", props.preloadedData);
   useEffect(() => {
     // FIXED: Check if preloadedData exists and use it
-    if (props.preloadedData && typeof props.preloadedData === 'object') {
+    if (props.preloadedData && typeof props.preloadedData === "object") {
       setIndustryClustersData(props.preloadedData.data || []);
       setLoading(props.preloadedData.loading || false);
       setError(props.preloadedData.error || null);
@@ -76,30 +77,43 @@ const IndustryClusters = (props) => {
     });
   };
 
-  // Memoize the transformed data to avoid recalculation on every render
+  // Memoize the transformed data to create rows for each cluster
   const transformedData = useMemo(() => {
-    return industryClustersData.map((item, index) => ({
-      id: index + 1,
-      "cluster-1": item?.cluster_1 || item?.field_1 || "",
-      "cluster-2": item?.cluster_2 || item?.field_2 || "",
-      "cluster-3": item?.cluster_3 || item?.field_3 || "",
-      "cluster-4": item?.cluster_4 || item?.field_4 || "",
-      "cluster-5": item?.cluster_5 || item?.field_5 || "",
-      "cluster-6": item?.cluster_6 || item?.field_6 || "",
-      "cluster-7": item?.cluster_7 || item?.field_7 || "",
-    }));
+    const flattenedData = [];
+    let rowId = 1;
+
+    industryClustersData.forEach((item) => {
+      // Array of cluster fields to iterate through
+      const clusterFields = [
+        { key: 'cluster_1', fallback: 'field_1' },
+        { key: 'cluster_2', fallback: 'field_2' },
+        { key: 'cluster_3', fallback: 'field_3' },
+        { key: 'cluster_4', fallback: 'field_4' },
+        { key: 'cluster_5', fallback: 'field_5' },
+        { key: 'cluster_6', fallback: 'field_6' },
+        { key: 'cluster_7', fallback: 'field_7' },
+      ];
+
+      clusterFields.forEach((field) => {
+        const clusterValue = item?.[field.key] || item?.[field.fallback] || "";
+        
+        // Only add non-empty clusters
+        if (clusterValue.trim()) {
+          flattenedData.push({
+            id: rowId++,
+            cluster: clusterValue.trim()
+          });
+        }
+      });
+    });
+
+    return flattenedData;
   }, [industryClustersData]);
 
-  // Memoize columns to prevent unnecessary re-renders
+  // Memoize columns for the new 2-column format
   const columns = useMemo(
     () => [
-      { key: "cluster-1", label: "Cluster #1" },
-      { key: "cluster-2", label: "Cluster #2" },
-      { key: "cluster-3", label: "Cluster #3" },
-      { key: "cluster-4", label: "Cluster #4" },
-      { key: "cluster-5", label: "Cluster #5" },
-      { key: "cluster-6", label: "Cluster #6" },
-      { key: "cluster-7", label: "Cluster #7" },
+      { key: "cluster", label: "Industry Cluster" },
     ],
     []
   );
@@ -146,7 +160,8 @@ const IndustryClusters = (props) => {
           <h2 className="popup-title text-white">{props.name}</h2>
           <p className="popup-description text-white mt-2 mb-0">
             Industry clusters in{" "}
-            {props.name === "united-states" ? "the United States" : props.name} per GDP.
+            {props.name === "united-states" ? "the United States" : props.name}{" "}
+            per GDP.
           </p>
         </div>
         <BackToMapButton />
@@ -155,7 +170,7 @@ const IndustryClusters = (props) => {
       <div className="bg-white mt-5 rounded-3xl popup-table-content">
         <div className="mt-4 p-8 w-full flex justify-between gap-6 sm:gap-9 sm:items-center flex-col sm:flex-row">
           <p className="text-xl font-black pb-0">
-            Creating Positive Impact in U.S. Industry Clusters.
+            Creating Positive Impact in U.S. Industry Clusters
           </p>
           <PopupSearchInput onChange={handleInputChange} />
         </div>
@@ -170,6 +185,9 @@ const IndustryClusters = (props) => {
         ) : (
           <DataTable data={transformedData} columns={columns} />
         )}
+        <p className="text-xs text-gray-500 px-5">
+          Ranked by cluster&apos;s contribution to the state GDP.
+        </p>
       </div>
     </div>
   );

@@ -154,7 +154,7 @@ const SwissRepresentations = (props) => {
         <div>
           <h2 className="popup-title text-white">{props.name}</h2>
           <p className="popup-description text-white mt-2 mb-0">
-            Swiss Representations in{" "}
+            Swiss Representations of Switzerland in{" "}
             {props.name === "united-states" ? "the United States" : props.name}:{" "}
             <strong>{transformedData.length}</strong>.
           </p>
@@ -165,7 +165,8 @@ const SwissRepresentations = (props) => {
       <div className="bg-white mt-5 rounded-3xl popup-table-content">
         <div className="mt-4 p-8 w-full flex justify-between gap-6 sm:gap-9 sm:items-center flex-col sm:flex-row">
           <p className="text-xl font-black pb-0">
-            Swiss Representations of Switzerland in {props.name}.
+            Swiss Representations of Switzerland in{" "}
+            {props.name === "united-states" ? "the United States" : props.name}
           </p>
           <PopupSearchInput onChange={handleInputChange} />
         </div>
