@@ -568,7 +568,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
   // get the pdf url from data
   const pdfUrl =
     data?.pdf_download_url ||
-    "/wp-content/uploads/2025/09/" + name + "-2025-Swiss-Impact.pdf";
+    "/wp-content/uploads/2025/09/" + name + " 2025 Swiss Impact.pdf";
 
   // Heights for chart canvases (taller on mobile so wrapped labels fit)
   const barChartHeight = isLg() ? 380 : 460;
