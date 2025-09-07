@@ -521,7 +521,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
           industry: {
             anchor: "start",
             align: "left",
-            offset: isSm() ? -10 : 6, // Negative offset on mobile to move labels left
+            offset: isSm() ? 1 : 6, // Negative offset on mobile to move labels left
             clip: false,
             textAlign: "left",
             formatter: (_, ctx) => {
