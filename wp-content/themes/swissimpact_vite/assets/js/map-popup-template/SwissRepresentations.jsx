@@ -3,11 +3,13 @@ import BackToMapButton from "./components/backToMapButton";
 import PopupSearchInput from "./components/popupSearchInput";
 import DataTable from "./components/dataTable";
 import { useEffect, useState, useMemo } from "preact/hooks";
+import constructLink from "./components/constructLink";
 
 const SwissRepresentations = (props) => {
   const [swissRepresentationsData, setSwissRepresentationsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState(""); // Add search state
 
   useEffect(() => {
     // If preloaded data is available, use it instead of fetching
@@ -58,22 +60,10 @@ const SwissRepresentations = (props) => {
     }
   }, [props.stateId, props.preloadedData]);
 
+  // Updated search handler that works with React state
   const handleInputChange = (event) => {
-    const searchValue = event.target.value.toLowerCase();
-    const rows = document.querySelectorAll(".data-table tbody tr");
-
-    rows.forEach((row) => {
-      const cells = row.querySelectorAll("td");
-      let matchFound = false;
-
-      cells.forEach((cell) => {
-        if (cell.textContent.toLowerCase().includes(searchValue)) {
-          matchFound = true;
-        }
-      });
-
-      row.style.display = matchFound ? "" : "none";
-    });
+    const searchValue = event.target.value;
+    setSearchTerm(searchValue);
   };
 
   // Helper function to construct type value with optional link
@@ -96,19 +86,45 @@ const SwissRepresentations = (props) => {
     return swissRepresentationsData.map((item, index) => {
       return {
         id: index + 1,
-        state: item.state || "",
-        representation: item?.representation,
-        type: constructTypeValue(item),
+        state: item?.state || "",
+        representation:
+          constructLink(
+            item?.representation,
+            item?.type_of_representation_link?.url
+          ) || "",
+        type: item?.type || "",
       };
     });
   }, [swissRepresentationsData]);
+
+  // Filter data based on search term
+  const filteredData = useMemo(() => {
+    if (!searchTerm.trim()) {
+      return transformedData;
+    }
+
+    const searchLower = searchTerm.toLowerCase();
+    return transformedData.filter((item) => {
+      // Search across all text fields
+      const searchableText = [
+        item.state,
+        item.representation,
+        item.type
+      ]
+        .join(' ')
+        .toLowerCase()
+        .replace(/<[^>]*>/g, ''); // Remove HTML tags for search
+
+      return searchableText.includes(searchLower);
+    });
+  }, [transformedData, searchTerm]);
 
   // Memoize columns to prevent unnecessary re-renders
   const columns = useMemo(
     () => [
       { key: "state", label: "State" },
-      { key: "representation", label: "Representation" },
-      { key: "type", label: "Type of Representation", allowHTML: true },
+      { key: "representation", label: "Representation", allowHTML: true },
+      { key: "type", label: "Type of Representation" },
     ],
     []
   );
@@ -145,6 +161,18 @@ const SwissRepresentations = (props) => {
     </div>
   );
 
+  // Search results empty state
+  const NoSearchResults = () => (
+    <div className="flex justify-center items-center py-20">
+      <div className="text-gray-600">
+        <p className="text-lg font-semibold">No Results Found</p>
+        <p className="text-sm">
+          No Swiss representations match your search "{searchTerm}"
+        </p>
+      </div>
+    </div>
+  );
+
   return (
     <div className="pt-12 pb-5">
       <div
@@ -156,7 +184,10 @@ const SwissRepresentations = (props) => {
           <p className="popup-description text-white mt-2 mb-0">
             Swiss Representations of Switzerland in{" "}
             {props.name === "united-states" ? "the United States" : props.name}:{" "}
-            <strong>{transformedData.length}</strong>
+            <strong>{filteredData.length}</strong>
+            {searchTerm && transformedData.length !== filteredData.length && (
+              <span className="text-gray-300"> (of {transformedData.length} total)</span>
+            )}
           </p>
         </div>
         <BackToMapButton />
@@ -168,7 +199,11 @@ const SwissRepresentations = (props) => {
             Swiss Representations of Switzerland in{" "}
             {props.name === "united-states" ? "the United States" : props.name}
           </p>
-          <PopupSearchInput onChange={handleInputChange} />
+          <PopupSearchInput 
+            onChange={handleInputChange} 
+            value={searchTerm}
+            placeholder="Search representations..."
+          />
         </div>
 
         {/* Conditional rendering for DataTable area only */}
@@ -178,8 +213,10 @@ const SwissRepresentations = (props) => {
           <ErrorDataTable />
         ) : transformedData.length === 0 ? (
           <EmptyDataTable />
+        ) : filteredData.length === 0 && searchTerm ? (
+          <NoSearchResults />
         ) : (
-          <DataTable data={transformedData} columns={columns} />
+          <DataTable data={filteredData} columns={columns} />
         )}
       </div>
     </div>

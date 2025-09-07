@@ -54,7 +54,47 @@
                     </div>
                 </div>
             </div>
-            <div id="si-map"></div>
+            <div>
+                <div id="si-map"></div>
+                <div class="si-map-legends flex-center hidden lg:flex">
+                    <div class="w-20"></div>
+                    <ul id="science-academia-apprenticeship-legends" class="grid grid-cols-5 gap-8 my-4 text-xs mx-auto max-w-2xl w-full">
+                        <li class="flex flex-col items-center gap-1">
+                            <div class="h-3 w-full bg-[#FF5C5C]/20"></div><span>0 - 19</span>
+                        </li>
+                        <li class="flex flex-col items-center gap-1">
+                            <div class="h-3 w-full bg-[#FF5C5C]/40"></div><span>20 - 39</span>
+                        </li>
+                        <li class="flex flex-col items-center gap-1">
+                            <div class="h-3 w-full bg-[#FF5C5C]/60"></div><span>40 - 59</span>
+                        </li>
+                        <li class="flex flex-col items-center gap-1">
+                            <div class="h-3 w-full bg-[#FF5C5C]/80"></div><span>60 - 79</span>
+                        </li>
+                        <li class="flex flex-col items-center gap-1">
+                            <div class="h-3 w-full bg-[#FF5C5C]"></div><span>> 80</span>
+                        </li>
+                    </ul>
+                    <ul id="swiss-representation-legends" class="hidden grid-cols-5 gap-8 my-4 text-xs mx-auto max-w-2xl w-full">
+                        <li class="flex flex-col items-center gap-1 text-center">
+                            <div class="h-3 w-full bg-[#FFE8E8]"></div><span>Consulate General of Switzerland in Chicago</span>
+                        </li>
+                        <li class="flex flex-col items-center gap-1 text-center">
+                            <div class="h-3 w-full bg-[#FFD9D9]"></div><span>Consulate General of Switzerland in San Francisco</span>
+                        </li>
+                        <li class="flex flex-col items-center gap-1 text-center">
+                            <div class="h-3 w-full bg-[#FFBEBE]"></div><span>Consulate General of Switzerland in Atlanta</span>
+                        </li>
+                        <li class="flex flex-col items-center gap-1 text-center">
+                            <div class="h-3 w-full bg-[#FF4E4E]"></div><span>Consulate General of Switzerland in New York</span>
+                        </li>
+                        <li class="flex flex-col items-center gap-1 text-center">
+                            <div class="h-3 w-full bg-[#FF7E7E]"></div><span>Embassy of Switzerland in the United States of America</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
         </div>
     </section>
     <div class="data-popup mb-8 lg:mb-0 overflow-hidden bg-swissred lg:absolute w-full h-full top-0 left-0 z-20 pb-20 hidden">

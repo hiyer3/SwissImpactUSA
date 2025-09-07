@@ -8,6 +8,7 @@ const ApprenticeshipCompanies = (props) => {
   const [apprenticeshipData, setApprenticeshipData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState(""); // Add search state
 
   useEffect(() => {
     // FIXED: Check if preloadedData exists and use it
@@ -58,22 +59,10 @@ const ApprenticeshipCompanies = (props) => {
     }
   }, [props.stateId, props.preloadedData]);
 
+  // Updated search handler that works with React state (like ScienceAcademia)
   const handleInputChange = (event) => {
-    const searchValue = event.target.value.toLowerCase();
-    const rows = document.querySelectorAll(".data-table tbody tr");
-
-    rows.forEach((row) => {
-      const cells = row.querySelectorAll("td");
-      let matchFound = false;
-
-      cells.forEach((cell) => {
-        if (cell.textContent.toLowerCase().includes(searchValue)) {
-          matchFound = true;
-        }
-      });
-
-      row.style.display = matchFound ? "" : "none";
-    });
+    const searchValue = event.target.value;
+    setSearchTerm(searchValue);
   };
 
   // Memoize the transformed data to avoid recalculation on every render
@@ -90,6 +79,28 @@ const ApprenticeshipCompanies = (props) => {
         "",
     }));
   }, [apprenticeshipData]);
+
+  // Filter data based on search term (like ScienceAcademia)
+  const filteredData = useMemo(() => {
+    if (!searchTerm.trim()) {
+      return transformedData;
+    }
+
+    const searchLower = searchTerm.toLowerCase();
+    return transformedData.filter((item) => {
+      // Search across all text fields
+      const searchableText = [
+        item.location,
+        item.company,
+        item.field,
+        item.program
+      ]
+        .join(' ')
+        .toLowerCase();
+
+      return searchableText.includes(searchLower);
+    });
+  }, [transformedData, searchTerm]);
 
   // Memoize columns to prevent unnecessary re-renders
   const columns = useMemo(
@@ -136,6 +147,18 @@ const ApprenticeshipCompanies = (props) => {
     </div>
   );
 
+  // Search results empty state (like ScienceAcademia)
+  const NoSearchResults = () => (
+    <div className="flex justify-center items-center py-20">
+      <div className="text-gray-600">
+        <p className="text-lg font-semibold">No Results Found</p>
+        <p className="text-sm">
+          No apprenticeship companies match your search "{searchTerm}"
+        </p>
+      </div>
+    </div>
+  );
+
   return (
     <div className="pt-12 pb-5">
       <div
@@ -146,7 +169,10 @@ const ApprenticeshipCompanies = (props) => {
           <h2 className="popup-title text-white">{props.name}</h2>
           <p className="popup-description text-white mt-2 mb-0">
             Apprenticeship opportunities and companies in{" "}
-            {props.name === "united-states" ? "the United States" : props.name}.
+            {props.name === "united-states" ? "the United States" : props.name}: <strong>{filteredData.length}</strong>
+            {searchTerm && transformedData.length !== filteredData.length && (
+              <span className="text-gray-300"> (of {transformedData.length} total)</span>
+            )}
           </p>
         </div>
         <BackToMapButton />
@@ -156,10 +182,13 @@ const ApprenticeshipCompanies = (props) => {
         <div className="mt-4 p-8 w-full flex justify-between gap-6 sm:gap-9 sm:items-center flex-col sm:flex-row">
           <p className="text-xl font-black pb-0">
             Apprenticeship opportunities and companies in{" "}
-            {props.name === "united-states" ? "the United States" : props.name}:{" "}
-            {transformedData.length}
+            {props.name === "united-states" ? "the United States" : props.name}
           </p>
-          <PopupSearchInput onChange={handleInputChange} />
+          <PopupSearchInput 
+            onChange={handleInputChange} 
+            value={searchTerm}
+            placeholder="Search companies..."
+          />
         </div>
 
         {/* Conditional rendering for DataTable area only */}
@@ -169,8 +198,10 @@ const ApprenticeshipCompanies = (props) => {
           <ErrorDataTable />
         ) : transformedData.length === 0 ? (
           <EmptyDataTable />
+        ) : filteredData.length === 0 && searchTerm ? (
+          <NoSearchResults />
         ) : (
-          <DataTable data={transformedData} columns={columns} />
+          <DataTable data={filteredData} columns={columns} />
         )}
       </div>
     </div>

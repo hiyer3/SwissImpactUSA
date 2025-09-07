@@ -8,8 +8,8 @@ const IndustryClusters = (props) => {
   const [industryClustersData, setIndustryClustersData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState(""); // Add search state
 
-  console.log("Props in IndustryClusters:", props.preloadedData);
   useEffect(() => {
     // FIXED: Check if preloadedData exists and use it
     if (props.preloadedData && typeof props.preloadedData === "object") {
@@ -59,22 +59,10 @@ const IndustryClusters = (props) => {
     }
   }, [props.stateId, props.preloadedData]);
 
+  // Updated search handler that works with React state (like ScienceAcademia)
   const handleInputChange = (event) => {
-    const searchValue = event.target.value.toLowerCase();
-    const rows = document.querySelectorAll(".data-table tbody tr");
-
-    rows.forEach((row) => {
-      const cells = row.querySelectorAll("td");
-      let matchFound = false;
-
-      cells.forEach((cell) => {
-        if (cell.textContent.toLowerCase().includes(searchValue)) {
-          matchFound = true;
-        }
-      });
-
-      row.style.display = matchFound ? "" : "none";
-    });
+    const searchValue = event.target.value;
+    setSearchTerm(searchValue);
   };
 
   // Memoize the transformed data to create rows for each cluster
@@ -109,6 +97,20 @@ const IndustryClusters = (props) => {
 
     return flattenedData;
   }, [industryClustersData]);
+
+  // Filter data based on search term (like ScienceAcademia)
+  const filteredData = useMemo(() => {
+    if (!searchTerm.trim()) {
+      return transformedData;
+    }
+
+    const searchLower = searchTerm.toLowerCase();
+    return transformedData.filter((item) => {
+      // Search in cluster field
+      const searchableText = item.cluster.toLowerCase();
+      return searchableText.includes(searchLower);
+    });
+  }, [transformedData, searchTerm]);
 
   // Memoize columns for the new 2-column format
   const columns = useMemo(
@@ -150,6 +152,18 @@ const IndustryClusters = (props) => {
     </div>
   );
 
+  // Search results empty state (like ScienceAcademia)
+  const NoSearchResults = () => (
+    <div className="flex justify-center items-center py-20">
+      <div className="text-gray-600">
+        <p className="text-lg font-semibold">No Results Found</p>
+        <p className="text-sm">
+          No industry clusters match your search "{searchTerm}"
+        </p>
+      </div>
+    </div>
+  );
+
   return (
     <div className="pt-12 pb-5">
       <div
@@ -161,7 +175,10 @@ const IndustryClusters = (props) => {
           <p className="popup-description text-white mt-2 mb-0">
             Industry clusters in{" "}
             {props.name === "united-states" ? "the United States" : props.name}{" "}
-            per GDP
+            per GDP: <strong>{filteredData.length}</strong>
+            {searchTerm && transformedData.length !== filteredData.length && (
+              <span className="text-gray-300"> (of {transformedData.length} total)</span>
+            )}
           </p>
         </div>
         <BackToMapButton />
@@ -172,7 +189,11 @@ const IndustryClusters = (props) => {
           <p className="text-xl font-black pb-0">
             Creating Positive Impact in U.S. Industry Clusters
           </p>
-          <PopupSearchInput onChange={handleInputChange} />
+          <PopupSearchInput 
+            onChange={handleInputChange} 
+            value={searchTerm}
+            placeholder="Search clusters..."
+          />
         </div>
 
         {/* Conditional rendering for DataTable area only */}
@@ -182,8 +203,10 @@ const IndustryClusters = (props) => {
           <ErrorDataTable />
         ) : transformedData.length === 0 ? (
           <EmptyDataTable />
+        ) : filteredData.length === 0 && searchTerm ? (
+          <NoSearchResults />
         ) : (
-          <DataTable data={transformedData} columns={columns} />
+          <DataTable data={filteredData} columns={columns} />
         )}
         <p className="text-xs text-gray-500 px-5">
           Ranked by cluster&apos;s contribution to the state GDP.

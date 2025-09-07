@@ -3,11 +3,13 @@ import BackToMapButton from "./components/backToMapButton";
 import PopupSearchInput from "./components/popupSearchInput";
 import DataTable from "./components/dataTable";
 import { useEffect, useState, useMemo } from "preact/hooks";
+import constructLink from "./components/constructLink";
 
 const ScienceAcademia = (props) => {
   const [scienceAcademiaData, setScienceAcademiaData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState(""); // Add search state
 
   useEffect(() => {
     // If preloaded data is available, use it instead of fetching
@@ -59,29 +61,10 @@ const ScienceAcademia = (props) => {
     }
   }, [props.stateId, props.preloadedData]);
 
+  // Updated search handler that works with React state
   const handleInputChange = (event) => {
-    const searchValue = event.target.value.toLowerCase();
-    const rows = document.querySelectorAll(".data-table tbody tr");
-
-    rows.forEach((row) => {
-      const cells = row.querySelectorAll("td");
-      let matchFound = false;
-
-      cells.forEach((cell) => {
-        if (cell.textContent.toLowerCase().includes(searchValue)) {
-          matchFound = true;
-        }
-      });
-
-      row.style.display = matchFound ? "" : "none";
-    });
-  };
-
-  // Helper function to construct link with optional title
-  const constructLink = (title, link) => {
-    return link
-      ? `<a href="${link}" target="_blank" rel="noopener noreferrer">${title}</a>`
-      : title;
+    const searchValue = event.target.value;
+    setSearchTerm(searchValue);
   };
 
   // Memoize the transformed data to avoid recalculation on every render
@@ -94,6 +77,41 @@ const ScienceAcademia = (props) => {
       field: item?.department || "",
     }));
   }, [scienceAcademiaData]);
+
+  // Filter data based on search term
+  const filteredData = useMemo(() => {
+    if (!searchTerm.trim()) {
+      return transformedData;
+    }
+
+    const searchLower = searchTerm.toLowerCase();
+    return transformedData.filter((item) => {
+      // Search across all text fields
+      const searchableText = [
+        item.institution,
+        item.name,
+        item.position,
+        item.field
+      ]
+        .join(' ')
+        .toLowerCase()
+        .replace(/<[^>]*>/g, ''); // Remove HTML tags for search
+
+      return searchableText.includes(searchLower);
+    });
+  }, [transformedData, searchTerm]);
+
+  // Memoize columns to prevent unnecessary re-renders
+  const columns = useMemo(
+    () => [
+      { key: "institution", label: "Institution" },
+      { key: "name", label: "Name", allowHTML: true },
+      { key: "position", label: "Position" },
+      { key: "field", label: "Field/Department" },
+    ],
+    []
+  );
+
   // Loading component for DataTable
   const LoadingDataTable = () => (
     <div className="flex justify-center items-center py-20">
@@ -112,6 +130,30 @@ const ScienceAcademia = (props) => {
     </div>
   );
 
+  // Empty state component
+  const EmptyDataTable = () => (
+    <div className="flex justify-center items-center py-20">
+      <div className="text-gray-600">
+        <p className="text-lg font-semibold">No Data Available</p>
+        <p className="text-sm">
+          No science and academia data available for {props.name}
+        </p>
+      </div>
+    </div>
+  );
+
+  // Search results empty state
+  const NoSearchResults = () => (
+    <div className="flex justify-center items-center py-20">
+      <div className="text-gray-600">
+        <p className="text-lg font-semibold">No Results Found</p>
+        <p className="text-sm">
+          No academics or scientists match your search "{searchTerm}"
+        </p>
+      </div>
+    </div>
+  );
+
   return (
     <div className="pt-12 pb-5">
       <div
@@ -122,7 +164,10 @@ const ScienceAcademia = (props) => {
           <h2 className="popup-title text-white">{props.name}</h2>
           <p className="popup-description text-white mt-2 mb-0">
             Swiss academics and scientists in {props.name}:{" "}
-            <strong>{scienceAcademiaData?.length || 0}</strong>
+            <strong>{filteredData.length}</strong>
+            {searchTerm && transformedData.length !== filteredData.length && (
+              <span className="text-gray-300"> (of {transformedData.length} total)</span>
+            )}
           </p>
         </div>
         <BackToMapButton />
@@ -133,7 +178,11 @@ const ScienceAcademia = (props) => {
           <p className="text-xl font-black pb-0">
             Creating Positive Impact in U.S. Academia and Science
           </p>
-          <PopupSearchInput onChange={handleInputChange} />
+          <PopupSearchInput 
+            onChange={handleInputChange} 
+            value={searchTerm}
+            placeholder="Search academics..."
+          />
         </div>
 
         {/* Conditional rendering for DataTable area only */}
@@ -141,15 +190,14 @@ const ScienceAcademia = (props) => {
           <LoadingDataTable />
         ) : error ? (
           <ErrorDataTable />
+        ) : transformedData.length === 0 ? (
+          <EmptyDataTable />
+        ) : filteredData.length === 0 && searchTerm ? (
+          <NoSearchResults />
         ) : (
           <DataTable
-            data={transformedData}
-            columns={[
-              { key: "institution", label: "Institution" },
-              { key: "name", label: "Name", allowHTML: true },
-              { key: "position", label: "Position" },
-              { key: "field", label: "Field/Department" },
-            ]}
+            data={filteredData}
+            columns={columns}
           />
         )}
       </div>
