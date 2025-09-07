@@ -13,6 +13,7 @@ import {
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { Bar, Doughnut } from "react-chartjs-2";
 import BackToMapButton from "./components/backToMapButton";
+import DownloadPDF from "./components/downloadPDF";
 
 const centerTextPlugin = {
   id: "centerTextPlugin",
@@ -103,9 +104,12 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     if (!amount) return "$0";
     const absAmount = Math.abs(amount);
     const sign = amount < 0 ? "-" : "";
-    if (absAmount >= 1e9) return `${sign}$${(absAmount / 1e9).toFixed(3).replace(/\.?0+$/, "")}B`;
-    if (absAmount >= 1e6) return `${sign}$${(absAmount / 1e6).toFixed(3).replace(/\.?0+$/, "")}M`;
-    if (absAmount >= 1e3) return `${sign}$${(absAmount / 1e3).toFixed(3).replace(/\.?0+$/, "")}K`;
+    if (absAmount >= 1e9)
+      return `${sign}$${(absAmount / 1e9).toFixed(3).replace(/\.?0+$/, "")}B`;
+    if (absAmount >= 1e6)
+      return `${sign}$${(absAmount / 1e6).toFixed(3).replace(/\.?0+$/, "")}M`;
+    if (absAmount >= 1e3)
+      return `${sign}$${(absAmount / 1e3).toFixed(3).replace(/\.?0+$/, "")}K`;
     return `${sign}$${absAmount}`;
   };
 
@@ -133,7 +137,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     fontPx,
     wrapAt = 22,
     containerW = 320,
-    maxContainerShare = 0.35  // Reduced from 0.45 to 0.35
+    maxContainerShare = 0.35 // Reduced from 0.45 to 0.35
   ) => {
     const widths = labels.map((lab) => {
       const lines = wrapLabel(lab, wrapAt);
@@ -171,17 +175,24 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
   if (loading) {
     return (
       <div className="pt-12 pb-5">
-        <div className="flex flex-row items-end space-evenly" style={{ justifyContent: "space-between" }}>
+        <div
+          className="flex flex-row items-end space-evenly"
+          style={{ justifyContent: "space-between" }}
+        >
           <div>
             <h2 className="popup-title text-white">{name}</h2>
-            <p className="popup-description text-white mt-2 mb-0">Loading economic impact data...</p>
+            <p className="popup-description text-white mt-2 mb-0">
+              Loading economic impact data...
+            </p>
           </div>
           <BackToMapButton />
         </div>
         <div className="bg-white mt-5 rounded-3xl p-6">
           <div className="flex justify-center items-center py-20">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-            <span className="ml-3 text-gray-600">Loading economic impact data...</span>
+            <span className="ml-3 text-gray-600">
+              Loading economic impact data...
+            </span>
           </div>
         </div>
       </div>
@@ -191,17 +202,24 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
   if (error) {
     return (
       <div className="pt-12 pb-5">
-        <div className="flex flex-row items-end space-evenly" style={{ justifyContent: "space-between" }}>
+        <div
+          className="flex flex-row items-end space-evenly"
+          style={{ justifyContent: "space-between" }}
+        >
           <div>
             <h2 className="popup-title text-white">{name}</h2>
-            <p className="popup-description text-white mt-2 mb-0">Error loading economic impact data</p>
+            <p className="popup-description text-white mt-2 mb-0">
+              Error loading economic impact data
+            </p>
           </div>
           <BackToMapButton />
         </div>
         <div className="bg-white mt-5 rounded-3xl p-6">
           <div className="flex justify-center items-center py-20">
             <div className="text-red-600">
-              <p className="text-lg font-semibold">Error Loading Economic Impact Data</p>
+              <p className="text-lg font-semibold">
+                Error Loading Economic Impact Data
+              </p>
               <p className="text-sm">{String(error)}</p>
             </div>
           </div>
@@ -213,18 +231,28 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
   if (!data) {
     return (
       <div className="pt-12 pb-5">
-        <div className="flex flex-row items-end space-evenly" style={{ justifyContent: "space-between" }}>
+        <div
+          className="flex flex-row items-end space-evenly"
+          style={{ justifyContent: "space-between" }}
+        >
           <div>
             <h2 className="popup-title text-white">{name}</h2>
-            <p className="popup-description text-white mt-2 mb-0">No economic impact data available</p>
+            <p className="popup-description text-white mt-2 mb-0">
+              No economic impact data available
+            </p>
           </div>
           <BackToMapButton />
         </div>
         <div className="bg-white mt-5 rounded-3xl p-6">
           <div className="flex justify-center items-center py-20">
             <div className="text-gray-600">
-              <h2 className="text-xl font-semibold mb-2">No Economic Impact Data Available</h2>
-              <p>Economic impact information for {name} is not currently available.</p>
+              <h2 className="text-xl font-semibold mb-2">
+                No Economic Impact Data Available
+              </h2>
+              <p>
+                Economic impact information for {name} is not currently
+                available.
+              </p>
             </div>
           </div>
         </div>
@@ -241,9 +269,13 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
 
   // === Employment Chart ===
   const employmentLabels =
-    data?.employment_supported_by_foreign_affiliates?.map((item) => item.esbfa_country) || [];
+    data?.employment_supported_by_foreign_affiliates?.map(
+      (item) => item.esbfa_country
+    ) || [];
   const employmentValues =
-    data?.employment_supported_by_foreign_affiliates?.map((item) => item.esbfa_value) || [];
+    data?.employment_supported_by_foreign_affiliates?.map(
+      (item) => item.esbfa_value
+    ) || [];
 
   const employmentChartData = {
     labels: employmentLabels,
@@ -251,7 +283,9 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
       {
         data: employmentValues,
         backgroundColor: employmentLabels.map((label) =>
-          String(label).includes("Switzerland") ? "rgb(228, 16, 28)" : "rgb(157, 157, 156)"
+          String(label).includes("Switzerland")
+            ? "rgb(228, 16, 28)"
+            : "rgb(157, 157, 156)"
         ),
         borderRadius: { topLeft: 5, topRight: 5 },
         barThickness,
@@ -280,7 +314,8 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     },
     scales: {
       y: {
-        max: Math.max(...(employmentValues.length ? employmentValues : [0])) * 1.2,
+        max:
+          Math.max(...(employmentValues.length ? employmentValues : [0])) * 1.2,
         beginAtZero: true,
         ticks: { display: false },
         grid: { display: false, drawTicks: false, drawBorder: false },
@@ -330,19 +365,29 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
       tooltip: { enabled: false, displayColors: false },
     },
     animation: { duration: 2000 },
-    jobsTotal: data?.esbfa_total_jobs ? formatUSNumber(data.esbfa_total_jobs) : "0",
+    jobsTotal: data?.esbfa_total_jobs
+      ? formatUSNumber(data.esbfa_total_jobs)
+      : "0",
   };
 
   // === Export / Import data ===
   const exportLabels =
-    data?.exports_top_exports_of_goods_by_industry?.map((i) => i.export_industry) || [];
+    data?.exports_top_exports_of_goods_by_industry?.map(
+      (i) => i.export_industry
+    ) || [];
   const exportValues =
-    data?.exports_top_exports_of_goods_by_industry?.map((i) => i.export_value) || [];
+    data?.exports_top_exports_of_goods_by_industry?.map(
+      (i) => i.export_value
+    ) || [];
 
   const importLabels =
-    data?.import_top_imports_of_goods_by_industry_from_switzerland?.map((i) => i.import_industry) || [];
+    data?.import_top_imports_of_goods_by_industry_from_switzerland?.map(
+      (i) => i.import_industry
+    ) || [];
   const importValues =
-    data?.import_top_imports_of_goods_by_industry_from_switzerland?.map((i) => i.import_value) || [];
+    data?.import_top_imports_of_goods_by_industry_from_switzerland?.map(
+      (i) => i.import_value
+    ) || [];
 
   // Dynamic left padding based on card widths
   const [leftPads, setLeftPads] = useState({ export: 48, import: 48 });
@@ -354,8 +399,20 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
       const labelFont = isLg() ? vp() * 0.00833 : vp() * 0.03889;
 
       setLeftPads({
-        export: computeLeftPadding(exportLabels, labelFont, wrapAt, exportW, 0.35),
-        import: computeLeftPadding(importLabels, labelFont, wrapAt, importW, 0.35),
+        export: computeLeftPadding(
+          exportLabels,
+          labelFont,
+          wrapAt,
+          exportW,
+          0.35
+        ),
+        import: computeLeftPadding(
+          importLabels,
+          labelFont,
+          wrapAt,
+          importW,
+          0.35
+        ),
       });
     };
     recalc();
@@ -400,7 +457,10 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
               return wrapLabel(lab, wrapAt);
             },
             color: "#111",
-            font: { size: isSm() ? labelFontSize * 0.8 : labelFontSize, weight: 500 },
+            font: {
+              size: isSm() ? labelFontSize * 0.8 : labelFontSize,
+              weight: 500,
+            },
           },
           value: {
             anchor: "end",
@@ -409,7 +469,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
             backgroundColor: "#FFF",
             color: "#000",
             borderRadius: 5,
-            padding: isSm() 
+            padding: isSm()
               ? { top: 2, bottom: 2, left: 6, right: 6 }
               : { top: 4, bottom: 4, left: 12, right: 12 },
             borderWidth: 1,
@@ -469,7 +529,10 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
               return wrapLabel(lab, wrapAt);
             },
             color: "#111",
-            font: { size: isSm() ? labelFontSize * 0.8 : labelFontSize, weight: 500 },
+            font: {
+              size: isSm() ? labelFontSize * 0.8 : labelFontSize,
+              weight: 500,
+            },
           },
           value: {
             anchor: "end",
@@ -478,7 +541,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
             backgroundColor: "#FFF",
             color: "#000",
             borderRadius: 5,
-            padding: isSm() 
+            padding: isSm()
               ? { top: 2, bottom: 2, left: 6, right: 6 }
               : { top: 4, bottom: 4, left: 12, right: 12 },
             borderWidth: 1,
@@ -502,54 +565,87 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     animation: { duration: 2000 },
   };
 
+  // get the pdf url from data
+  const pdfUrl =
+    data?.pdf_download_url ||
+    "/wp-content/uploads/2025/09/" + name + "-2025-Swiss-Impact.pdf";
+
   // Heights for chart canvases (taller on mobile so wrapped labels fit)
   const barChartHeight = isLg() ? 380 : 460;
   const employmentChartHeight = isLg() ? 360 : 320;
   const donutHeight = isLg() ? 340 : 300;
-
+ 
   return (
     <div ref={containerRef} className="pt-12 pb-5">
       {/* Header Section */}
-      <div className="flex flex-row items-end space-evenly" style={{ justifyContent: "space-between" }}>
+      <div
+        className="flex flex-row items-end space-evenly"
+        style={{ justifyContent: "space-between" }}
+      >
         <div>
           <h2 className="popup-title text-white">{name}</h2>
           <p className="popup-description text-white mt-2 mb-0">
             Residents of Swiss Descent:{" "}
             <strong>
-              {data?.resident_of_swiss_descent ? formatUSNumber(data?.resident_of_swiss_descent) : 0}
+              {data?.resident_of_swiss_descent
+                ? formatUSNumber(data?.resident_of_swiss_descent)
+                : 0}
             </strong>
           </p>
+        </div> 
+        <div className="flex gap-3">
+          <DownloadPDF pdfUrl={pdfUrl} />
+          <BackToMapButton />
         </div>
-        <BackToMapButton />
       </div>
 
       <div className="chart-container flex gap-6 mt-5 flex-col xl:flex-row">
         {/* Left column: charts */}
         <div className="bg-white p-3 md:p-6 rounded-3xl max-h-[1200px] overflow-y-scroll flex-1">
-          <h2 className="text-xl mb-4">Employment Supported by Foreign Affiliates, 2022</h2>
+          <h2 className="text-xl mb-4">
+            Employment Supported by Foreign Affiliates, 2022
+          </h2>
 
           <div className="flex gap-2 flex-col lg:flex-row">
             {/* Employment */}
             {employmentLabels.length > 0 && (
-              <div data-chart="employment" className="bg-white p-2 rounded-2xl w-full lg:w-1/2">
+              <div
+                data-chart="employment"
+                className="bg-white p-2 rounded-2xl w-full lg:w-1/2"
+              >
                 {isVisible.employment && (
                   <div style={{ height: employmentChartHeight }}>
-                    <Bar data={employmentChartData} options={employmentChartOptions} />
+                    <Bar
+                      data={employmentChartData}
+                      options={employmentChartOptions}
+                    />
                   </div>
                 )}
                 <p className="text-sm text-gray-600 mt-4">
-                  Swiss Affiliates account for {data?.esbfa_affiliate_percentage || 0}% of the{" "}
-                  {data?.esbfa_foreign_jobs ? formatUSNumber(data?.esbfa_foreign_jobs) : 0} jobs created by all
-                  foreign affiliates in {name === "United States" ? "the United States" : name}.
+                  Swiss Affiliates account for{" "}
+                  {data?.esbfa_affiliate_percentage || 0}% of the{" "}
+                  {data?.esbfa_foreign_jobs
+                    ? formatUSNumber(data?.esbfa_foreign_jobs)
+                    : 0}{" "}
+                  jobs created by all foreign affiliates in{" "}
+                  {name === "United States" ? "the United States" : name}.
                 </p>
               </div>
             )}
 
             {/* Jobs Doughnut */}
             {jobsSlices.some((v) => v > 0) && (
-              <div data-chart="jobs" className="bg-white p-6 rounded-2xl w-full lg:w-1/2">
-                <div className="w-full max-w-md mx-auto" style={{ height: donutHeight }}>
-                  {isVisible.jobs && <Doughnut data={jobsChartData} options={jobsChartOptions} />}
+              <div
+                data-chart="jobs"
+                className="bg-white p-6 rounded-2xl w-full lg:w-1/2"
+              >
+                <div
+                  className="w-full max-w-md mx-auto"
+                  style={{ height: donutHeight }}
+                >
+                  {isVisible.jobs && (
+                    <Doughnut data={jobsChartData} options={jobsChartOptions} />
+                  )}
                 </div>
                 <ul className="ei-donut-legend mt-4 text-sm text-gray-600 list-none">
                   <li>Jobs Supported by Swiss Affiliates</li>
@@ -570,7 +666,8 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                 ref={exportCardRef}
               >
                 <h2 className="text-xl font-semibold mb-4 leading-[1.2]">
-                  Top Exports of Goods by Industry from {name} to Switzerland, 2023
+                  Top Exports of Goods by Industry from {name} to Switzerland,
+                  2023
                 </h2>
                 {isVisible.export && (
                   <div style={{ height: barChartHeight }}>
@@ -579,7 +676,8 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                 )}
                 <div className="text-sm mt-4">
                   Total Export Value of Goods ={" "}
-                  {formatCurrency(data?.export_total_export_value_of_goods) || "$0"}
+                  {formatCurrency(data?.export_total_export_value_of_goods) ||
+                    "$0"}
                 </div>
               </div>
             )}
@@ -592,7 +690,8 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                 ref={importCardRef}
               >
                 <h2 className="text-xl font-semibold mb-4 leading-[1.2]">
-                  Top Imports of Goods by Industry from {name} to Switzerland, 2023
+                  Top Imports of Goods by Industry from {name} to Switzerland,
+                  2023
                 </h2>
                 {isVisible.import && (
                   <div style={{ height: barChartHeight }}>
@@ -601,7 +700,9 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                 )}
                 <div className="text-sm mt-4">
                   Total Import Value of Goods ={" "}
-                  {data?.import_total_import_value ? formatCurrency(data?.import_total_import_value) : "$0"}
+                  {data?.import_total_import_value
+                    ? formatCurrency(data?.import_total_import_value)
+                    : "$0"}
                 </div>
               </div>
             )}
@@ -614,7 +715,9 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
             Array.isArray(data?.companies_located_in_state) &&
             data.companies_located_in_state.length > 0 && (
               <div className="bg-white p-6 rounded-3xl lg:min-w-[300px]">
-                <h2 className="text-xl mb-4">Swiss Companies Located in {name}</h2>
+                <h2 className="text-xl mb-4">
+                  Swiss Companies Located in {name}
+                </h2>
                 <div className="grid max-h-[1000px] overflow-y-scroll grid-cols-1 sm:grid-cols-2 gap-2">
                   {data.companies_located_in_state.map((company, index) => (
                     <div key={index} className="text-sm text-gray-700 py-1">
