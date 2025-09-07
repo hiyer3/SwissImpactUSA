@@ -517,7 +517,7 @@ export default function SIMapControl() {
     const holder = document.getElementById("si-map");
 
     inlineSVG(
-      "/wp-content/themes/swissimpact_vite/assets/img/si-number-map/map.svg?ver=1.60",
+      "/wp-content/themes/swissimpact_vite/assets/img/si-number-map/map.svg?ver=1.61",
       holder
     ).then((el) => {
       svgEl = el;
