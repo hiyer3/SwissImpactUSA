@@ -25,7 +25,7 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
   const node = Array.isArray(preloadedData?.data)
     ? preloadedData.data[0]
     : null;
-console.log("SwissImpact node:", node);
+  console.log("SwissImpact node:", node);
   const impact = node
     ? {
         totalJobs: toNumber(node.total_jobs),
@@ -180,21 +180,34 @@ console.log("SwissImpact node:", node);
                   iconWidth={30}
                   iconPadding={40}
                 />
-                <CardContent
-                  description={`Top industry cluster in ${placeLabel}`}
-                  type="fullWidth"
-                ></CardContent>
                 <div className="flex">
-                  <div className="w-20 pr-10"></div>
+                  <div className="max-w-[80px] w-full"></div>
                   <div className={`flex flex-col mt-4`}>
-                    <p
-                      style={{ lineHeight: "1.1" }}
-                      className={`text-[30px] lg:text-[40px] xl:text-[40px] leading-[1.1] font-bold`}
-                    >
-                      {stateId == "united-states"
-                        ? impact.industryClusters.join(", ")
-                        : impact.industryClusters[0]}
-                    </p>
+                    {stateId == "united-states" ? (
+                      <>
+                        <p className="text-xl lg:text-2xl font-bold">
+                          Top industry cluster in {placeLabel}
+                        </p>
+                        <p
+                          style={{ lineHeight: "1.1" }}
+                          className={`text-lg lg:text-xl leading-[1.4] font-medium`}
+                        >
+                          {impact.industryClusters.join(", ")}
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-xl lg:text-2xl font-bold">
+                          Top industry cluster in {placeLabel}
+                        </p>
+                        <p
+                          style={{ lineHeight: "1.1" }}
+                          className={`text-[30px] lg:text-[40px] xl:text-[40px] leading-[1.1] font-bold`}
+                        >
+                          {impact.industryClusters[0]}
+                        </p>
+                      </>
+                    )}
                   </div>
                 </div>
               </Card>
