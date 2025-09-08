@@ -611,14 +611,14 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
         </div>
       </div>
 
-      <div className="chart-container flex gap-6 mt-5 flex-col xl:flex-row">
+      <div className="chart-container flex gap-6 mt-5 flex-col lg:flex-row">
         {/* Left column: charts */}
         <div className="bg-white p-3 md:p-6 rounded-3xl max-h-[1200px] overflow-y-scroll flex-1">
           <h2 className="text-xl mb-4">
             Employment Supported by Foreign Affiliates, 2022
           </h2>
 
-          <div className="flex gap-2 flex-col lg:flex-row">
+          <div className="flex gap-2 flex-col md:flex-row">
             {/* Employment */}
             {employmentLabels.length > 0 && (
               <div
@@ -669,7 +669,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
           </div>
 
           {/* Export/Import Charts Row */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             {/* Export Chart */}
             {exportLabels.length > 0 && (
               <div
@@ -731,11 +731,11 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
         <div>
           {Array.isArray(data?.companies_located_in_state) &&
             data.companies_located_in_state.length > 0 && (
-              <div className="bg-white p-6 rounded-3xl lg:min-w-[300px] max-w-xs">
+              <div className="bg-white p-6 rounded-3xl lg:min-w-[300px] lg:max-w-xs">
                 <h2 className="text-xl mb-4">
                   Swiss Companies Located in {name}
                 </h2>
-                <div className="grid max-h-[1000px] overflow-y-scroll grid-cols-1 sm:grid-cols-2 gap-2">
+                <div className="grid max-h-[1000px] overflow-y-scroll grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-2">
                   {data.companies_located_in_state.map((company, index) => (
                     <div key={index} className="text-sm text-gray-700 py-1">
                       {company.company_name}
