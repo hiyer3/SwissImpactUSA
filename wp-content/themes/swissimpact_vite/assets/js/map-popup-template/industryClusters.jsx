@@ -73,23 +73,23 @@ const IndustryClusters = (props) => {
     industryClustersData.forEach((item) => {
       // Array of cluster fields to iterate through
       const clusterFields = [
-        { key: 'cluster_1', fallback: 'field_1' },
-        { key: 'cluster_2', fallback: 'field_2' },
-        { key: 'cluster_3', fallback: 'field_3' },
-        { key: 'cluster_4', fallback: 'field_4' },
-        { key: 'cluster_5', fallback: 'field_5' },
-        { key: 'cluster_6', fallback: 'field_6' },
-        { key: 'cluster_7', fallback: 'field_7' },
+        { key: "cluster_1", fallback: "field_1" },
+        { key: "cluster_2", fallback: "field_2" },
+        { key: "cluster_3", fallback: "field_3" },
+        { key: "cluster_4", fallback: "field_4" },
+        { key: "cluster_5", fallback: "field_5" },
+        { key: "cluster_6", fallback: "field_6" },
+        { key: "cluster_7", fallback: "field_7" },
       ];
 
       clusterFields.forEach((field) => {
         const clusterValue = item?.[field.key] || item?.[field.fallback] || "";
-        
+
         // Only add non-empty clusters
         if (clusterValue.trim()) {
           flattenedData.push({
             id: rowId++,
-            cluster: clusterValue.trim()
+            cluster: clusterValue.trim(),
           });
         }
       });
@@ -114,9 +114,7 @@ const IndustryClusters = (props) => {
 
   // Memoize columns for the new 2-column format
   const columns = useMemo(
-    () => [
-      { key: "cluster", label: "Industry Cluster" },
-    ],
+    () => [{ key: "cluster", label: "Industry Cluster" }],
     []
   );
 
@@ -177,7 +175,10 @@ const IndustryClusters = (props) => {
             {props.name === "united-states" ? "the United States" : props.name}{" "}
             per GDP: <strong>{filteredData.length}</strong>
             {searchTerm && transformedData.length !== filteredData.length && (
-              <span className="text-gray-300"> (of {transformedData.length} total)</span>
+              <span className="text-gray-300">
+                {" "}
+                (of {transformedData.length} total)
+              </span>
             )}
           </p>
         </div>
@@ -189,8 +190,8 @@ const IndustryClusters = (props) => {
           <p className="text-xl font-black pb-0">
             Creating Positive Impact in U.S. Industry Clusters
           </p>
-          <PopupSearchInput 
-            onChange={handleInputChange} 
+          <PopupSearchInput
+            onChange={handleInputChange}
             value={searchTerm}
             placeholder="Search clusters..."
           />
@@ -208,8 +209,9 @@ const IndustryClusters = (props) => {
         ) : (
           <DataTable data={filteredData} columns={columns} />
         )}
-        <p className="text-xs text-gray-500 px-5">
-          Ranked by cluster&apos;s contribution to the state GDP.
+        <p className="text-xs text-gray-500 px-5 pt-3">
+          Ranked by cluster&apos;s contribution to the{" "}
+          {props.name === "United States" ? "national" : "state"} GDP.
         </p>
       </div>
     </div>

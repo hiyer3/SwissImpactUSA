@@ -7,7 +7,7 @@
 
 <?php get_header('minimal'); ?>
 
-<section class="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-4 w-11/12 mx-auto lg:mx-0 pt-20 pb-10 post-content">
+<section class="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-4 w-11/12 mx-auto lg:mx-0 pt-10 md:pt-20 pb-10 post-content">
     <div class="lg:mx-12">
         <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/hero-economic-icon-2x.png" alt="Economic Impact US Map Icon" class="w-full max-w-[165px]" />
     </div>

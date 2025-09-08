@@ -1,6 +1,7 @@
 // SIMapControl.jsx — Single fetch + heatmap overlay + consulate choropleth
 // + map-filter-aware popup tabs + tab persistence rules + back-to-map reset
 // + legend switching + robust popup-close reset to current map filter
+// + US companies aggregation for EconomicImpact
 
 import { h } from "preact";
 import {
@@ -227,7 +228,16 @@ const deriveFromAcf = (acf, dataType) => {
         (econ.esbfa_total_jobs || 0) > 0 ||
         (econ.resident_of_swiss_descent || 0) > 0 ||
         Object.keys(econ).some((k) => econ[k] && econ[k] !== 0);
-      return hasMeaningful ? [econ] : [];
+
+      if (!hasMeaningful) return [];
+      console.log("econ", acf.economic_impact);
+      // ✅ Attach companies list if present on ACF (for U.S. aggregated case)
+      const payload = { ...econ };
+      if (Array.isArray(acf.economic_impact.companies_located_in_state)) {
+        payload.companies_located_in_state =
+          acf.economic_impact.companies_located_in_state;
+      }
+      return [payload];
     }
 
     default:
@@ -289,20 +299,18 @@ export default function SIMapControl() {
   const [prefetchError, setPrefetchError] = useState(null);
   const [, forceUpdate] = useState(0);
 
-  // ---- persist last popup tab (used when map filter is "see all")
+  // ---- persist last popup tab
   const lastSelectedFilterRef = useRef(FILTERS.SEE_ALL);
   useEffect(() => {
     lastSelectedFilterRef.current = singleStateData.selectedFilter;
   }, [singleStateData.selectedFilter]);
 
-  // ---- track current MAP filter (controls overlays + default popup tab)
+  // ---- map filter + popup state
   const currentMapFilterRef = useRef("si-filter-see-all");
-
-  // ---- track popup open/close, and user's tab override while open
   const popupOpenRef = useRef(false);
   const userTabOverrideRef = useRef(null);
 
-  // ---- heatmap data (built once after fetch)
+  // ---- heatmap data
   const [heatmapArray, setHeatmapArray] = useState([]);
   const heatmapByStateRef = useRef({});
   const [heatmapStats, setHeatmapStats] = useState({
@@ -311,7 +319,7 @@ export default function SIMapControl() {
     maxTotal: 0,
   });
 
-  // ===== Legend switcher (map filter → legend UI) =====
+  // ===== Legend switcher =====
   const updateLegendsForFilter = (filterId) => {
     const sciAppr = document.getElementById(
       "science-academia-apprenticeship-legends"
@@ -448,6 +456,7 @@ export default function SIMapControl() {
 
         const aggSci = [];
         const aggAppr = [];
+        // (You can replace the hardcoded clusters with your unique-union later if needed)
         const aggClusters = [
           {
             cluster_1: "Mining",
@@ -460,6 +469,7 @@ export default function SIMapControl() {
           },
         ];
         const aggReps = [];
+        const aggCompanies = []; // ✅ collect all companies across states
 
         nonUsEntries.forEach(([slug, acf]) => {
           if (Array.isArray(acf?.["science_&_academia_fields"])) {
@@ -477,6 +487,16 @@ export default function SIMapControl() {
               }))
             );
           }
+          // ✅ aggregate companies list (keep original objects; optionally tag statecode)
+          if (Array.isArray(acf?.economic_impact.companies_located_in_state)) {
+            const sc = acf?.state_short_code || "";
+            aggCompanies.push(
+              ...acf.economic_impact.companies_located_in_state.map((c) => ({
+                ...c,
+                statecode: c?.statecode ?? sc,
+              }))
+            );
+          }
         });
 
         // Merge into existing US ACF, preserving economic_impact if present
@@ -488,6 +508,9 @@ export default function SIMapControl() {
           swiss_representations: aggReps,
           // keep existing economic_impact as-is
         };
+        usACF.economic_impact.companies_located_in_state = aggCompanies;
+
+        console.log(usACF);
         cache["united-states"] = usACF;
 
         rawStateCacheRef.current = cache;
@@ -670,37 +693,29 @@ export default function SIMapControl() {
     }
   }, [singleStateData.selectedFilter, memoizedComponents]);
 
-  // ===== Reset helper: set popup tab back to current map-filter-implied tab =====
-  // ===== Reset helper: set popup tab back to current map-filter-implied tab,
-  // and KEEP/REPAINT the correct overlay instead of clearing it.
+  // ===== Reset helper to map filter tab & overlay =====
   const resetToMapFilterTab = useCallback(() => {
-    // Prefer ref; fallback to DOM active button if ref is stale
     const fallbackActive =
       document.querySelector("#si-map-filter .single-filter-item.active")?.id ||
       "si-filter-see-all";
     const mapFilterId = currentMapFilterRef.current || fallbackActive;
     const mappedTab = MAP_FILTER_TO_POPUP[mapFilterId] || FILTERS.SEE_ALL;
 
-    // Reset the popup tab selection to match the map filter
     setSingleStateData((prev) => ({ ...prev, selectedFilter: mappedTab }));
     lastSelectedFilterRef.current = mappedTab;
-
-    // Popup closed → forget user override, mark closed
     userTabOverrideRef.current = null;
     popupOpenRef.current = false;
 
-    // Sync legends to the current filter
     updateLegendsForFilter(mapFilterId);
 
-    // Repaint the overlay to match the CURRENT map filter (do NOT clear)
     const svgRoot =
       document.querySelector("#si-map svg") ||
       document.querySelector("#si-map");
     if (!svgRoot) return;
 
     if (mapFilterId === "si-filter-science-academia") {
-      clearHeatmap(svgRoot); // clear any prior fill state first
-      paintHeatmap(svgRoot, "science"); // repaint science overlay
+      clearHeatmap(svgRoot);
+      paintHeatmap(svgRoot, "science");
     } else if (mapFilterId === "si-filter-apprenticeship-companies") {
       clearHeatmap(svgRoot);
       paintHeatmap(svgRoot, "apprenticeship");
@@ -708,7 +723,6 @@ export default function SIMapControl() {
       clearHeatmap(svgRoot);
       paintConsulateMap(svgRoot);
     } else {
-      // see-all or other filters: no overlay
       clearHeatmap(svgRoot);
     }
   }, [clearHeatmap, paintHeatmap, paintConsulateMap]);
@@ -801,10 +815,7 @@ export default function SIMapControl() {
         const preferredFromMap =
           MAP_FILTER_TO_POPUP[mapFilterId] || FILTERS.SEE_ALL;
 
-        // RULES:
-        // 1) When opening from map filter, use mapped tab
-        // 2) If user changed tab in popup and popup is still open, keep user selection
-        // 3) If popup is closed, default to mapped tab again
+        // RULES (respect user tab while popup open)
         let requestedTab;
         if (popupOpenRef.current && userTabOverrideRef.current) {
           requestedTab = userTabOverrideRef.current;
@@ -841,7 +852,6 @@ export default function SIMapControl() {
           selectedFilter: nextSelected,
         }));
 
-        // Remember and mark popup as open
         lastSelectedFilterRef.current = nextSelected;
         popupOpenRef.current = true;
 
@@ -849,38 +859,21 @@ export default function SIMapControl() {
       };
 
       const onSvgClick = (e) => {
-        let stateGroup =
+        const stateGroup =
           e.target.closest(".single-state") || e.target.closest(".singe-state");
+        if (!stateGroup) return;
 
-        if (stateGroup === null) return;
-
-        if (stateGroup) {
-          const firstChild = stateGroup.firstElementChild;
-          const stateName = firstChild?.getAttribute("data-name");
-          const stateId = firstChild?.classList[0];
-          if (stateId && stateName) {
-            openState(stateName, stateId);
-            return;
-          }
+        const firstChild = stateGroup.firstElementChild;
+        const stateName = firstChild?.getAttribute("data-name");
+        const stateId = firstChild?.classList[0];
+        if (stateId && stateName) {
+          openState(stateName, stateId);
         }
-
-        const getStateInfo = (element) => {
-          if (!element || !element.getAttribute) return null;
-          const stateId = element.id || element.getAttribute("data-state");
-          const stateName = element.getAttribute("data-name");
-          if (stateId && stateId.length > 0) {
-            return { stateId, stateName: stateName || stateId };
-          }
-          return null;
-        };
-
-        const info = getStateInfo(e.target);
-        if (info) openState(info.stateName, info.stateId);
       };
 
       svgEl.addEventListener("click", onSvgClick, { signal });
 
-      // Map filter buttons: remember current filter, toggle markers/legend, and manage overlays
+      // Map filter buttons
       const mapFilters = document.querySelectorAll(
         "#si-map-filter .single-filter-item"
       );
@@ -891,10 +884,9 @@ export default function SIMapControl() {
             const filterId = e.currentTarget.getAttribute("id");
             currentMapFilterRef.current = filterId;
 
-            // sync legends with the selected filter
             updateLegendsForFilter(filterId);
 
-            // marker visibility (preserved)
+            // marker visibility
             for (const child of svgEl.querySelectorAll("[class*='si-']")) {
               if (filterId === "si-filter-see-all") {
                 child.style.opacity = "1";
@@ -906,7 +898,6 @@ export default function SIMapControl() {
             mapFilters.forEach((f) => f.classList.remove("active"));
             e.currentTarget.classList.add("active");
 
-            // (Keep any other legend you use, e.g., #KEY)
             const legend = document.getElementById("KEY");
             if (
               filterId !== "si-filter-see-all" &&
@@ -917,7 +908,7 @@ export default function SIMapControl() {
               legend?.classList.remove("hidden");
             }
 
-            // HEATMAP / CONSULATE overlay
+            // overlays
             if (filterId === "si-filter-science-academia") {
               clearHeatmap(svgEl);
               paintHeatmap(svgEl, "science");
@@ -1107,7 +1098,6 @@ export default function SIMapControl() {
       const id = el.getAttribute("id");
       if (!id) return;
 
-      // Persist user’s chosen tab while popup is open
       userTabOverrideRef.current = id;
       lastSelectedFilterRef.current = id;
 
@@ -1118,7 +1108,7 @@ export default function SIMapControl() {
     return () => ac.abort();
   }, [paintHeatmap, clearHeatmap, paintConsulateMap]);
 
-  // If data loads after the user already selected an overlay filter, reapply + fix legends
+  // If data loads after user selected an overlay filter, reapply + fix legends
   useEffect(() => {
     if (!isAllLoaded) return;
     const svgRoot =
@@ -1127,8 +1117,6 @@ export default function SIMapControl() {
     if (!svgRoot) return;
 
     const filterId = currentMapFilterRef.current;
-
-    // ensure legends match current filter on load
     updateLegendsForFilter(filterId);
 
     if (filterId === "si-filter-science-academia") {
@@ -1145,7 +1133,7 @@ export default function SIMapControl() {
     }
   }, [isAllLoaded, paintHeatmap, clearHeatmap, paintConsulateMap]);
 
-  // back-to-map: call the shared reset helper
+  // back-to-map
   useEffect(() => {
     const onBackToMap = () => {
       resetToMapFilterTab();
@@ -1154,7 +1142,7 @@ export default function SIMapControl() {
     return () => window.removeEventListener("si:back-to-map", onBackToMap);
   }, [resetToMapFilterTab]);
 
-  // Observe popup visibility: if it gets hidden (any method), reset tab to map filter
+  // Observe popup visibility → reset tab to map filter when closed
   useEffect(() => {
     const popup = document.querySelector(".data-popup");
     if (!popup) return;
