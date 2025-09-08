@@ -189,25 +189,6 @@ const deriveFromAcf = (acf, dataType) => {
         ? acf.swiss_representations
         : [];
 
-      let firstClusterLabel = null;
-      if (clustersArr.length) {
-        const c0 = clustersArr[0];
-        if (typeof c0 === "string") firstClusterLabel = c0;
-        else if (c0 && typeof c0 === "object") {
-          firstClusterLabel =
-            c0.cluster_1 ||
-            c0.name ||
-            c0.cluster_name ||
-            c0.title ||
-            c0.label ||
-            c0.value ||
-            c0.post_title ||
-            null;
-        }
-      }
-
-      console.log(clustersArr);
-
       const payload = {
         ...(econ.esbfa_total_jobs > 0 && { total_jobs: econ.esbfa_total_jobs }),
         ...(econ.resident_of_swiss_descent > 0 && {
@@ -215,7 +196,9 @@ const deriveFromAcf = (acf, dataType) => {
         }),
         ...(sciArr.length > 0 && { science_academia: sciArr.length }),
         ...(apprArr.length > 0 && { apprenticeship_companies: apprArr.length }),
-        ...(firstClusterLabel && { industry_clusters: [firstClusterLabel] }),
+        ...(clustersArr && {
+          industry_clusters: Object.values(clustersArr[0]),
+        }),
         ...(repsArr.length > 0 && { swiss_representations: repsArr }),
         statecode: acf.state_short_code || "",
       };
@@ -511,7 +494,6 @@ export default function SIMapControl() {
         };
         usACF.economic_impact.companies_located_in_state = aggCompanies;
 
-        console.log(usACF);
         cache["united-states"] = usACF;
 
         rawStateCacheRef.current = cache;
