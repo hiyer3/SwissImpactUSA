@@ -181,16 +181,19 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                   iconPadding={40}
                 />
                 <CardContent
-                  description={`Top industry cluster in ${placeLabel}`} type="fullWidth"
+                  description={`Top industry cluster in ${placeLabel}`}
+                  type="fullWidth"
                 ></CardContent>
                 <div className="flex">
-                  <div className="w-20"></div>
+                  <div className="w-20 pr-10"></div>
                   <div className={`flex flex-col mt-4`}>
                     <p
                       style={{ lineHeight: "1.1" }}
                       className={`text-[30px] lg:text-[40px] xl:text-[40px] leading-[1.1] font-bold`}
                     >
-                      {impact.industryClusters[0]}
+                      {stateId == "united-states"
+                        ? impact.industryClusters.join(", ")
+                        : impact.industryClusters[0]}
                     </p>
                   </div>
                 </div>

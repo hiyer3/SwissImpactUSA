@@ -60,7 +60,6 @@ const DataTable = ({
                 style={{ width: idColumnWidth, minWidth: idColumnWidth }}
                 onClick={() => handleSort("id")}
               >
-                ID
                 {sortConfig && sortConfig.key === "id" && (
                   <span className={`sort-icon ${sortConfig.direction} ml-1`}>
                     {sortConfig.direction === "asc" ? "▲" : "▼"}
@@ -128,8 +127,8 @@ const DataTable = ({
           
           return (
             <div
-              key={itemId}
-              className="border-b border-gray-200 bg-white shadow-sm"
+              key={itemId} 
+              className="border-b border-[#ccc] bg-white shadow-sm"
             >
               {/* Accordion Header */}
               <button
@@ -163,7 +162,7 @@ const DataTable = ({
 
               {/* Accordion Content */}
               {isOpen && (
-                <div className="px-4 pb-4 border-t border-gray-100">
+                <div className="px-4 pb-4 border-t border-[#ccc]">
                   <div className="space-y-3 pt-3">
                     {columns.map((column) => (
                       <div key={column.key} className="flex flex-col space-y-1">

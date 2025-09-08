@@ -131,21 +131,21 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     return lines;
   };
 
-  // UPDATED: compute padding capped by container width
+  // Compute padding capped by container width - more conservative approach
   const computeLeftPadding = (
     labels,
     fontPx,
-    wrapAt = 22,
+    wrapAt = 20,
     containerW = 320,
-    maxContainerShare = 0.35 // Reduced from 0.45 to 0.35
+    maxContainerShare = 0.25
   ) => {
     const widths = labels.map((lab) => {
       const lines = wrapLabel(lab, wrapAt);
       const longest = Math.max(...lines.map((ln) => ln.length), 0);
-      return longest * fontPx * 0.6; // approx px width
+      return longest * fontPx * 0.5;
     });
     const widest = Math.max(0, ...widths);
-    const raw = Math.max(Math.ceil(widest) + 16, 32);
+    const raw = Math.max(Math.ceil(widest) + 8, 24);
     const maxByCard = Math.floor(containerW * maxContainerShare);
     return Math.min(raw, maxByCard);
   };
@@ -260,12 +260,17 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     );
   }
 
-  // ===== Chart configs (compute sizes from viewport safely) =====
-  const barThickness = isLg() ? vp() * 0.025 : vp() * 0.0468;
-  const labelFontSize = isLg() ? vp() * 0.00833 : vp() * 0.03889;
+  // ===== Chart font sizes (add +1px everywhere) =====
+  const labelFontBase = isLg() ? vp() * 0.008 : vp() * 0.032;
+  const plus1 = 1;
+  const labelFontSize = Math.round(labelFontBase) + plus1; // base labels +1px
+  const scaled = (mult) => Math.max(8, Math.round(labelFontBase * mult) + plus1);
 
-  // Dynamic wrap length (shorter on mobile)
-  const wrapAt = isLg() ? 28 : 16;
+  // ===== Chart configs (compute sizes from viewport safely) =====
+  const barThickness = isLg() ? vp() * 0.02 : vp() * 0.04;
+
+  // Shorter wrap length to prevent overflow
+  const wrapAt = isLg() ? 20 : 10;
 
   // === Employment Chart ===
   const employmentLabels =
@@ -304,10 +309,10 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
         backgroundColor: "#FFF",
         color: "#000",
         borderRadius: 5,
-        padding: { top: 4, bottom: 4, left: 12, right: 12 },
+        padding: { top: 3, bottom: 3, left: 8, right: 8 },
         borderWidth: 0,
         borderColor: "#EDEEEE",
-        font: { size: labelFontSize },
+        font: { size: labelFontSize }, // +1px
       },
       legend: { display: false },
       tooltip: { enabled: false },
@@ -315,14 +320,15 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     scales: {
       y: {
         max:
-          Math.max(...(employmentValues.length ? employmentValues : [0])) * 1.2,
+          Math.max(...(employmentValues.length ? employmentValues : [0])) *
+          1.15,
         beginAtZero: true,
         ticks: { display: false },
         grid: { display: false, drawTicks: false, drawBorder: false },
       },
       x: {
         grid: { display: false, drawBorder: false },
-        ticks: { font: { size: labelFontSize } },
+        ticks: { font: { size: labelFontSize } }, // +1px
       },
     },
     animation: { duration: 2000 },
@@ -356,10 +362,10 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
         backgroundColor: "#FFF",
         color: "#000",
         borderRadius: 5,
-        padding: { top: 4, bottom: 4, left: 12, right: 12 },
+        padding: { top: 3, bottom: 3, left: 8, right: 8 },
         borderWidth: 1,
         borderColor: "#EDEEEE",
-        font: { size: Math.max(10, labelFontSize * 0.85) }, // Reduced font size
+        font: { size: scaled(0.8) }, // +1px relative
       },
       legend: { display: false },
       tooltip: { enabled: false, displayColors: false },
@@ -390,13 +396,13 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     ) || [];
 
   // Dynamic left padding based on card widths
-  const [leftPads, setLeftPads] = useState({ export: 48, import: 48 });
+  const [leftPads, setLeftPads] = useState({ export: 32, import: 32 });
 
   useEffect(() => {
     const recalc = () => {
       const exportW = exportCardRef.current?.offsetWidth ?? vp();
       const importW = importCardRef.current?.offsetWidth ?? vp();
-      const labelFont = isLg() ? vp() * 0.00833 : vp() * 0.03889;
+      const labelFont = Math.round(isLg() ? vp() * 0.008 : vp() * 0.032) + 1; // +1px
 
       setLeftPads({
         export: computeLeftPadding(
@@ -404,21 +410,20 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
           labelFont,
           wrapAt,
           exportW,
-          0.35
+          0.25
         ),
         import: computeLeftPadding(
           importLabels,
           labelFont,
           wrapAt,
           importW,
-          0.35
+          0.25
         ),
       });
     };
     recalc();
     window.addEventListener("resize", recalc);
     return () => window.removeEventListener("resize", recalc);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(exportLabels), JSON.stringify(importLabels), wrapAt]);
 
   // Export Chart
@@ -430,8 +435,9 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
         backgroundColor: "rgb(157, 157, 156)",
         borderRadius: { topRight: 5, bottomRight: 5 },
         barThickness,
-        categoryPercentage: 0.85, // Increased from 0.8 to reduce spacing
-        barPercentage: 0.95, // Increased from 0.9 to reduce spacing
+        // ↓ narrower bars so nothing overflows
+        categoryPercentage: 0.55,
+        barPercentage: 0.65,
       },
     ],
   };
@@ -440,7 +446,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     responsive: true,
     maintainAspectRatio: false,
     indexAxis: "y",
-    layout: { padding: { left: leftPads.export } },
+    layout: { padding: { left: leftPads.export, right: 16 } }, // add right padding
     plugins: {
       legend: { display: false },
       tooltip: { enabled: false },
@@ -449,7 +455,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
           industry: {
             anchor: "start",
             align: "left",
-            offset: isSm() ? 1 : 6, // Negative offset on mobile to move labels left
+            offset: isSm() ? -4 : 2,
             clip: false,
             textAlign: "left",
             formatter: (_, ctx) => {
@@ -458,30 +464,33 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
             },
             color: "#111",
             font: {
-              size: isSm() ? labelFontSize * 0.8 : labelFontSize,
+              size: isSm() ? scaled(0.7) : scaled(0.85), // +1px
               weight: 500,
             },
           },
           value: {
             anchor: "end",
             align: "right",
+            offset: -4,
+            clip: true, // keep value pill inside chart
             formatter: (val) => formatCurrency(val),
             backgroundColor: "#FFF",
             color: "#000",
-            borderRadius: 5,
+            borderRadius: 4,
             padding: isSm()
-              ? { top: 2, bottom: 2, left: 6, right: 6 }
-              : { top: 4, bottom: 4, left: 12, right: 12 },
+              ? { top: 1, bottom: 1, left: 3, right: 3 }
+              : { top: 2, bottom: 2, left: 6, right: 6 },
             borderWidth: 1,
             borderColor: "#EDEEEE",
-            font: { size: isSm() ? labelFontSize * 0.8 : labelFontSize },
+            font: { size: isSm() ? scaled(0.7) : scaled(0.85) }, // +1px
           },
         },
       },
     },
     scales: {
       x: {
-        max: Math.max(...(exportValues.length ? exportValues : [0])) * 1.2, // Reduced from 1.35
+        // a touch more headroom so bars + value pills don't bump the edge
+        max: Math.max(...(exportValues.length ? exportValues : [0])) * 1.12,
         grid: { display: false, drawBorder: false },
         ticks: { display: false },
       },
@@ -502,8 +511,9 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
         backgroundColor: "rgb(157, 157, 156)",
         borderRadius: { topRight: 5, bottomRight: 5 },
         barThickness,
-        categoryPercentage: 0.85, // Increased from 0.8 to reduce spacing
-        barPercentage: 0.95, // Increased from 0.9 to reduce spacing
+        // ↓ narrower bars
+        categoryPercentage: 0.55,
+        barPercentage: 0.65,
       },
     ],
   };
@@ -512,7 +522,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     responsive: true,
     maintainAspectRatio: false,
     indexAxis: "y",
-    layout: { padding: { left: leftPads.import } },
+    layout: { padding: { left: leftPads.import, right: 16 } }, // add right padding
     plugins: {
       legend: { display: false },
       tooltip: { enabled: false },
@@ -521,7 +531,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
           industry: {
             anchor: "start",
             align: "left",
-            offset: isSm() ? 1 : 6, // Negative offset on mobile to move labels left
+            offset: isSm() ? -4 : 2,
             clip: false,
             textAlign: "left",
             formatter: (_, ctx) => {
@@ -530,30 +540,32 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
             },
             color: "#111",
             font: {
-              size: isSm() ? labelFontSize * 0.8 : labelFontSize,
+              size: isSm() ? scaled(0.7) : scaled(0.85), // +1px
               weight: 500,
             },
           },
           value: {
             anchor: "end",
             align: "right",
+            offset: -4,
+            clip: true,
             formatter: (val) => formatCurrency(val),
             backgroundColor: "#FFF",
             color: "#000",
-            borderRadius: 5,
+            borderRadius: 4,
             padding: isSm()
-              ? { top: 2, bottom: 2, left: 6, right: 6 }
-              : { top: 4, bottom: 4, left: 12, right: 12 },
+              ? { top: 1, bottom: 1, left: 3, right: 3 }
+              : { top: 2, bottom: 2, left: 6, right: 6 },
             borderWidth: 1,
             borderColor: "#EDEEEE",
-            font: { size: isSm() ? labelFontSize * 0.8 : labelFontSize },
+            font: { size: isSm() ? scaled(0.7) : scaled(0.85) }, // +1px
           },
         },
       },
     },
     scales: {
       x: {
-        max: Math.max(...(importValues.length ? importValues : [0])) * 1.2, // Reduced from 1.35
+        max: Math.max(...(importValues.length ? importValues : [0])) * 1.12,
         grid: { display: false, drawBorder: false },
         ticks: { display: false },
       },
@@ -570,11 +582,11 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     data?.pdf_download_url ||
     "/wp-content/uploads/2025/09/" + name + " 2025 Swiss Impact.pdf";
 
-  // Heights for chart canvases (taller on mobile so wrapped labels fit)
-  const barChartHeight = isLg() ? 380 : 460;
-  const employmentChartHeight = isLg() ? 360 : 320;
-  const donutHeight = isLg() ? 340 : 300;
- 
+  // Heights for chart canvases
+  const barChartHeight = isLg() ? 300 : 240;
+  const employmentChartHeight = isLg() ? 340 : 280;
+  const donutHeight = isLg() ? 320 : 280;
+
   return (
     <div ref={containerRef} className="pt-12 pb-5">
       {/* Header Section */}
@@ -592,7 +604,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                 : 0}
             </strong>
           </p>
-        </div> 
+        </div>
         <div className="flex gap-3">
           <DownloadPDF pdfUrl={pdfUrl} />
           <BackToMapButton />
@@ -662,15 +674,18 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
             {exportLabels.length > 0 && (
               <div
                 data-chart="export"
-                className="bg-white p-6 rounded-3xl"
+                className="bg-white p-4 rounded-3xl overflow-hidden"
                 ref={exportCardRef}
               >
-                <h2 className="text-xl font-semibold mb-4 leading-[1.2]">
+                <h2 className="text-lg font-semibold mb-4 leading-[1.2]">
                   Top Exports of Goods by Industry from {name} to Switzerland,
                   2023
                 </h2>
                 {isVisible.export && (
-                  <div style={{ height: barChartHeight }}>
+                  <div
+                    style={{ height: barChartHeight }}
+                    className="overflow-hidden"
+                  >
                     <Bar data={exportChartData} options={exportChartOptions} />
                   </div>
                 )}
@@ -686,15 +701,18 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
             {importLabels.length > 0 && (
               <div
                 data-chart="import"
-                className="bg-white p-6 rounded-3xl"
+                className="bg-white p-4 rounded-3xl overflow-hidden"
                 ref={importCardRef}
               >
-                <h2 className="text-xl font-semibold mb-4 leading-[1.2]">
+                <h2 className="text-lg font-semibold mb-4 leading-[1.2]">
                   Top Imports of Goods by Industry from {name} to Switzerland,
                   2023
                 </h2>
                 {isVisible.import && (
-                  <div style={{ height: barChartHeight }}>
+                  <div
+                    style={{ height: barChartHeight }}
+                    className="overflow-hidden"
+                  >
                     <Bar data={importChartData} options={importChartOptions} />
                   </div>
                 )}
@@ -711,10 +729,9 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
 
         {/* Right column: Companies list */}
         <div>
-          {name !== "United States" &&
-            Array.isArray(data?.companies_located_in_state) &&
+          {Array.isArray(data?.companies_located_in_state) &&
             data.companies_located_in_state.length > 0 && (
-              <div className="bg-white p-6 rounded-3xl lg:min-w-[300px]">
+              <div className="bg-white p-6 rounded-3xl lg:min-w-[300px] max-w-xs">
                 <h2 className="text-xl mb-4">
                   Swiss Companies Located in {name}
                 </h2>
