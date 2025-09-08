@@ -206,6 +206,8 @@ const deriveFromAcf = (acf, dataType) => {
         }
       }
 
+      console.log(clustersArr);
+
       const payload = {
         ...(econ.esbfa_total_jobs > 0 && { total_jobs: econ.esbfa_total_jobs }),
         ...(econ.resident_of_swiss_descent > 0 && {
@@ -230,7 +232,6 @@ const deriveFromAcf = (acf, dataType) => {
         Object.keys(econ).some((k) => econ[k] && econ[k] !== 0);
 
       if (!hasMeaningful) return [];
-      console.log("econ", acf.economic_impact);
       // ✅ Attach companies list if present on ACF (for U.S. aggregated case)
       const payload = { ...econ };
       if (Array.isArray(acf.economic_impact.companies_located_in_state)) {
@@ -736,7 +737,8 @@ export default function SIMapControl() {
     const holder = document.getElementById("si-map");
 
     inlineSVG(
-      "/wp-content/themes/swissimpact_vite/assets/img/si-number-map/map.svg?ver=1.61",
+      "/wp-content/themes/swissimpact_vite/assets/img/si-number-map/map.svg?ver=" +
+        Date.now(),
       holder
     ).then((el) => {
       svgEl = el;
