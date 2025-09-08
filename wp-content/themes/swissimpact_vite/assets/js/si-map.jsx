@@ -335,15 +335,21 @@ export default function SIMapControl() {
     }
   };
 
-  // ===== Heatmap painters =====
+  // ===== Heatmap painters (bucketed colors) =====
+  const getBucketColor = (val) => {
+    const n = Number(val) || 0;
+    if (n >= 80) return "#ff5c5c"; // 80+
+    if (n >= 60) return "#ff5c5ccc"; // 60–79
+    if (n >= 40) return "#ff5c5c99"; // 40–59
+    if (n >= 20) return "#ff5c5c66"; // 20–39
+    return "#ff5c5c33"; // 0–19
+  };
+
   const paintHeatmap = useCallback(
     (svgRoot, category /* "science" | "apprenticeship" */) => {
       if (!svgRoot) return;
+
       const byState = heatmapByStateRef.current || {};
-      const max =
-        category === "science"
-          ? heatmapStats.maxScience || 1
-          : heatmapStats.maxApprenticeship || 1;
 
       svgRoot.querySelectorAll(".single-state").forEach((group) => {
         const first = group.firstElementChild;
@@ -357,8 +363,7 @@ export default function SIMapControl() {
             : row.apprenticeshipCompanies
           : 0;
 
-        const t = Math.max(0, Math.min(1, value / max)); // 0..1
-        const fill = `rgba(255, 92, 92, ${0.12 + 0.88 * t})`;
+        const fill = getBucketColor(value);
 
         group.querySelectorAll("path, polygon, rect").forEach((shape) => {
           if (!shape.dataset.origFill) {
@@ -369,7 +374,7 @@ export default function SIMapControl() {
         });
       });
     },
-    [heatmapStats.maxApprenticeship, heatmapStats.maxScience]
+    [] // bucketed colors don't depend on max values
   );
 
   const clearHeatmap = useCallback((svgRoot) => {
