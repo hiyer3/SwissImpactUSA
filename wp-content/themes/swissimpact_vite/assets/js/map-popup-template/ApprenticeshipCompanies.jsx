@@ -178,7 +178,7 @@ const ApprenticeshipCompanies = (props) => {
         <BackToMapButton />
       </div>
 
-      <div className="bg-white mt-5 rounded-3xl popup-table-content">
+      <div className="bg-white mt-5 rounded-3xl popup-table-content overflow-hidden">
         <div className="mt-4 p-8 w-full flex justify-between gap-6 sm:gap-9 sm:items-center flex-col sm:flex-row">
           <p className="text-xl font-black pb-0">
             Investing in the Next Generation of Skilled Workers

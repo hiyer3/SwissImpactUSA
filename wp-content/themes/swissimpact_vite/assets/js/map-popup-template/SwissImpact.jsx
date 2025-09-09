@@ -109,7 +109,7 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
           </div>
         </div>
       ) : (
-        <div className="bg-swissred rounded-3xl popup-table-content mt-5">
+        <div className="bg-swissred rounded-3xl popup-table-content mt-5 max-h-[1200px] h-full lg:max-h-[78vw] overflow-scroll">
           {/* Top metrics */}
           <CardWrapper cols={2}>
             {impact.totalJobs > 0 && (

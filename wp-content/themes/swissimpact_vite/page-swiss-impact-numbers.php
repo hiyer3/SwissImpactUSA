@@ -103,7 +103,7 @@
             <div class="overflow-hidden">
                 <div class="popup-filter-wrapper flex flex-col min-w-0 relative bg-white">
                     <div class="min-w-0 overflow-x-auto scroll-smooth no-scrollbar overscroll-x-contain [-webkit-overflow-scrolling:touch]">
-                        <div id="si-map-popup-filter" class="flex gap-4 px-4 min-w-max">
+                        <div id="si-map-popup-filter" class="flex gap-4 px-2 md:px-4 min-w-max">
                             <div class="single-popup-filter active" id="si-popup-filter-see-all" title="See All">
                                 <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/si-bp-tab-see-all-2x.png" alt="See All Icon" class="w-full" />
                             </div>

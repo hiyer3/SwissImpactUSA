@@ -214,6 +214,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
   /* ---------- responsive sizing (tablet-safe & thicker bars) ---------- */
   const vw = useViewportWidth();
   const bp = vw < 768 ? "sm" : vw <= 1024 ? "md" : "lg";
+  const isSymmetric = bp !== "lg";
 
   // Base label px (clamped per breakpoint) +1px bump
   const baseLabelPx =
@@ -448,8 +449,8 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
   };
 
   // Reduced category and bar percentages for more label space
-  const catPct = bp === "md" ? 0.5 : 0.45; // Reduced from 0.68/0.6
-  const barPct = bp === "md" ? 0.6 : 0.55; // Reduced from 0.78/0.7
+  const catPct = bp === "md" ? 1 : 0.45; // Reduced from 0.68/0.6
+  const barPct = bp === "md" ? 1 : 0.55; // Reduced from 0.78/0.7
 
   const exportChartData = {
     labels: exportLabels,
@@ -469,7 +470,11 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     responsive: true,
     maintainAspectRatio: false,
     indexAxis: "y",
-    layout: { padding: { left: leftPads.export, right: 16 } }, // Increased right padding
+    layout: {
+      padding: isSymmetric
+        ? { left: leftPads.export, right: leftPads.export, bottom: 16 }
+        : { left: leftPads.export, right: 16, bottom: 16 },
+    },
     plugins: {
       legend: { display: false },
       tooltip: { enabled: false },
@@ -517,7 +522,9 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     },
     scales: {
       x: {
-        max: Math.max(...(exportValues.length ? exportValues : [0])) * 1.1, // Reduced from 1.08 to 1.1 for more space
+        max:
+          Math.max(...(exportValues.length ? exportValues : [0])) *
+          (isSymmetric ? 1.2 : 1.1), // a bit more room when centered
         grid: { display: false, drawBorder: false },
         ticks: { display: false },
       },
@@ -547,7 +554,11 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     responsive: true,
     maintainAspectRatio: false,
     indexAxis: "y",
-    layout: { padding: { left: leftPads.import, right: 16 } }, // Increased right padding
+    layout: {
+      padding: isSymmetric
+        ? { left: leftPads.import, right: leftPads.import, bottom: 16 }
+        : { left: leftPads.import, right: 16, bottom: 16 },
+    },
     plugins: {
       legend: { display: false },
       tooltip: { enabled: false },
@@ -595,7 +606,9 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     },
     scales: {
       x: {
-        max: Math.max(...(importValues.length ? importValues : [0])) * 1.15, // More space for labels
+        max:
+          Math.max(...(importValues.length ? importValues : [0])) *
+          (isSymmetric ? 1.22 : 1.15), // tiny extra on sm/md for the value tag
         grid: { display: false, drawBorder: false },
         ticks: { display: false },
       },
@@ -635,7 +648,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
       {/* Body */}
       <div className="chart-container flex gap-6 mt-5 flex-col lg:flex-row">
         {/* Left column: charts */}
-        <div className="bg-white p-3 md:p-6 rounded-3xl max-h-[1200px] overflow-y-auto flex-1">
+        <div className="bg-white p-3 md:p-6 rounded-3xl max-h-[1200px] h-full lg:max-h-[78vw] overflow-y-auto flex-1">
           <h2 className="text-xl mb-4">
             Employment Supported by Foreign Affiliates, 2022
           </h2>
@@ -745,7 +758,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
         <div>
           {Array.isArray(data?.companies_located_in_state) &&
             data.companies_located_in_state.length > 0 && (
-              <div className="bg-white p-6 rounded-3xl lg:min-w-[300px] lg:max-w-xs">
+              <div className="bg-white p-6 rounded-3xl lg:min-w-[300px] lg:max-w-xs max-h-[1200px] h-full lg:max-h-[78vw]">
                 <h2 className="text-xl mb-4">
                   Swiss Companies Located in {name}
                 </h2>
