@@ -25,7 +25,6 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
   const node = Array.isArray(preloadedData?.data)
     ? preloadedData.data[0]
     : null;
-  console.log("SwissImpact node:", node);
   const impact = node
     ? {
         totalJobs: toNumber(node.total_jobs),
