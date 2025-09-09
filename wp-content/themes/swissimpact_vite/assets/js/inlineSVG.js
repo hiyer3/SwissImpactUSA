@@ -23,8 +23,6 @@ async function inlineSVG(url, container) {
     // Clear previous content and append new SVG
     container.innerHTML = "";
     container.appendChild(svgEl);
-
-    console.log("SVG loaded successfully:", url);
     return svgEl;
   } catch (err) {
     console.error("Error loading SVG:", err);

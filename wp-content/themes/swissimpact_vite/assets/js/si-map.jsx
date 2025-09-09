@@ -570,8 +570,6 @@ export default function SIMapControl() {
           }
         });
 
-        console.log(aggReps);
-
         // Merge into existing US ACF, preserving economic_impact if present
         const usACF = {
           ...(cache["united-states"] || {}),
@@ -581,9 +579,8 @@ export default function SIMapControl() {
           swiss_representations: aggReps.filter((obj, index, self) => {
             // Filter out duplicates based on representation name
             return (
-              self.findIndex(
-                (o) => o.representation === obj.representation
-              ) === index
+              self.findIndex((o) => o.representation === obj.representation) ===
+              index
             );
           }),
           // keep existing economic_impact as-is
@@ -1188,6 +1185,7 @@ export default function SIMapControl() {
       popupFilterWrapper?.classList.remove("active");
 
       popupOpenRef.current = true;
+      document.querySelector("#si-map")?.classList.add("active-hide-on-mobile");
     };
 
     const links = document.querySelectorAll(".state-link");
