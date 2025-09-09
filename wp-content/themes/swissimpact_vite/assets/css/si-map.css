@@ -78,7 +78,7 @@
 }
 
 #si-map-popup-filter .single-popup-filter {
-  @apply py-3 px-2 hidden flex-shrink-0 w-[180px] justify-center items-center cursor-pointer transition-all bg-[#BE0015] rounded-t-3xl ease-in-out;
+  @apply py-3 px-2 hidden flex-shrink-0 w-[155px] md:w-[180px] justify-center items-center cursor-pointer transition-all bg-[#BE0015] rounded-t-3xl ease-in-out;
 }
 
 #si-map-popup-filter .single-popup-filter.tab-active {
@@ -175,9 +175,16 @@
   font-family: "Cerebri Sans Pro ExtraBold", sans-serif;
 }
 
-#si-map,
+#si-map {
+  @apply my-10 lg:my-0 block;
+}
+
 .si-map-filter-wrapper {
   @apply hidden lg:block;
+}
+
+#si-map.active-hide-on-mobile {
+  @apply hidden lg:flex;
 }
 
 .ei-donut-legend li {

@@ -260,6 +260,8 @@ const pickSelectedFilter = (preferredTab, lastTab, activeTabs) => {
   return PRIORITY.find((id) => activeTabs[id]) || FILTERS.SEE_ALL;
 };
 
+const isMobileViewport = () => window.matchMedia("(max-width: 1023px)").matches;
+
 export default function SIMapControl() {
   const [singleStateData, setSingleStateData] = useState({
     name: "",
@@ -556,7 +558,8 @@ export default function SIMapControl() {
               }))
             );
           }
-          if (Array.isArray(acf?.economic_impact?.companies_located_in_state)) {
+          // ✅ aggregate companies list (keep original objects; optionally tag statecode)
+          if (Array.isArray(acf?.economic_impact.companies_located_in_state)) {
             const sc = acf?.state_short_code || "";
             aggCompanies.push(
               ...acf.economic_impact.companies_located_in_state.map((c) => ({
@@ -567,16 +570,34 @@ export default function SIMapControl() {
           }
         });
 
+        console.log(aggReps);
+
         // Merge into existing US ACF, preserving economic_impact if present
         const usACF = {
           ...(cache["united-states"] || {}),
           ["science_&_academia_fields"]: aggSci,
           apprenticeship_companies: aggAppr,
           industry_clusters: aggClusters,
-          swiss_representations: aggReps,
+          swiss_representations: aggReps.filter((obj, index, self) => {
+            // Filter out duplicates based on representation name
+            return (
+              self.findIndex(
+                (o) => o.representation === obj.representation
+              ) === index
+            );
+          }),
+          // keep existing economic_impact as-is
         };
-        if (!usACF.economic_impact) usACF.economic_impact = {};
-        usACF.economic_impact.companies_located_in_state = aggCompanies;
+
+        usACF.economic_impact.companies_located_in_state = aggCompanies.filter(
+          (obj, index, self) => {
+            // Filter out duplicates based on company name
+            return (
+              self.findIndex((o) => o.company_name === obj.company_name) ===
+              index
+            );
+          }
+        );
 
         cache["united-states"] = usACF;
 
@@ -926,9 +947,17 @@ export default function SIMapControl() {
         popupOpenRef.current = true;
 
         document.querySelector(".data-popup")?.classList.remove("hidden");
+        document
+          .querySelector("#si-map")
+          ?.classList.add("active-hide-on-mobile");
       };
 
       const onSvgClick = (e) => {
+        if (isMobileViewport()) {
+          openState("United States", "united-states");
+          return;
+        }
+
         const stateGroup =
           e.target.closest(".single-state") || e.target.closest(".singe-state");
         if (!stateGroup) return;
@@ -1080,7 +1109,7 @@ export default function SIMapControl() {
     const popupFilterWrapper = document.querySelector(
       ".data-popup .data-popup-filter-wrapper"
     );
-    
+
     const onToggle = () => {
       btn?.classList.toggle("active");
       listC?.classList.toggle("active");
@@ -1224,6 +1253,9 @@ export default function SIMapControl() {
     const onBackToMap = () => {
       resetToMapFilterTab();
     };
+    document
+      .querySelector("#si-map")
+      ?.classList.remove("active-hide-on-mobile");
     window.addEventListener("si:back-to-map", onBackToMap);
     return () => window.removeEventListener("si:back-to-map", onBackToMap);
   }, [resetToMapFilterTab]);
