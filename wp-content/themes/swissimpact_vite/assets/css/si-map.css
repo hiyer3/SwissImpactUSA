@@ -210,3 +210,40 @@
 .map-page-wrapper.active {
   @apply min-h-[1440px];
 }
+
+.chart-with-labels {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  height: 100%;
+}
+
+.labels-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-right: 8px;
+  width: 38%; /* Adjust as needed for layout or screen size */
+}
+
+.label-cell {
+  @apply text-xs sm:text-sm font-medium;
+  line-height: 1.2;
+  word-break: break-word;
+  white-space: normal;
+  padding: 5px 0;
+  /* Optionally match height/padding to chart bars */
+}
+
+.bars-column {
+  flex: 1 1 auto; /* allow shrinking and growing */
+  min-width: 0; /* allow flexbox to shrink below content size */
+  width: 100%; /* ensure full width inside flex container */
+}
+
+.bars-column canvas {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100% !important;
+}

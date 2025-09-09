@@ -2,7 +2,8 @@
 // + map-filter-aware popup tabs + tab persistence rules + back-to-map reset
 // + legend switching + robust popup-close reset to current map filter
 // + US companies aggregation for EconomicImpact
-// + Fixed legend labels for Science/Apprenticeship overlays
+// + Fixed/dynamic legend labels for Science/Apprenticeship overlays
+// + Race-condition safe: preserves early clicks; never-stuck loader
 
 import { h } from "preact";
 import {
@@ -262,6 +263,45 @@ const pickSelectedFilter = (preferredTab, lastTab, activeTabs) => {
 
 const isMobileViewport = () => window.matchMedia("(max-width: 1023px)").matches;
 
+// ===== dynamic legend labels (5 bins) based on TOTAL (science+apprenticeship) =====
+const niceStep = (targetStep) => {
+  const t = Math.max(1, Number(targetStep) || 1);
+  const exp = Math.floor(Math.log10(t));
+  const base = Math.pow(10, exp);
+  const f = t / base;
+  let m = 1;
+  if (f > 5) m = 10;
+  else if (f > 2) m = 5;
+  else if (f > 1) m = 2;
+  else m = 1;
+  return m * base;
+};
+
+const buildFiveLabelsFromMaxTotal = (maxTotal) => {
+  const max = Math.max(0, Math.floor(Number(maxTotal) || 0));
+  if (max <= 0) return ["0", "0", "0", "0", "≥ 0"];
+
+  const step = niceStep(max / 5);
+  const e1 = step - 1;
+  const e2 = 2 * step - 1;
+  const e3 = 3 * step - 1;
+  const e4 = 4 * step - 1;
+
+  const s1 = 0;
+  const s2 = e1 + 1;
+  const s3 = e2 + 1;
+  const s4 = e3 + 1;
+  const s5 = e4 + 1;
+
+  return [
+    `${s1} - ${e1}`,
+    `${s2} - ${e2}`,
+    `${s3} - ${e3}`,
+    `${s4} - ${e4}`,
+    `≥ ${s5}`,
+  ];
+};
+
 export default function SIMapControl() {
   const [singleStateData, setSingleStateData] = useState({
     name: "",
@@ -281,6 +321,7 @@ export default function SIMapControl() {
 
   // ---- global cache (slug -> acf) and loading/errors
   const rawStateCacheRef = useRef({});
+  const svgRootRef = useRef(null);
   const [isAllLoaded, setIsAllLoaded] = useState(false);
   const [prefetchError, setPrefetchError] = useState(null);
   const [, forceUpdate] = useState(0);
@@ -293,6 +334,7 @@ export default function SIMapControl() {
 
   // ---- map filter + popup state
   const currentMapFilterRef = useRef("si-filter-see-all");
+  const hasUserClickedMapFilterRef = useRef(false);
   const popupOpenRef = useRef(false);
   const userTabOverrideRef = useRef(null);
 
@@ -305,125 +347,68 @@ export default function SIMapControl() {
     maxTotal: 0,
   });
 
-  // ===== Legend helpers (fixed labels; matches your PHP UL colors) =====
-  const ensureSciApprLegendHeader = () => {
-    const root = document.getElementById(
-      "science-academia-apprenticeship-legends"
-    );
-    if (!root) return null;
+  // ===== Legend label updater (NO HEADER injection) =====
+  const updateSciApprLegend = useCallback(
+    (_category /* "science" | "apprenticeship" */) => {
+      const root = document.getElementById(
+        "science-academia-apprenticeship-legends"
+      );
+      if (!root) return;
 
-    if (
-      !root.previousElementSibling ||
-      !root.previousElementSibling.classList?.contains("sci-appr-legend-title")
-    ) {
-      const title = document.createElement("div");
-      title.className =
-        "sci-appr-legend-title text-xs font-medium text-neutral-700 text-center mb-1";
-      title.style.userSelect = "none";
-      root.parentNode.insertBefore(title, root);
-    }
-    return root.previousElementSibling;
-  };
+      // remove any legacy injected header if present
+      const prev = root.previousElementSibling;
+      if (prev?.classList?.contains("sci-appr-legend-title")) prev.remove();
 
-  // ---- "Nice" steps + dynamic 5-bin labels based on TOTAL (science+apprenticeship) ----
-  const niceStep = (targetStep) => {
-    // Round a step to 1/2/5 * 10^k
-    const t = Math.max(1, Number(targetStep) || 1);
-    const exp = Math.floor(Math.log10(t));
-    const base = Math.pow(10, exp);
-    const f = t / base;
-    let m = 1;
-    if (f > 5) m = 10;
-    else if (f > 2) m = 5;
-    else if (f > 1) m = 2;
-    else m = 1;
-    return m * base;
-  };
-
-  const buildFiveLabelsFromMaxTotal = (maxTotal) => {
-    const max = Math.max(0, Math.floor(Number(maxTotal) || 0));
-    if (max <= 0) return ["0", "0", "0", "0", "≥ 0"];
-
-    // Equal-width bins across TOTAL range, rounded to a "nice" step
-    const step = niceStep(max / 5);
-    const e1 = step - 1;
-    const e2 = 2 * step - 1;
-    const e3 = 3 * step - 1;
-    const e4 = 4 * step - 1;
-
-    const s1 = 0;
-    const s2 = e1 + 1;
-    const s3 = e2 + 1;
-    const s4 = e3 + 1;
-    const s5 = e4 + 1;
-
-    return [
-      `${s1} - ${e1}`,
-      `${s2} - ${e2}`,
-      `${s3} - ${e3}`,
-      `${s4} - ${e4}`,
-      `≥ ${s5}`,
-    ];
-  };
-
-  // ===== Legend helpers (dynamic labels; NO HEADER) =====
-  const updateSciApprLegend = (
-    _category /* "science" | "apprenticeship" */
-  ) => {
-    const root = document.getElementById(
-      "science-academia-apprenticeship-legends"
-    );
-    if (!root) return;
-
-    // If any old header was injected previously, remove it.
-    const prev = root.previousElementSibling;
-    if (prev?.classList?.contains("sci-appr-legend-title")) prev.remove();
-
-    // Build labels from TOTAL (science + apprenticeship) across states
-    const labels = buildFiveLabelsFromMaxTotal(heatmapStats.maxTotal);
-
-    const spans = root.querySelectorAll("li span");
-    spans.forEach((s, i) => {
-      if (labels[i]) s.textContent = labels[i];
-    });
-  };
+      const labels = buildFiveLabelsFromMaxTotal(heatmapStats.maxTotal);
+      const spans = root.querySelectorAll("li span");
+      spans.forEach((s, i) => {
+        if (labels[i]) s.textContent = labels[i];
+      });
+    },
+    [heatmapStats.maxTotal]
+  );
 
   // ===== Legend switcher =====
-  const updateLegendsForFilter = (filterId) => {
-    const sciAppr = document.getElementById(
-      "science-academia-apprenticeship-legends"
-    );
-    const swiss = document.getElementById("swiss-representation-legends");
-    if (!sciAppr || !swiss) return;
-
-    const show = (el) => {
-      el.classList.remove("hidden");
-      el.classList.add("grid");
-    };
-    const hide = (el) => {
-      el.classList.add("hidden");
-      el.classList.remove("grid");
-    };
-
-    if (
-      filterId === "si-filter-science-academia" ||
-      filterId === "si-filter-apprenticeship-companies"
-    ) {
-      show(sciAppr);
-      hide(swiss);
-      updateSciApprLegend(
-        filterId === "si-filter-science-academia" ? "science" : "apprenticeship"
+  const updateLegendsForFilter = useCallback(
+    (filterId) => {
+      const sciAppr = document.getElementById(
+        "science-academia-apprenticeship-legends"
       );
-    } else if (filterId === "si-filter-swiss-representatives") {
-      hide(sciAppr);
-      show(swiss);
-    } else {
-      hide(sciAppr);
-      hide(swiss);
-    }
-  };
+      const swiss = document.getElementById("swiss-representation-legends");
+      if (!sciAppr || !swiss) return;
 
-  // ===== Heatmap painters (continuous alpha by value; original behavior) =====
+      const show = (el) => {
+        el.classList.remove("hidden");
+        el.classList.add("grid");
+      };
+      const hide = (el) => {
+        el.classList.add("hidden");
+        el.classList.remove("grid");
+      };
+
+      if (
+        filterId === "si-filter-science-academia" ||
+        filterId === "si-filter-apprenticeship-companies"
+      ) {
+        show(sciAppr);
+        hide(swiss);
+        updateSciApprLegend(
+          filterId === "si-filter-science-academia"
+            ? "science"
+            : "apprenticeship"
+        );
+      } else if (filterId === "si-filter-swiss-representatives") {
+        hide(sciAppr);
+        show(swiss);
+      } else {
+        hide(sciAppr);
+        hide(swiss);
+      }
+    },
+    [updateSciApprLegend]
+  );
+
+  // ===== Heatmap painters (continuous alpha by value) =====
   const paintHeatmap = useCallback(
     (svgRoot, category /* "science" | "apprenticeship" */) => {
       if (!svgRoot) return;
@@ -505,6 +490,61 @@ export default function SIMapControl() {
     });
   }, []);
 
+  // ===== Single source of truth to apply current overlay & legends =====
+  const applyCurrentOverlay = useCallback(() => {
+    const svgRoot =
+      svgRootRef.current ||
+      document.querySelector("#si-map svg") ||
+      document.querySelector("#si-map");
+    if (!svgRoot) return;
+
+    const filterId = currentMapFilterRef.current || "si-filter-see-all";
+
+    // reflect active class on left-panel filter buttons
+    const mapFilters = document.querySelectorAll(
+      "#si-map-filter .single-filter-item"
+    );
+    mapFilters.forEach((f) =>
+      f.classList.toggle("active", f.id === filterId)
+    );
+
+    updateLegendsForFilter(filterId);
+
+    const legend = document.getElementById("KEY");
+    if (
+      filterId !== "si-filter-see-all" &&
+      filterId !== "si-filter-swiss-representatives"
+    ) {
+      legend?.classList.add("hidden");
+    } else {
+      legend?.classList.remove("hidden");
+    }
+
+    // overlays
+    if (filterId === "si-filter-science-academia") {
+      clearHeatmap(svgRoot);
+      paintHeatmap(svgRoot, "science");
+      updateSciApprLegend("science");
+    } else if (filterId === "si-filter-apprenticeship-companies") {
+      clearHeatmap(svgRoot);
+      paintHeatmap(svgRoot, "apprenticeship");
+      updateSciApprLegend("apprenticeship");
+    } else if (filterId === "si-filter-swiss-representatives") {
+      clearHeatmap(svgRoot);
+      paintConsulateMap(svgRoot);
+    } else {
+      clearHeatmap(svgRoot);
+    }
+  }, [clearHeatmap, paintHeatmap, paintConsulateMap, updateLegendsForFilter, updateSciApprLegend]);
+
+  // Initialize currentMapFilterRef from DOM 'active' (if present)
+  useEffect(() => {
+    const domActive = document.querySelector(
+      "#si-map-filter .single-filter-item.active"
+    )?.id;
+    if (domActive) currentMapFilterRef.current = domActive;
+  }, []);
+
   // -------- one API call on mount + build US aggregate --------
   useEffect(() => {
     const ac = new AbortController();
@@ -521,7 +561,7 @@ export default function SIMapControl() {
           cache[normId(post.slug)] = post?.acf || {};
         }
 
-        // ---- Aggregate into united-states (except economic_impact) ----
+        // ---- Aggregate into united-states (except economic_impact values) ----
         const nonUsEntries = Object.entries(cache).filter(
           ([slug]) => slug !== "united-states"
         );
@@ -540,9 +580,9 @@ export default function SIMapControl() {
           },
         ];
         const aggReps = [];
-        const aggCompanies = []; // collect all companies across states
+        const aggCompanies = [];
 
-        nonUsEntries.forEach(([slug, acf]) => {
+        nonUsEntries.forEach(([_, acf]) => {
           if (Array.isArray(acf?.["science_&_academia_fields"])) {
             aggSci.push(...acf["science_&_academia_fields"]);
           }
@@ -558,8 +598,7 @@ export default function SIMapControl() {
               }))
             );
           }
-          // ✅ aggregate companies list (keep original objects; optionally tag statecode)
-          if (Array.isArray(acf?.economic_impact.companies_located_in_state)) {
+          if (Array.isArray(acf?.economic_impact?.companies_located_in_state)) {
             const sc = acf?.state_short_code || "";
             aggCompanies.push(
               ...acf.economic_impact.companies_located_in_state.map((c) => ({
@@ -570,32 +609,22 @@ export default function SIMapControl() {
           }
         });
 
-        // Merge into existing US ACF, preserving economic_impact if present
         const usACF = {
           ...(cache["united-states"] || {}),
           ["science_&_academia_fields"]: aggSci,
           apprenticeship_companies: aggAppr,
           industry_clusters: aggClusters,
-          swiss_representations: aggReps.filter((obj, index, self) => {
-            // Filter out duplicates based on representation name
-            return (
+          swiss_representations: aggReps.filter(
+            (obj, index, self) =>
               self.findIndex((o) => o.representation === obj.representation) ===
               index
-            );
-          }),
-          // keep existing economic_impact as-is
+          ),
         };
-
+        if (!usACF.economic_impact) usACF.economic_impact = {};
         usACF.economic_impact.companies_located_in_state = aggCompanies.filter(
-          (obj, index, self) => {
-            // Filter out duplicates based on company name
-            return (
-              self.findIndex((o) => o.company_name === obj.company_name) ===
-              index
-            );
-          }
+          (obj, index, self) =>
+            self.findIndex((o) => o.company_name === obj.company_name) === index
         );
-
         cache["united-states"] = usACF;
 
         rawStateCacheRef.current = cache;
@@ -635,7 +664,6 @@ export default function SIMapControl() {
         const maxTotal = rows.reduce((m, r) => Math.max(m, r.total), 0);
         setHeatmapStats({ maxApprenticeship, maxScience, maxTotal });
 
-        // Ready
         setIsAllLoaded(true);
         forceUpdate((n) => n + 1);
       } catch (e) {
@@ -651,6 +679,12 @@ export default function SIMapControl() {
   // -------- recompute active tabs when state changes or data loaded --------
   const updateActiveTabs = useCallback((stateId, preferredFilter) => {
     if (!stateId) return;
+
+    // Respect user's tab while popup is open
+    if (popupOpenRef.current && userTabOverrideRef.current) {
+      setSingleStateData((prev) => ({ ...prev, isLoadingTabs: false }));
+      return;
+    }
 
     if (stateId === "united-states") {
       const allTrue = {
@@ -670,6 +704,7 @@ export default function SIMapControl() {
         ...prev,
         activeTabs: allTrue,
         selectedFilter: nextSel,
+        isLoadingTabs: false,
       }));
       return;
     }
@@ -686,13 +721,13 @@ export default function SIMapControl() {
       ...prev,
       activeTabs: newActiveTabs,
       selectedFilter: nextSel,
+      isLoadingTabs: false,
     }));
   }, []);
 
   useEffect(() => {
     if (!singleStateData.stateId || !isAllLoaded) return;
     updateActiveTabs(singleStateData.stateId, lastSelectedFilterRef.current);
-    setSingleStateData((prev) => ({ ...prev, isLoadingTabs: false }));
   }, [singleStateData.stateId, isAllLoaded, updateActiveTabs]);
 
   // -------- provide preloadedData to child components --------
@@ -786,33 +821,17 @@ export default function SIMapControl() {
     const mapFilterId = currentMapFilterRef.current || fallbackActive;
     const mappedTab = MAP_FILTER_TO_POPUP[mapFilterId] || FILTERS.SEE_ALL;
 
-    setSingleStateData((prev) => ({ ...prev, selectedFilter: mappedTab }));
+    setSingleStateData((prev) => ({
+      ...prev,
+      selectedFilter: mappedTab,
+      isLoadingTabs: false,
+    }));
     lastSelectedFilterRef.current = mappedTab;
     userTabOverrideRef.current = null;
     popupOpenRef.current = false;
 
-    updateLegendsForFilter(mapFilterId);
-
-    const svgRoot =
-      document.querySelector("#si-map svg") ||
-      document.querySelector("#si-map");
-    if (!svgRoot) return;
-
-    if (mapFilterId === "si-filter-science-academia") {
-      clearHeatmap(svgRoot);
-      paintHeatmap(svgRoot, "science");
-      updateSciApprLegend("science");
-    } else if (mapFilterId === "si-filter-apprenticeship-companies") {
-      clearHeatmap(svgRoot);
-      paintHeatmap(svgRoot, "apprenticeship");
-      updateSciApprLegend("apprenticeship");
-    } else if (mapFilterId === "si-filter-swiss-representatives") {
-      clearHeatmap(svgRoot);
-      paintConsulateMap(svgRoot);
-    } else {
-      clearHeatmap(svgRoot);
-    }
-  }, [clearHeatmap, paintHeatmap, paintConsulateMap]);
+    applyCurrentOverlay();
+  }, [applyCurrentOverlay]);
 
   // -------- wiring: SVG, map filters, state list, popup tabs --------
   useEffect(() => {
@@ -828,6 +847,7 @@ export default function SIMapControl() {
       holder
     ).then((el) => {
       svgEl = el;
+      svgRootRef.current = el;
       if (!svgEl) return;
 
       const holderEl = document.getElementById("si-map");
@@ -936,7 +956,7 @@ export default function SIMapControl() {
           ...prev,
           name,
           stateId: normId(id),
-          isLoadingTabs: true,
+          isLoadingTabs: !isAllLoaded, // only show loader if data isn't ready yet
           selectedFilter: nextSelected,
         }));
 
@@ -979,8 +999,7 @@ export default function SIMapControl() {
           (e) => {
             const filterId = e.currentTarget.getAttribute("id");
             currentMapFilterRef.current = filterId;
-
-            updateLegendsForFilter(filterId);
+            hasUserClickedMapFilterRef.current = true;
 
             // marker visibility
             for (const child of svgEl.querySelectorAll("[class*='si-']")) {
@@ -994,35 +1013,15 @@ export default function SIMapControl() {
             mapFilters.forEach((f) => f.classList.remove("active"));
             e.currentTarget.classList.add("active");
 
-            const legend = document.getElementById("KEY");
-            if (
-              filterId !== "si-filter-see-all" &&
-              filterId !== "si-filter-swiss-representatives"
-            ) {
-              legend?.classList.add("hidden");
-            } else {
-              legend?.classList.remove("hidden");
-            }
-
-            // overlays
-            if (filterId === "si-filter-science-academia") {
-              clearHeatmap(svgEl);
-              paintHeatmap(svgEl, "science");
-              updateSciApprLegend("science");
-            } else if (filterId === "si-filter-apprenticeship-companies") {
-              clearHeatmap(svgEl);
-              paintHeatmap(svgEl, "apprenticeship");
-              updateSciApprLegend("apprenticeship");
-            } else if (filterId === "si-filter-swiss-representatives") {
-              clearHeatmap(svgEl);
-              paintConsulateMap(svgEl);
-            } else {
-              clearHeatmap(svgEl);
-            }
+            // overlays + legends
+            applyCurrentOverlay();
           },
           { signal }
         );
       });
+
+      // After listeners are bound, apply current overlay once
+      applyCurrentOverlay();
     });
 
     // State list build & interactions
@@ -1170,7 +1169,7 @@ export default function SIMapControl() {
         ...prev,
         stateId: normId(id),
         name,
-        isLoadingTabs: true,
+        isLoadingTabs: !isAllLoaded,
         selectedFilter: nextSelected,
       }));
       lastSelectedFilterRef.current = nextSelected;
@@ -1201,41 +1200,24 @@ export default function SIMapControl() {
       userTabOverrideRef.current = id;
       lastSelectedFilterRef.current = id;
 
-      setSingleStateData((prev) => ({ ...prev, selectedFilter: id }));
+      setSingleStateData((prev) => ({
+        ...prev,
+        selectedFilter: id,
+        isLoadingTabs: false, // always clear on tab change
+      }));
     };
     popupFilterRoot?.addEventListener("click", onFilter, { signal });
 
     return () => ac.abort();
-  }, [paintHeatmap, clearHeatmap, paintConsulateMap]);
+  }, [applyCurrentOverlay, isAllLoaded]);
 
   // If data loads after user selected an overlay filter, reapply + fix legends
   useEffect(() => {
     if (!isAllLoaded) return;
-    const svgRoot =
-      document.querySelector("#si-map svg") ||
-      document.querySelector("#si-map");
-    if (!svgRoot) return;
+    applyCurrentOverlay();
+  }, [isAllLoaded, applyCurrentOverlay]);
 
-    const filterId = currentMapFilterRef.current;
-    updateLegendsForFilter(filterId);
-
-    if (filterId === "si-filter-science-academia") {
-      clearHeatmap(svgRoot);
-      paintHeatmap(svgRoot, "science");
-      updateSciApprLegend("science");
-    } else if (filterId === "si-filter-apprenticeship-companies") {
-      clearHeatmap(svgRoot);
-      paintHeatmap(svgRoot, "apprenticeship");
-      updateSciApprLegend("apprenticeship");
-    } else if (filterId === "si-filter-swiss-representatives") {
-      clearHeatmap(svgRoot);
-      paintConsulateMap(svgRoot);
-    } else {
-      clearHeatmap(svgRoot);
-    }
-  }, [isAllLoaded, paintHeatmap, clearHeatmap, paintConsulateMap]);
-
-  // keep legend header text synced if maxima change while same overlay is active
+  // keep legend labels synced if maxima change while same overlay is active
   useEffect(() => {
     if (!isAllLoaded) return;
     const filterId = currentMapFilterRef.current;
@@ -1244,7 +1226,7 @@ export default function SIMapControl() {
     } else if (filterId === "si-filter-apprenticeship-companies") {
       updateSciApprLegend("apprenticeship");
     }
-  }, [heatmapStats, isAllLoaded]);
+  }, [heatmapStats, isAllLoaded, updateSciApprLegend]);
 
   // back-to-map
   useEffect(() => {
@@ -1258,7 +1240,7 @@ export default function SIMapControl() {
     return () => window.removeEventListener("si:back-to-map", onBackToMap);
   }, [resetToMapFilterTab]);
 
-  // Observe popup visibility → reset tab to map filter when closed
+  // Observe popup visibility → reset tab to map filter when closed + clear loader
   useEffect(() => {
     const popup = document.querySelector(".data-popup");
     if (!popup) return;
@@ -1268,6 +1250,7 @@ export default function SIMapControl() {
         if (m.type === "attributes" && m.attributeName === "class") {
           const isHidden = popup.classList.contains("hidden");
           if (isHidden) {
+            setSingleStateData((p) => ({ ...p, isLoadingTabs: false }));
             resetToMapFilterTab();
           }
         }
@@ -1304,6 +1287,19 @@ export default function SIMapControl() {
         : "none";
     }
   }, [singleStateData.activeTabs, singleStateData.isLoadingTabs]);
+
+  // Safety nets to ensure loader never gets stuck
+  useEffect(() => {
+    if (popupOpenRef.current && isAllLoaded && singleStateData.isLoadingTabs) {
+      setSingleStateData((p) => ({ ...p, isLoadingTabs: false }));
+    }
+  }, [isAllLoaded, singleStateData.isLoadingTabs]);
+
+  useEffect(() => {
+    if (popupOpenRef.current && isAllLoaded) {
+      setSingleStateData((p) => ({ ...p, isLoadingTabs: false }));
+    }
+  }, [singleStateData.selectedFilter, singleStateData.stateId, isAllLoaded]);
 
   return (
     <div>
