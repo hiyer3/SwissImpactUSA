@@ -2,6 +2,7 @@
 // + map-filter-aware popup tabs + tab persistence rules + back-to-map reset
 // + legend switching + robust popup-close reset to current map filter
 // + US companies aggregation for EconomicImpact
+// + Fixed legend labels for Science/Apprenticeship overlays
 
 import { h } from "preact";
 import {
@@ -197,7 +198,7 @@ const deriveFromAcf = (acf, dataType) => {
         ...(sciArr.length > 0 && { science_academia: sciArr.length }),
         ...(apprArr.length > 0 && { apprenticeship_companies: apprArr.length }),
         ...(clustersArr && {
-          industry_clusters: Object.values(clustersArr[0]),
+          industry_clusters: Object.values(clustersArr[0] || {}),
         }),
         ...(repsArr.length > 0 && { swiss_representations: repsArr }),
         statecode: acf.state_short_code || "",
@@ -215,9 +216,8 @@ const deriveFromAcf = (acf, dataType) => {
         Object.keys(econ).some((k) => econ[k] && econ[k] !== 0);
 
       if (!hasMeaningful) return [];
-      // ✅ Attach companies list if present on ACF (for U.S. aggregated case)
       const payload = { ...econ };
-      if (Array.isArray(acf.economic_impact.companies_located_in_state)) {
+      if (Array.isArray(acf.economic_impact?.companies_located_in_state)) {
         payload.companies_located_in_state =
           acf.economic_impact.companies_located_in_state;
       }
@@ -303,6 +303,89 @@ export default function SIMapControl() {
     maxTotal: 0,
   });
 
+  // ===== Legend helpers (fixed labels; matches your PHP UL colors) =====
+  const ensureSciApprLegendHeader = () => {
+    const root = document.getElementById(
+      "science-academia-apprenticeship-legends"
+    );
+    if (!root) return null;
+
+    if (
+      !root.previousElementSibling ||
+      !root.previousElementSibling.classList?.contains("sci-appr-legend-title")
+    ) {
+      const title = document.createElement("div");
+      title.className =
+        "sci-appr-legend-title text-xs font-medium text-neutral-700 text-center mb-1";
+      title.style.userSelect = "none";
+      root.parentNode.insertBefore(title, root);
+    }
+    return root.previousElementSibling;
+  };
+
+  // ---- "Nice" steps + dynamic 5-bin labels based on TOTAL (science+apprenticeship) ----
+  const niceStep = (targetStep) => {
+    // Round a step to 1/2/5 * 10^k
+    const t = Math.max(1, Number(targetStep) || 1);
+    const exp = Math.floor(Math.log10(t));
+    const base = Math.pow(10, exp);
+    const f = t / base;
+    let m = 1;
+    if (f > 5) m = 10;
+    else if (f > 2) m = 5;
+    else if (f > 1) m = 2;
+    else m = 1;
+    return m * base;
+  };
+
+  const buildFiveLabelsFromMaxTotal = (maxTotal) => {
+    const max = Math.max(0, Math.floor(Number(maxTotal) || 0));
+    if (max <= 0) return ["0", "0", "0", "0", "≥ 0"];
+
+    // Equal-width bins across TOTAL range, rounded to a "nice" step
+    const step = niceStep(max / 5);
+    const e1 = step - 1;
+    const e2 = 2 * step - 1;
+    const e3 = 3 * step - 1;
+    const e4 = 4 * step - 1;
+
+    const s1 = 0;
+    const s2 = e1 + 1;
+    const s3 = e2 + 1;
+    const s4 = e3 + 1;
+    const s5 = e4 + 1;
+
+    return [
+      `${s1} - ${e1}`,
+      `${s2} - ${e2}`,
+      `${s3} - ${e3}`,
+      `${s4} - ${e4}`,
+      `≥ ${s5}`,
+    ];
+  };
+
+  // ===== Legend helpers (dynamic labels; NO HEADER) =====
+  const updateSciApprLegend = (
+    _category /* "science" | "apprenticeship" */
+  ) => {
+    const root = document.getElementById(
+      "science-academia-apprenticeship-legends"
+    );
+    if (!root) return;
+
+    // If any old header was injected previously, remove it.
+    const prev = root.previousElementSibling;
+    if (prev?.classList?.contains("sci-appr-legend-title")) prev.remove();
+
+    // Build labels from TOTAL (science + apprenticeship) across states
+    const labels = buildFiveLabelsFromMaxTotal(heatmapStats.maxTotal);
+
+    const spans = root.querySelectorAll("li span");
+    spans.forEach((s, i) => {
+      if (labels[i]) s.textContent = labels[i];
+    });
+  };
+
   // ===== Legend switcher =====
   const updateLegendsForFilter = (filterId) => {
     const sciAppr = document.getElementById(
@@ -326,6 +409,9 @@ export default function SIMapControl() {
     ) {
       show(sciAppr);
       hide(swiss);
+      updateSciApprLegend(
+        filterId === "si-filter-science-academia" ? "science" : "apprenticeship"
+      );
     } else if (filterId === "si-filter-swiss-representatives") {
       hide(sciAppr);
       show(swiss);
@@ -335,21 +421,15 @@ export default function SIMapControl() {
     }
   };
 
-  // ===== Heatmap painters (bucketed colors) =====
-  const getBucketColor = (val) => {
-    const n = Number(val) || 0;
-    if (n >= 80) return "#ff5c5c"; // 80+
-    if (n >= 60) return "#ff5c5ccc"; // 60–79
-    if (n >= 40) return "#ff5c5c99"; // 40–59
-    if (n >= 20) return "#ff5c5c66"; // 20–39
-    return "#ff5c5c33"; // 0–19
-  };
-
+  // ===== Heatmap painters (continuous alpha by value; original behavior) =====
   const paintHeatmap = useCallback(
     (svgRoot, category /* "science" | "apprenticeship" */) => {
       if (!svgRoot) return;
-
       const byState = heatmapByStateRef.current || {};
+      const max =
+        category === "science"
+          ? heatmapStats.maxScience || 1
+          : heatmapStats.maxApprenticeship || 1;
 
       svgRoot.querySelectorAll(".single-state").forEach((group) => {
         const first = group.firstElementChild;
@@ -363,7 +443,8 @@ export default function SIMapControl() {
             : row.apprenticeshipCompanies
           : 0;
 
-        const fill = getBucketColor(value);
+        const t = Math.max(0, Math.min(1, value / max)); // 0..1
+        const fill = `rgba(255, 92, 92, ${0.12 + 0.88 * t})`;
 
         group.querySelectorAll("path, polygon, rect").forEach((shape) => {
           if (!shape.dataset.origFill) {
@@ -374,7 +455,7 @@ export default function SIMapControl() {
         });
       });
     },
-    [] // bucketed colors don't depend on max values
+    [heatmapStats.maxApprenticeship, heatmapStats.maxScience]
   );
 
   const clearHeatmap = useCallback((svgRoot) => {
@@ -445,7 +526,6 @@ export default function SIMapControl() {
 
         const aggSci = [];
         const aggAppr = [];
-        // (You can replace the hardcoded clusters with your unique-union later if needed)
         const aggClusters = [
           {
             cluster_1: "Mining",
@@ -458,7 +538,7 @@ export default function SIMapControl() {
           },
         ];
         const aggReps = [];
-        const aggCompanies = []; // ✅ collect all companies across states
+        const aggCompanies = []; // collect all companies across states
 
         nonUsEntries.forEach(([slug, acf]) => {
           if (Array.isArray(acf?.["science_&_academia_fields"])) {
@@ -476,8 +556,7 @@ export default function SIMapControl() {
               }))
             );
           }
-          // ✅ aggregate companies list (keep original objects; optionally tag statecode)
-          if (Array.isArray(acf?.economic_impact.companies_located_in_state)) {
+          if (Array.isArray(acf?.economic_impact?.companies_located_in_state)) {
             const sc = acf?.state_short_code || "";
             aggCompanies.push(
               ...acf.economic_impact.companies_located_in_state.map((c) => ({
@@ -495,8 +574,8 @@ export default function SIMapControl() {
           apprenticeship_companies: aggAppr,
           industry_clusters: aggClusters,
           swiss_representations: aggReps,
-          // keep existing economic_impact as-is
         };
+        if (!usACF.economic_impact) usACF.economic_impact = {};
         usACF.economic_impact.companies_located_in_state = aggCompanies;
 
         cache["united-states"] = usACF;
@@ -704,9 +783,11 @@ export default function SIMapControl() {
     if (mapFilterId === "si-filter-science-academia") {
       clearHeatmap(svgRoot);
       paintHeatmap(svgRoot, "science");
+      updateSciApprLegend("science");
     } else if (mapFilterId === "si-filter-apprenticeship-companies") {
       clearHeatmap(svgRoot);
       paintHeatmap(svgRoot, "apprenticeship");
+      updateSciApprLegend("apprenticeship");
     } else if (mapFilterId === "si-filter-swiss-representatives") {
       clearHeatmap(svgRoot);
       paintConsulateMap(svgRoot);
@@ -901,9 +982,11 @@ export default function SIMapControl() {
             if (filterId === "si-filter-science-academia") {
               clearHeatmap(svgEl);
               paintHeatmap(svgEl, "science");
+              updateSciApprLegend("science");
             } else if (filterId === "si-filter-apprenticeship-companies") {
               clearHeatmap(svgEl);
               paintHeatmap(svgEl, "apprenticeship");
+              updateSciApprLegend("apprenticeship");
             } else if (filterId === "si-filter-swiss-representatives") {
               clearHeatmap(svgEl);
               paintConsulateMap(svgEl);
@@ -997,6 +1080,7 @@ export default function SIMapControl() {
     const popupFilterWrapper = document.querySelector(
       ".data-popup .data-popup-filter-wrapper"
     );
+    
     const onToggle = () => {
       btn?.classList.toggle("active");
       listC?.classList.toggle("active");
@@ -1111,9 +1195,11 @@ export default function SIMapControl() {
     if (filterId === "si-filter-science-academia") {
       clearHeatmap(svgRoot);
       paintHeatmap(svgRoot, "science");
+      updateSciApprLegend("science");
     } else if (filterId === "si-filter-apprenticeship-companies") {
       clearHeatmap(svgRoot);
       paintHeatmap(svgRoot, "apprenticeship");
+      updateSciApprLegend("apprenticeship");
     } else if (filterId === "si-filter-swiss-representatives") {
       clearHeatmap(svgRoot);
       paintConsulateMap(svgRoot);
@@ -1121,6 +1207,17 @@ export default function SIMapControl() {
       clearHeatmap(svgRoot);
     }
   }, [isAllLoaded, paintHeatmap, clearHeatmap, paintConsulateMap]);
+
+  // keep legend header text synced if maxima change while same overlay is active
+  useEffect(() => {
+    if (!isAllLoaded) return;
+    const filterId = currentMapFilterRef.current;
+    if (filterId === "si-filter-science-academia") {
+      updateSciApprLegend("science");
+    } else if (filterId === "si-filter-apprenticeship-companies") {
+      updateSciApprLegend("apprenticeship");
+    }
+  }, [heatmapStats, isAllLoaded]);
 
   // back-to-map
   useEffect(() => {

@@ -41,7 +41,7 @@
   transition-property: all;
   transition-duration: 200ms;
 }
- 
+
 .si-map-wrapper.active {
   @apply lg:grid-cols-[280px_1fr];
 }
@@ -196,6 +196,10 @@
   @apply content-[''] absolute w-2.5 h-2.5 rounded-full bg-[#F9C5AF] top-1 left-[-1.1rem];
 }
 
-.representation-legend{
+.representation-legend {
   @apply pointer-events-none;
+}
+
+.map-page-wrapper.active {
+  @apply min-h-[1440px];
 }

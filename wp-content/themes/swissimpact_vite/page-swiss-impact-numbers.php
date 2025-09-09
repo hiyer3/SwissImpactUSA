@@ -17,7 +17,7 @@
     </div>
 </section>
 
-<div class="relative min-h-[1440px] mb-20">
+<div class="relative map-page-wrapper.active mb-20">
     <section class="si-map-wrapper">
         <div class="relative">
             <a href="javascript: void(0);" class="bg-white state-selector">
@@ -77,19 +77,19 @@
                     </ul>
                     <ul id="swiss-representation-legends" class="hidden grid-cols-5 gap-8 my-4 text-xs mx-auto max-w-2xl w-full">
                         <li class="flex flex-col items-center gap-1 text-center">
-                            <div class="h-3 w-full bg-[#FFE8E8]"></div><span>Consulate General of Switzerland in Chicago</span>
+                            <div class="h-3 w-full bg-[#FFE8E8]"></div><span>Consulate General of Switzerland in San Francisco</span>
                         </li>
                         <li class="flex flex-col items-center gap-1 text-center">
-                            <div class="h-3 w-full bg-[#FFD9D9]"></div><span>Consulate General of Switzerland in San Francisco</span>
+                            <div class="h-3 w-full bg-[#FFD9D9]"></div><span>Consulate General of Switzerland in Chicago</span>
                         </li>
                         <li class="flex flex-col items-center gap-1 text-center">
                             <div class="h-3 w-full bg-[#FFBEBE]"></div><span>Consulate General of Switzerland in Atlanta</span>
                         </li>
                         <li class="flex flex-col items-center gap-1 text-center">
-                            <div class="h-3 w-full bg-[#FF4E4E]"></div><span>Consulate General of Switzerland in New York</span>
+                            <div class="h-3 w-full bg-[#FF7E7E]"></div><span>Consulate General of Switzerland in New York</span>
                         </li>
                         <li class="flex flex-col items-center gap-1 text-center">
-                            <div class="h-3 w-full bg-[#FF7E7E]"></div><span>Embassy of Switzerland in the United States of America</span>
+                            <div class="h-3 w-full bg-[#FF4E4E]"></div><span>Embassy of Switzerland in the United States of America</span>
                         </li>
                     </ul>
                 </div>

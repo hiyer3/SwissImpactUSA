@@ -171,7 +171,7 @@ const IndustryClusters = (props) => {
         <div>
           <h2 className="popup-title text-white">{props.name}</h2>
           <p className="popup-description text-white mt-2 mb-0">
-            Industry clusters in{" "}
+            Industry Clusters in{" "}
             {props.name === "united-states" ? "the United States" : props.name}{" "}
             per GDP: <strong>{filteredData.length}</strong>
             {searchTerm && transformedData.length !== filteredData.length && (

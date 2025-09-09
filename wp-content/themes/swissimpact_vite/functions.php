@@ -13,11 +13,11 @@ add_theme_support('post-thumbnails');
 // Main switch to get fontend assets from a Vite dev server OR from production built folder
 // it is recommeded to move it into wp-config.php
 define('IS_VITE_DEVELOPMENT', false);
-  
+ 
 function wpdocs_custom_excerpt_length($length)
 {
     return 20;
-}
+} 
 add_filter('excerpt_length', 'wpdocs_custom_excerpt_length', 999);
 
 function new_excerpt_more($more)
@@ -208,3 +208,19 @@ if (function_exists('acf_add_options_page')) {
 
 // add title tag support
 add_theme_support('title-tag');
+
+
+// add rest api endpoint to fetch acf options page data
+add_action('rest_api_init', function () {
+    register_rest_route('myacf/v1', '/options', [
+        'methods' => 'GET',
+        'callback' => 'myacf_get_options_page_data',
+        'permission_callback' => '__return_true' // Adjust permissions as needed
+    ]);
+});
+
+function myacf_get_options_page_data() {
+    // Replace 'option' with the specific ID of your options page if you registered it with a custom ID
+    $options_data = get_fields('option'); 
+    return rest_ensure_response($options_data);
+}

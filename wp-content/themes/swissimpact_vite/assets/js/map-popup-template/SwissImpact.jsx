@@ -143,7 +143,7 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                   iconPadding={20}
                 />
                 <CardContent
-                  description={`Total Academic Institutions in ${placeLabel}`}
+                  description={`Total Swiss Academics and Scientists in ${placeLabel}`}
                 >
                   <CardStatNumber
                     number={formatUS(impact.counts.scienceAcademia)}
@@ -186,7 +186,7 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                     {stateId == "united-states" ? (
                       <>
                         <p className="text-xl lg:text-2xl font-bold">
-                          Top industry cluster in {placeLabel}
+                          Top Industry Cluster in {placeLabel}
                         </p>
                         <p
                           style={{ lineHeight: "1.1" }}
@@ -198,7 +198,7 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                     ) : (
                       <>
                         <p className="text-xl lg:text-2xl font-bold">
-                          Top industry cluster in {placeLabel}
+                          Top Industry Cluster in {placeLabel}
                         </p>
                         <p
                           style={{ lineHeight: "1.1" }}
