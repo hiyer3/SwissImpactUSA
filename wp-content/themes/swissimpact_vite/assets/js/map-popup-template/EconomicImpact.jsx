@@ -79,34 +79,28 @@ const useViewportWidth = () => {
 const clamp = (n, min, max) => Math.min(Math.max(n, min), max);
 
 /* ---------- label wrapping ---------- */
-const wrapLabel = (str, maxChars) => {
+const wrapLabel = (str, maxChars, maxLines = 2) => {
   const words = String(str || "").split(" ");
   const lines = [];
   let line = "";
 
-  const pushChunks = (token) => {
-    for (let i = 0; i < token.length; i += maxChars) {
-      lines.push(token.slice(i, i + maxChars));
-    }
-  };
-
-  for (const w of words) {
-    if (w.length > maxChars) {
-      if (line) {
-        lines.push(line);
-        line = "";
-      }
-      pushChunks(w);
-      continue;
-    }
-    const test = (line ? line + " " : "") + w;
-    if (test.length <= maxChars) line = test;
-    else {
+  for (const word of words) {
+    if ((line + " " + word).trim().length <= maxChars) {
+      line = (line ? line + " " : "") + word;
+    } else {
       if (line) lines.push(line);
-      line = w;
+      line = word;
+      if (lines.length === maxLines - 1) break; // Max lines reached
     }
   }
   if (line) lines.push(line);
+  // If overflow, append ellipsis to the last line
+  if (lines.length > maxLines) {
+    lines.length = maxLines;
+    lines[maxLines - 1] += "…";
+  } else if (words.join(" ").length > maxChars * maxLines) {
+    lines[lines.length - 1] += "…";
+  }
   return lines;
 };
 
@@ -215,6 +209,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
   const vw = useViewportWidth();
   const bp = vw < 768 ? "sm" : vw <= 1024 ? "md" : "lg";
   const isSymmetric = bp !== "lg";
+  const maxLabelLines = bp === "sm" ? 1 : 2;
 
   // Base label px (clamped per breakpoint) +1px bump
   const baseLabelPx =
@@ -327,7 +322,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
       const exportW = exportCardRef.current?.offsetWidth ?? vw;
       const importW = importCardRef.current?.offsetWidth ?? vw;
       // Increased share to give more space for labels
-      const share = bp === "lg" ? 0.3 : bp === "md" ? 0.35 : 0.45;
+      const share = bp === "lg" ? 0.4 : bp === "md" ? 0.5 : 0.65;
       setLeftPads({
         export: computeLeftPadding(
           exportLabels,
@@ -453,15 +448,15 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
   const barPct = bp === "md" ? 1 : 0.55; // Reduced from 0.78/0.7
 
   const exportChartData = {
-    labels: exportLabels,
+    labels: exportLabels.map(() => ""),
     datasets: [
       {
         data: exportValues,
         backgroundColor: "rgb(157, 157, 156)",
         borderRadius: { topRight: 5, bottomRight: 5 },
-        barThickness: horizontalBarThickness, // Use reduced thickness
-        categoryPercentage: catPct,
-        barPercentage: barPct,
+        barThickness: horizontalBarThickness,
+        categoryPercentage: 0.9,
+        barPercentage: 0.9,
       },
     ],
   };
@@ -470,37 +465,19 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     responsive: true,
     maintainAspectRatio: false,
     indexAxis: "y",
-    layout: {
-      padding: isSymmetric
-        ? { left: leftPads.export, right: leftPads.export, bottom: 16 }
-        : { left: leftPads.export, right: 16, bottom: 16 },
-    },
+    layout: { padding: { left: 8, right: 16, top: 12, bottom: 16 } },
     plugins: {
       legend: { display: false },
       tooltip: { enabled: false },
       datalabels: {
         labels: {
           industry: {
-            anchor: "start",
-            align: "left",
-            offset: 4, // Increased offset for more spacing
-            clip: false,
-            textAlign: "left",
-            formatter: (_, ctx) => {
-              const lab = ctx.chart.data.labels?.[ctx.dataIndex] ?? "";
-              return wrapLabel(lab, wrapAt);
-            },
-            color: "#111",
-            font: {
-              size: bp === "sm" ? scaled(0.9) : scaled(0.95),
-              weight: 500,
-              lineHeight: 1.12,
-            },
+            display: false,
           },
           value: {
             anchor: "center",
             align: "right",
-            offset: bp === "sm" ? 8 : 10, // Increased offset
+            offset: bp === "sm" ? 8 : 10,
             clip: false,
             formatter: (val) => formatCurrency(val),
             backgroundColor: "#FFF",
@@ -522,30 +499,29 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     },
     scales: {
       x: {
-        max:
-          Math.max(...(exportValues.length ? exportValues : [0])) *
-          (isSymmetric ? 1.2 : 1.1), // a bit more room when centered
+        max: Math.max(...(exportValues.length ? exportValues : [0])) * 1.12, // see note below
         grid: { display: false, drawBorder: false },
         ticks: { display: false },
       },
       y: {
         ticks: { display: false },
         grid: { display: false, drawTicks: false, drawBorder: false },
+        offset: true,
       },
     },
     animation: { duration: 2000 },
   };
 
   const importChartData = {
-    labels: importLabels,
+    labels: importLabels.map(() => ""),
     datasets: [
       {
         data: importValues,
         backgroundColor: "rgb(157, 157, 156)",
         borderRadius: { topRight: 5, bottomRight: 5 },
-        barThickness: horizontalBarThickness, // Use reduced thickness
-        categoryPercentage: catPct,
-        barPercentage: barPct,
+        barThickness: horizontalBarThickness,
+        categoryPercentage: 0.9,
+        barPercentage: 0.9,
       },
     ],
   };
@@ -554,37 +530,19 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     responsive: true,
     maintainAspectRatio: false,
     indexAxis: "y",
-    layout: {
-      padding: isSymmetric
-        ? { left: leftPads.import, right: leftPads.import, bottom: 16 }
-        : { left: leftPads.import, right: 16, bottom: 16 },
-    },
+    layout: { padding: { left: 8, right: 16, top: 12, bottom: 16 } },
     plugins: {
       legend: { display: false },
       tooltip: { enabled: false },
       datalabels: {
         labels: {
           industry: {
-            anchor: "start",
-            align: "left",
-            offset: 4, // Increased offset for more spacing
-            clip: false,
-            textAlign: "right",
-            formatter: (_, ctx) => {
-              const lab = ctx.chart.data.labels?.[ctx.dataIndex] ?? "";
-              return wrapLabel(lab, wrapAt);
-            },
-            color: "#111",
-            font: {
-              size: bp === "sm" ? scaled(0.9) : scaled(0.95),
-              weight: 500,
-              lineHeight: 1.12,
-            },
+            display: false,
           },
           value: {
             anchor: "center",
             align: "right",
-            offset: bp === "sm" ? 8 : 10, // Increased offset
+            offset: bp === "sm" ? 8 : 10,
             clip: false,
             formatter: (val) => formatCurrency(val),
             backgroundColor: "#FFF",
@@ -606,15 +564,14 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     },
     scales: {
       x: {
-        max:
-          Math.max(...(importValues.length ? importValues : [0])) *
-          (isSymmetric ? 1.22 : 1.15), // tiny extra on sm/md for the value tag
+        max: Math.max(...(importValues.length ? importValues : [0])) * 1.12, // see note below
         grid: { display: false, drawBorder: false },
         ticks: { display: false },
       },
       y: {
         ticks: { display: false },
         grid: { display: false, drawTicks: false, drawBorder: false },
+        offset: true,
       },
     },
     animation: { duration: 2000 },
@@ -716,8 +673,35 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                   2023
                 </h2>
                 {isVisible.export && (
-                  <div style={{ height: barChartHeight }}>
-                    <Bar data={exportChartData} options={exportChartOptions} />
+                  <div
+                    style={{ height: barChartHeight }}
+                    className="chart-with-labels"
+                  >
+                    <div className="labels-column">
+                      {exportLabels.map((label, idx) => (
+                        <div className="label-cell" key={idx}>
+                          {label}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="bars-column">
+                      <Bar
+                        data={{
+                          ...exportChartData,
+                          labels: exportLabels.map(() => ""),
+                        }}
+                        options={{
+                          ...exportChartOptions,
+                          scales: {
+                            ...exportChartOptions.scales,
+                            y: {
+                              ...exportChartOptions.scales.y,
+                              ticks: { display: false },
+                            },
+                          },
+                        }}
+                      />
+                    </div>
                   </div>
                 )}
                 <div className="text-sm mt-4">
@@ -735,12 +719,39 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                 ref={importCardRef}
               >
                 <h2 className="text-lg font-semibold mb-4 leading-[1.2]">
-                  Top Imports of Goods by Industry from {name} to Switzerland,
+                  Top Imports of Goods by Industry from {name} from Switzerland,
                   2023
                 </h2>
                 {isVisible.import && (
-                  <div style={{ height: barChartHeight }}>
-                    <Bar data={importChartData} options={importChartOptions} />
+                  <div
+                    style={{ height: barChartHeight }}
+                    className="chart-with-labels"
+                  >
+                    <div className="labels-column">
+                      {importLabels.map((label, idx) => (
+                        <div className="label-cell" key={idx}>
+                          {label}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="bars-column">
+                      <Bar
+                        data={{
+                          ...importChartData,
+                          labels: importLabels.map(() => ""),
+                        }}
+                        options={{
+                          ...importChartOptions,
+                          scales: {
+                            ...importChartOptions.scales,
+                            y: {
+                              ...importChartOptions.scales.y,
+                              ticks: { display: false },
+                            },
+                          },
+                        }}
+                      />
+                    </div>
                   </div>
                 )}
                 <div className="text-sm mt-4">

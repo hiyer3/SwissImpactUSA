@@ -12,12 +12,12 @@ add_theme_support('post-thumbnails');
  
 // Main switch to get fontend assets from a Vite dev server OR from production built folder
 // it is recommeded to move it into wp-config.php
-define('IS_VITE_DEVELOPMENT', false); 
+define('IS_VITE_DEVELOPMENT', false);
  
 function wpdocs_custom_excerpt_length($length)
 {
     return 20;
-} 
+}  
 add_filter('excerpt_length', 'wpdocs_custom_excerpt_length', 999);
 
 function new_excerpt_more($more)
