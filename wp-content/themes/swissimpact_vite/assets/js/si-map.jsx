@@ -152,6 +152,31 @@ const CONSULATE_STATE_COLOR = (() => {
   };
 })();
 
+// 5 fixed shades (light → dark)
+const HEAT5 = ["#FFD9D9", "#FFBEBE", "#FF9D9D", "#FF7C7C", "#FF4E4E"];
+
+/**
+ * Choose a bin index 0..4 based on value in [min..max], using the same "niceStep"
+ * logic you use to produce 5 legend labels. Returns -1 for value <= 0 (no overlay).
+ */
+const getHeatBinIndex = (value, { min = 1, max = 1 }) => {
+  if (value <= 0) return -1;
+  const range = Math.max(0, max - min);
+  if (range <= 0) return 0; // everything in the first bucket
+
+  const step = niceStep(range / 5);
+  let start = min;
+
+  // first 4 finite bins
+  for (let i = 0; i < 4; i++) {
+    const end = start + step - 1;
+    if (value >= start && value <= end) return i;
+    start = end + 1;
+  }
+  // last bin is "≥ start"
+  return 4;
+};
+
 // ---------- derive specific slices from ACF ----------
 const deriveFromAcf = (acf, dataType) => {
   if (!acf) return [];
@@ -426,7 +451,7 @@ export default function SIMapControl() {
         if (filterId === "si-filter-science-academia") {
           const min = Math.min(...heatmapArray.map((r) => r.scienceAcademia));
           const max = Math.max(...heatmapArray.map((r) => r.scienceAcademia));
-          const labels = buildFiveLabelsFromRange(min, max);
+          const labels = buildFiveLabelsFromRange(1, max);
           updateSciApprLegend("science", labels);
         } else {
           const min = Math.min(
@@ -435,7 +460,7 @@ export default function SIMapControl() {
           const max = Math.max(
             ...heatmapArray.map((r) => r.apprenticeshipCompanies)
           );
-          const labels = buildFiveLabelsFromRange(min, max);
+          const labels = buildFiveLabelsFromRange(1, max);
           updateSciApprLegend("apprenticeship", labels);
         }
       } else if (filterId === "si-filter-swiss-representatives") {
@@ -458,6 +483,7 @@ export default function SIMapControl() {
         category === "science"
           ? heatmapStats.maxScience || 1
           : heatmapStats.maxApprenticeship || 1;
+      const binRange = { min: 1, max }; // legends start from 1
 
       svgRoot.querySelectorAll(".single-state").forEach((group) => {
         const first = group.firstElementChild;
@@ -471,15 +497,24 @@ export default function SIMapControl() {
             : row.apprenticeshipCompanies
           : 0;
 
-        const t = Math.max(0, Math.min(1, value / max)); // 0..1
-        const fill = `rgba(255, 92, 92, ${0.12 + 0.88 * t})`;
+        const bin = getHeatBinIndex(value, binRange); // -1..4
+        // Choose a single solid color or revert to original if value is 0
+        const fill = bin >= 0 ? HEAT5[bin] : null;
 
         group.querySelectorAll("path, polygon, rect").forEach((shape) => {
           if (!shape.dataset.origFill) {
             const orig = shape.getAttribute("fill");
             shape.dataset.origFill = orig !== null ? orig : "none";
           }
-          shape.setAttribute("fill", fill);
+
+          if (fill) {
+            shape.setAttribute("fill", fill);
+          } else {
+            // value <= 0 → restore base map color (no overlay)
+            const orig = shape.dataset.origFill;
+            if (orig === "none") shape.removeAttribute("fill");
+            else shape.setAttribute("fill", orig);
+          }
         });
       });
     },
