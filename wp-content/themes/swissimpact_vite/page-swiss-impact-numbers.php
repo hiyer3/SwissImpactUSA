@@ -135,7 +135,7 @@
 
     </div>
 
-    <?php echo get_template_part('template-parts/featured-posts/featured', 'posts', ['slug' => "cat_innovation"]); ?>
+
 </div>
 
 

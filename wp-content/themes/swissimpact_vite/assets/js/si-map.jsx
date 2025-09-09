@@ -347,28 +347,58 @@ export default function SIMapControl() {
     maxTotal: 0,
   });
 
-  // ===== Legend label updater (NO HEADER injection) =====
-  const updateSciApprLegend = useCallback(
-    (_category /* "science" | "apprenticeship" */) => {
-      const root = document.getElementById(
-        "science-academia-apprenticeship-legends"
-      );
-      if (!root) return;
+  // Add this helper function for building 5 legend labels from min-max range
+  const buildFiveLabelsFromRange = (min, max) => {
+    const niceStep = (targetStep) => {
+      const t = Math.max(1, Number(targetStep) || 1);
+      const exp = Math.floor(Math.log10(t));
+      const base = Math.pow(10, exp);
+      const f = t / base;
+      let m = 1;
+      if (f > 5) m = 10;
+      else if (f > 2) m = 5;
+      else if (f > 1) m = 2;
+      else m = 1;
+      return m * base;
+    };
 
-      // remove any legacy injected header if present
-      const prev = root.previousElementSibling;
-      if (prev?.classList?.contains("sci-appr-legend-title")) prev.remove();
+    const range = max - min;
+    if (range <= 0) return [`${min}`, `${min}`, `${min}`, `${min}`, `≥ ${min}`];
 
-      const labels = buildFiveLabelsFromMaxTotal(heatmapStats.maxTotal);
-      const spans = root.querySelectorAll("li span");
-      spans.forEach((s, i) => {
-        if (labels[i]) s.textContent = labels[i];
-      });
-    },
-    [heatmapStats.maxTotal]
-  );
+    const step = niceStep(range / 5);
+    const labels = [];
+    let start = min;
+    for (let i = 0; i < 5; i++) {
+      if (i < 4) {
+        const end = start + step - 1;
+        labels.push(`${Math.floor(start)} - ${Math.floor(end)}`);
+        start = end + 1;
+      } else {
+        labels.push(`≥ ${Math.floor(start)}`);
+      }
+    }
+    return labels;
+  };
 
-  // ===== Legend switcher =====
+  // Modify updateSciApprLegend to accept labels and update DOM accordingly
+  const updateSciApprLegend = useCallback((category, labels) => {
+    const root = document.getElementById(
+      "science-academia-apprenticeship-legends"
+    );
+    if (!root) return;
+
+    const prev = root.previousElementSibling;
+    if (prev?.classList?.contains("sci-appr-legend-title")) prev.remove();
+
+    if (!labels || labels.length !== 5) return;
+
+    const spans = root.querySelectorAll("li span");
+    spans.forEach((span, i) => {
+      if (labels[i]) span.textContent = labels[i];
+    });
+  }, []);
+
+  // Modify updateLegendsForFilter to compute min/max and update legend labels for each category separately
   const updateLegendsForFilter = useCallback(
     (filterId) => {
       const sciAppr = document.getElementById(
@@ -392,11 +422,22 @@ export default function SIMapControl() {
       ) {
         show(sciAppr);
         hide(swiss);
-        updateSciApprLegend(
-          filterId === "si-filter-science-academia"
-            ? "science"
-            : "apprenticeship"
-        );
+
+        if (filterId === "si-filter-science-academia") {
+          const min = Math.min(...heatmapArray.map((r) => r.scienceAcademia));
+          const max = Math.max(...heatmapArray.map((r) => r.scienceAcademia));
+          const labels = buildFiveLabelsFromRange(min, max);
+          updateSciApprLegend("science", labels);
+        } else {
+          const min = Math.min(
+            ...heatmapArray.map((r) => r.apprenticeshipCompanies)
+          );
+          const max = Math.max(
+            ...heatmapArray.map((r) => r.apprenticeshipCompanies)
+          );
+          const labels = buildFiveLabelsFromRange(min, max);
+          updateSciApprLegend("apprenticeship", labels);
+        }
       } else if (filterId === "si-filter-swiss-representatives") {
         hide(sciAppr);
         show(swiss);
@@ -405,7 +446,7 @@ export default function SIMapControl() {
         hide(swiss);
       }
     },
-    [updateSciApprLegend]
+    [heatmapArray, updateSciApprLegend]
   );
 
   // ===== Heatmap painters (continuous alpha by value) =====
@@ -504,9 +545,7 @@ export default function SIMapControl() {
     const mapFilters = document.querySelectorAll(
       "#si-map-filter .single-filter-item"
     );
-    mapFilters.forEach((f) =>
-      f.classList.toggle("active", f.id === filterId)
-    );
+    mapFilters.forEach((f) => f.classList.toggle("active", f.id === filterId));
 
     updateLegendsForFilter(filterId);
 
@@ -535,7 +574,13 @@ export default function SIMapControl() {
     } else {
       clearHeatmap(svgRoot);
     }
-  }, [clearHeatmap, paintHeatmap, paintConsulateMap, updateLegendsForFilter, updateSciApprLegend]);
+  }, [
+    clearHeatmap,
+    paintHeatmap,
+    paintConsulateMap,
+    updateLegendsForFilter,
+    updateSciApprLegend,
+  ]);
 
   // Initialize currentMapFilterRef from DOM 'active' (if present)
   useEffect(() => {
