@@ -168,7 +168,7 @@ const ApprenticeshipCompanies = (props) => {
         <div>
           <h2 className="popup-title text-white">{props.name}</h2>
           <p className="popup-description text-white mt-2 mb-0">
-            Apprenticeship opportunities and companies in{" "}
+            Apprenticeship Opportunities and Companies in{" "}
             {props.name === "united-states" ? "the United States" : props.name}: <strong>{filteredData.length}</strong>
             {searchTerm && transformedData.length !== filteredData.length && (
               <span className="text-gray-300"> (of {transformedData.length} total)</span>
@@ -181,8 +181,7 @@ const ApprenticeshipCompanies = (props) => {
       <div className="bg-white mt-5 rounded-3xl popup-table-content">
         <div className="mt-4 p-8 w-full flex justify-between gap-6 sm:gap-9 sm:items-center flex-col sm:flex-row">
           <p className="text-xl font-black pb-0">
-            Apprenticeship opportunities and companies in{" "}
-            {props.name === "united-states" ? "the United States" : props.name}
+            Investing in the Next Generation of Skilled Workers
           </p>
           <PopupSearchInput 
             onChange={handleInputChange} 

@@ -14,6 +14,7 @@ import ChartDataLabels from "chartjs-plugin-datalabels";
 import { Bar, Doughnut } from "react-chartjs-2";
 import BackToMapButton from "./components/backToMapButton";
 import DownloadPDF from "./components/downloadPDF";
+import RecommendedPosts from "./RecomendedPosts";
 
 /* ---------- donut center text ---------- */
 const centerTextPlugin = {
@@ -193,7 +194,13 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                 <span className="ml-3 text-gray-600">{msg}</span>
               </>
             ) : (
-              <div className={error ? "text-red-600 text-center" : "text-gray-600 text-center"}>
+              <div
+                className={
+                  error
+                    ? "text-red-600 text-center"
+                    : "text-gray-600 text-center"
+                }
+              >
                 <p className="text-lg font-semibold">{msg}</p>
                 {error && <p className="text-sm">{String(error)}</p>}
               </div>
@@ -214,11 +221,11 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
       ? clamp(vw * 0.008, 11, 14)
       : bp === "md"
       ? clamp(vw * 0.0072, 11, 13) // ↑ a bit on tablet
-      : clamp(vw * 0.030, 11, 13); // ↑ on mobile too
+      : clamp(vw * 0.03, 11, 13); // ↑ on mobile too
   const labelFontSize = Math.round(baseLabelPx) + 1;
   const scaled = (m) => Math.max(9, Math.round(baseLabelPx * m) + 1);
 
-  // Bar thickness (make tablet thicker)
+  // Bar thickness for vertical employment chart (unchanged)
   const barThickness =
     bp === "lg"
       ? clamp(vw * 0.018, 16, 24)
@@ -226,12 +233,20 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
       ? clamp(vw * 0.022, 18, 28) // ↑ tablet
       : clamp(vw * 0.036, 14, 22); // ↑ mobile
 
+  // Bar thickness for horizontal import/export charts (reduced)
+  const horizontalBarThickness =
+    bp === "lg"
+      ? clamp(vw * 0.012, 12, 18) // Reduced from 0.018
+      : bp === "md"
+      ? clamp(vw * 0.016, 14, 20) // Reduced from 0.022
+      : clamp(vw * 0.024, 10, 16); // Reduced from 0.036
+
   // Chart heights
   const employmentChartHeight =
     bp === "lg"
       ? clamp(vw * 0.22, 320, 380)
       : bp === "md"
-      ? clamp(vw * 0.30, 300, 360)
+      ? clamp(vw * 0.3, 300, 360)
       : clamp(vw * 0.45, 260, 320);
 
   const barChartHeight =
@@ -249,7 +264,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
       : clamp(vw * 0.34, 270, 320);
 
   // Label wrapping target per breakpoint (fewer chars on small screens)
-  const wrapAt = bp === "lg" ? 18 : bp === "md" ? 12 : 10;
+  const wrapAt = bp === "lg" ? 14 : bp === "md" ? 10 : 8;
 
   /* ---------- data extraction ---------- */
   const employmentLabels =
@@ -310,8 +325,8 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     const recalc = () => {
       const exportW = exportCardRef.current?.offsetWidth ?? vw;
       const importW = importCardRef.current?.offsetWidth ?? vw;
-      // ↑ give more left column on small/tablet so labels fit inside canvas
-      const share = bp === "lg" ? 0.18 : bp === "md" ? 0.24 : 0.34;
+      // Increased share to give more space for labels
+      const share = bp === "lg" ? 0.3 : bp === "md" ? 0.35 : 0.45;
       setLeftPads({
         export: computeLeftPadding(
           exportLabels,
@@ -332,7 +347,14 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     recalc();
     window.addEventListener("resize", recalc);
     return () => window.removeEventListener("resize", recalc);
-  }, [vw, bp, labelFontSize, wrapAt, exportLabels.join("|"), importLabels.join("|")]);
+  }, [
+    vw,
+    bp,
+    labelFontSize,
+    wrapAt,
+    exportLabels.join("|"),
+    importLabels.join("|"),
+  ]);
 
   /* ---------- chart configs ---------- */
   const employmentChartData = {
@@ -376,8 +398,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     scales: {
       y: {
         max:
-          Math.max(...(employmentValues.length ? employmentValues : [0])) *
-          1.1,
+          Math.max(...(employmentValues.length ? employmentValues : [0])) * 1.1,
         beginAtZero: true,
         ticks: { display: false },
         grid: { display: false, drawTicks: false, drawBorder: false },
@@ -426,9 +447,9 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
       : "0",
   };
 
-  // Tablet gets a bit more category space & bar size
-  const catPct = bp === "md" ? 0.68 : 0.6;
-  const barPct = bp === "md" ? 0.78 : 0.7;
+  // Reduced category and bar percentages for more label space
+  const catPct = bp === "md" ? 0.5 : 0.45; // Reduced from 0.68/0.6
+  const barPct = bp === "md" ? 0.6 : 0.55; // Reduced from 0.78/0.7
 
   const exportChartData = {
     labels: exportLabels,
@@ -437,7 +458,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
         data: exportValues,
         backgroundColor: "rgb(157, 157, 156)",
         borderRadius: { topRight: 5, bottomRight: 5 },
-        barThickness,
+        barThickness: horizontalBarThickness, // Use reduced thickness
         categoryPercentage: catPct,
         barPercentage: barPct,
       },
@@ -448,7 +469,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     responsive: true,
     maintainAspectRatio: false,
     indexAxis: "y",
-    layout: { padding: { left: leftPads.export, right: 12 } },
+    layout: { padding: { left: leftPads.export, right: 16 } }, // Increased right padding
     plugins: {
       legend: { display: false },
       tooltip: { enabled: false },
@@ -457,8 +478,8 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
           industry: {
             anchor: "start",
             align: "left",
-            offset: 2,
-            clip: false, // ← show on mobile/tablet
+            offset: 4, // Increased offset for more spacing
+            clip: false,
             textAlign: "left",
             formatter: (_, ctx) => {
               const lab = ctx.chart.data.labels?.[ctx.dataIndex] ?? "";
@@ -472,10 +493,10 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
             },
           },
           value: {
-            anchor: "end",
+            anchor: "center",
             align: "right",
-            offset: -4,
-            clip: true, // keep inside chart area
+            offset: bp === "sm" ? 8 : 10, // Increased offset
+            clip: false,
             formatter: (val) => formatCurrency(val),
             backgroundColor: "#FFF",
             color: "#000",
@@ -496,7 +517,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     },
     scales: {
       x: {
-        max: Math.max(...(exportValues.length ? exportValues : [0])) * 1.08,
+        max: Math.max(...(exportValues.length ? exportValues : [0])) * 1.1, // Reduced from 1.08 to 1.1 for more space
         grid: { display: false, drawBorder: false },
         ticks: { display: false },
       },
@@ -515,7 +536,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
         data: importValues,
         backgroundColor: "rgb(157, 157, 156)",
         borderRadius: { topRight: 5, bottomRight: 5 },
-        barThickness,
+        barThickness: horizontalBarThickness, // Use reduced thickness
         categoryPercentage: catPct,
         barPercentage: barPct,
       },
@@ -526,7 +547,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     responsive: true,
     maintainAspectRatio: false,
     indexAxis: "y",
-    layout: { padding: { left: leftPads.import, right: 12 } },
+    layout: { padding: { left: leftPads.import, right: 16 } }, // Increased right padding
     plugins: {
       legend: { display: false },
       tooltip: { enabled: false },
@@ -535,9 +556,9 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
           industry: {
             anchor: "start",
             align: "left",
-            offset: 2,
-            clip: false, // ← show on mobile/tablet
-            textAlign: "left",
+            offset: 4, // Increased offset for more spacing
+            clip: false,
+            textAlign: "right",
             formatter: (_, ctx) => {
               const lab = ctx.chart.data.labels?.[ctx.dataIndex] ?? "";
               return wrapLabel(lab, wrapAt);
@@ -550,10 +571,10 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
             },
           },
           value: {
-            anchor: "end",
+            anchor: "center",
             align: "right",
-            offset: -4,
-            clip: true,
+            offset: bp === "sm" ? 8 : 10, // Increased offset
+            clip: false,
             formatter: (val) => formatCurrency(val),
             backgroundColor: "#FFF",
             color: "#000",
@@ -574,7 +595,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     },
     scales: {
       x: {
-        max: Math.max(...(importValues.length ? importValues : [0])) * 1.08,
+        max: Math.max(...(importValues.length ? importValues : [0])) * 1.15, // More space for labels
         grid: { display: false, drawBorder: false },
         ticks: { display: false },
       },
@@ -652,7 +673,10 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                 data-chart="jobs"
                 className="bg-white p-6 rounded-2xl w-full lg:w-1/2"
               >
-                <div className="w-full max-w-md mx-auto" style={{ height: donutHeight }}>
+                <div
+                  className="w-full max-w-md mx-auto"
+                  style={{ height: donutHeight }}
+                >
                   {isVisible.jobs && (
                     <Doughnut data={jobsChartData} options={jobsChartOptions} />
                   )}

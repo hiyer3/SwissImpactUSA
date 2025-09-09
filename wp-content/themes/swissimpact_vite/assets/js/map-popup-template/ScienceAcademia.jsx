@@ -163,7 +163,7 @@ const ScienceAcademia = (props) => {
         <div>
           <h2 className="popup-title text-white">{props.name}</h2>
           <p className="popup-description text-white mt-2 mb-0">
-            Swiss academics and scientists in {props.name}:{" "}
+            Swiss Academics and Scientists in {props.name}:{" "}
             <strong>{filteredData.length}</strong>
             {searchTerm && transformedData.length !== filteredData.length && (
               <span className="text-gray-300"> (of {transformedData.length} total)</span>
