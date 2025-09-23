@@ -603,9 +603,9 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
       </div>
 
       {/* Body */}
-      <div className="chart-container flex gap-6 mt-5 flex-col lg:flex-row">
+      <div className="chart-container flex gap-6 mt-5 flex-col lg:flex-row overflow-y-scroll">
         {/* Left column: charts */}
-        <div className="bg-white p-3 md:p-6 rounded-3xl max-h-[1200px] h-full lg:max-h-[78vw] overflow-y-auto flex-1">
+        <div className="bg-white p-3 md:p-6 rounded-3xl max-h-[1200px] h-full xl:max-h-[67vh] overflow-y-auto flex-1">
           <h2 className="text-xl mb-4">
             Employment Supported by Foreign Affiliates, 2022
           </h2>
@@ -766,14 +766,14 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
         </div>
 
         {/* Right column: companies */}
-        <div>
+        <div className="overflow-hidden xl:max-h-[67vh]"> 
           {Array.isArray(data?.companies_located_in_state) &&
             data.companies_located_in_state.length > 0 && (
               <div className="bg-white p-6 rounded-3xl lg:min-w-[300px] lg:max-w-xs max-h-[1200px] h-full lg:max-h-[78vw]">
                 <h2 className="text-xl mb-4">
                   Swiss Companies Located in {name}
                 </h2>
-                <div className="grid max-h-[1000px] overflow-y-auto grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-2">
+                <div className="grid max-h-[600px] lg:max-h-[58vw] overflow-y-auto grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-2">
                   {data.companies_located_in_state.map((company, index) => (
                     <div key={index} className="text-sm text-gray-700 py-1">
                       {company.company_name}
@@ -781,7 +781,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                   ))}
                 </div>
               </div>
-            )}
+            )} 
         </div>
       </div>
     </div>

@@ -6,6 +6,7 @@ const CardTitle = ({
   alt,
   iconWidth = 110,
   iconPadding = 12,
+  textDecoration = "none",
 }) => {
   return (
     <div className="flex items-center">
@@ -13,7 +14,7 @@ const CardTitle = ({
         <img style={{ width: iconWidth + "px" }} className="max-w-full" src={imageURL} alt={alt} />
       </div>
       <div>
-        <p className="text-[30px] leading-[1.1] pb-0 font-bold">{title}</p>
+        <p className="text-[30px] leading-[1.1] pb-0 font-bold" style={{ textDecoration }}>{title}</p>
       </div>
     </div>
   );
