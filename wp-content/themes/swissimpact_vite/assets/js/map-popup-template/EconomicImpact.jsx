@@ -769,11 +769,11 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
         <div className="overflow-hidden xl:max-h-[67vh]"> 
           {Array.isArray(data?.companies_located_in_state) &&
             data.companies_located_in_state.length > 0 && (
-              <div className="bg-white p-6 rounded-3xl lg:min-w-[300px] lg:max-w-xs max-h-[1200px] h-full lg:max-h-[78vw]">
+              <div className="bg-white p-6 rounded-3xl lg:min-w-[300px] lg:max-w-xs max-h-[800px] h-full lg:max-h-[78vw]">
                 <h2 className="text-xl mb-4">
                   Swiss Companies Located in {name}
                 </h2>
-                <div className="grid max-h-[600px] lg:max-h-[58vw] overflow-y-auto grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-2">
+                <div className="grid max-h-[700px] xl:max-h-[56vh] overflow-y-auto grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-2">
                   {data.companies_located_in_state.map((company, index) => (
                     <div key={index} className="text-sm text-gray-700 py-1">
                       {company.company_name}
