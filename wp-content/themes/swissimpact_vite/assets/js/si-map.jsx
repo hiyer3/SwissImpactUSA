@@ -696,15 +696,15 @@ export default function SIMapControl() {
           industry_clusters: aggClusters,
           swiss_representations: aggReps.filter(
             (obj, index, self) =>
-              self.findIndex((o) => o.representation === obj.representation) ===
+              self.findIndex((o) => o.representation.toLowerCase() === obj.representation.toLowerCase()) ===
               index
-          ),
+          ), 
         };
         if (!usACF.economic_impact) usACF.economic_impact = {};
         usACF.economic_impact.companies_located_in_state = aggCompanies.filter(
           (obj, index, self) =>
-            self.findIndex((o) => o.company_name === obj.company_name) === index
-        );
+            self.findIndex((o) => o.company_name.toLowerCase() === obj.company_name.toLowerCase()) === index
+        ); 
         cache["united-states"] = usACF;
 
         rawStateCacheRef.current = cache;
