@@ -223,15 +223,13 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
 
   // Bar thickness for vertical employment chart (unchanged)
   const barThickness =
-    bp === "lg" ? clamp(vw * 0.018, 16, 24) : (window.innerWidth * 4.68) / 100;
+    bp === "lg" ? (window.innerWidth * 2.5) / 100 : (window.innerWidth * 4.68) / 100;
 
   // Bar thickness for horizontal import/export charts (increased)
   const horizontalBarThickness =
     bp === "lg"
-      ? (window.innerWidth * 2.5) / 100 // Increased thickness range
-      : bp === "md"
-      ? clamp(vw * 0.022, 20, 30) // Increased from 0.016
-      : clamp(vw * 0.03, 16, 24); // Increased from 0.024
+      ? (window.innerWidth * 2.5) / 100 
+      : (window.innerWidth * 4.68) / 100;
 
   // Chart heights
   const employmentChartHeight =
@@ -240,13 +238,6 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
       : bp === "md"
       ? clamp(vw * 0.3, 300, 360)
       : clamp(vw * 0.45, 260, 320);
-
-  const barChartHeight =
-    bp === "lg"
-      ? clamp(vw * 0.19, 280, 340)
-      : bp === "md"
-      ? clamp(vw * 0.26, 260, 320) // ↑ tablet
-      : clamp(vw * 0.38, 240, 300); // ↑ mobile
 
   const donutHeight =
     bp === "lg"
@@ -360,7 +351,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
             : "rgb(157, 157, 156)"
         ),
         borderRadius: { topLeft: 5, topRight: 5 },
-        barThickness,
+        barThickness: horizontalBarThickness,
         categoryPercentage: bp === "md" ? 0.7 : 0.72,
         barPercentage: bp === "md" ? 0.75 : 0.78,
       },
@@ -380,7 +371,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
         borderRadius: 5,
         padding: { top: 3, bottom: 3, left: 8, right: 8 },
         borderWidth: 0,
-        borderColor: "#EDEEEE",
+        borderColor: "#fff",
         font: { size: labelFontSize, lineHeight: 1.1 },
         clip: true,
       },
@@ -397,7 +388,10 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
       },
       x: {
         grid: { display: false, drawBorder: false },
-        ticks: { font: { size: labelFontSize } },
+        ticks: { 
+          font: { size: labelFontSize },
+          color: "#000" 
+        },
       },
     },
     animation: { duration: 2000 },
@@ -483,8 +477,8 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
               bp === "sm"
                 ? { top: 1, bottom: 1, left: 3, right: 3 }
                 : { top: 2, bottom: 2, left: 6, right: 6 },
-            borderWidth: 1,
-            borderColor: "#EDEEEE",
+            borderWidth: 0,
+            borderColor: "#fff",
             font: {
               size: bp === "sm" ? scaled(0.8) : scaled(0.9),
               lineHeight: 1.1,
@@ -548,8 +542,8 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
               bp === "sm"
                 ? { top: 1, bottom: 1, left: 3, right: 3 }
                 : { top: 2, bottom: 2, left: 6, right: 6 },
-            borderWidth: 1,
-            borderColor: "#EDEEEE",
+            borderWidth: 0,
+            borderColor: "#fff",
             font: {
               size: bp === "sm" ? scaled(0.8) : scaled(0.9),
               lineHeight: 1.1,
