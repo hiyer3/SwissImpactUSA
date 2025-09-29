@@ -223,19 +223,15 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
 
   // Bar thickness for vertical employment chart (unchanged)
   const barThickness =
-    bp === "lg"
-      ? clamp(vw * 0.018, 16, 24)
-      : bp === "md"
-      ? clamp(vw * 0.022, 18, 28) // ↑ tablet
-      : clamp(vw * 0.036, 14, 22); // ↑ mobile
+    bp === "lg" ? clamp(vw * 0.018, 16, 24) : (window.innerWidth * 4.68) / 100;
 
   // Bar thickness for horizontal import/export charts (increased)
   const horizontalBarThickness =
     bp === "lg"
-      ? clamp(vw * 0.018, 18, 28) // Increased from 0.012
+      ? (window.innerWidth * 2.5) / 100 // Increased thickness range
       : bp === "md"
       ? clamp(vw * 0.022, 20, 30) // Increased from 0.016
-      : clamp(vw * 0.030, 16, 24); // Increased from 0.024
+      : clamp(vw * 0.03, 16, 24); // Increased from 0.024
 
   // Chart heights
   const employmentChartHeight =
@@ -673,10 +669,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                   2023
                 </h2>
                 {isVisible.export && (
-                  <div
-                    style={{ height: barChartHeight }}
-                    className="chart-with-labels"
-                  >
+                  <div className="chart-with-labels">
                     <div className="labels-column">
                       {exportLabels.map((label, idx) => (
                         <div className="label-cell" key={idx}>
@@ -723,10 +716,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                   2023
                 </h2>
                 {isVisible.import && (
-                  <div
-                    style={{ height: barChartHeight }}
-                    className="chart-with-labels"
-                  >
+                  <div className="chart-with-labels">
                     <div className="labels-column">
                       {importLabels.map((label, idx) => (
                         <div className="label-cell" key={idx}>
@@ -766,7 +756,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
         </div>
 
         {/* Right column: companies */}
-        <div className="overflow-hidden xl:max-h-[67vh]"> 
+        <div className="overflow-hidden xl:max-h-[67vh]">
           {Array.isArray(data?.companies_located_in_state) &&
             data.companies_located_in_state.length > 0 && (
               <div className="bg-white p-6 rounded-3xl lg:min-w-[300px] lg:max-w-xs max-h-[800px] h-full lg:max-h-[78vw]">
@@ -781,7 +771,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                   ))}
                 </div>
               </div>
-            )} 
+            )}
         </div>
       </div>
     </div>
