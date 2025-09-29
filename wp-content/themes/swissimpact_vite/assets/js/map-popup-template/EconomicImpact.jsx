@@ -229,13 +229,13 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
       ? clamp(vw * 0.022, 18, 28) // ↑ tablet
       : clamp(vw * 0.036, 14, 22); // ↑ mobile
 
-  // Bar thickness for horizontal import/export charts (reduced)
+  // Bar thickness for horizontal import/export charts (increased)
   const horizontalBarThickness =
     bp === "lg"
-      ? clamp(vw * 0.012, 12, 18) // Reduced from 0.018
+      ? clamp(vw * 0.018, 18, 28) // Increased from 0.012
       : bp === "md"
-      ? clamp(vw * 0.016, 14, 20) // Reduced from 0.022
-      : clamp(vw * 0.024, 10, 16); // Reduced from 0.036
+      ? clamp(vw * 0.022, 20, 30) // Increased from 0.016
+      : clamp(vw * 0.030, 16, 24); // Increased from 0.024
 
   // Chart heights
   const employmentChartHeight =
