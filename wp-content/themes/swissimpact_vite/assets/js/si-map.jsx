@@ -701,10 +701,12 @@ export default function SIMapControl() {
           ), 
         };
         if (!usACF.economic_impact) usACF.economic_impact = {};
-        usACF.economic_impact.companies_located_in_state = aggCompanies.filter(
-          (obj, index, self) =>
-            self.findIndex((o) => o.company_name.toLowerCase() === obj.company_name.toLowerCase()) === index
-        ); 
+        usACF.economic_impact.companies_located_in_state = aggCompanies
+          .filter(
+            (obj, index, self) =>
+              self.findIndex((o) => o.company_name.toLowerCase() === obj.company_name.toLowerCase()) === index
+          )
+          .sort((a, b) => a.company_name.localeCompare(b.company_name)); 
         cache["united-states"] = usACF;
 
         rawStateCacheRef.current = cache;

@@ -230,7 +230,6 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                     alt="Swiss Representations Icon"
                     iconWidth={50}
                     iconPadding={30}
-                    textDecoration="underline"
                   />
                 </Card>
                 <SRStateCard data={impact.swissRepresentations} />

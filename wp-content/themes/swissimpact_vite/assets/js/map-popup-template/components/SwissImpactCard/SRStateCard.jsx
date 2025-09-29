@@ -12,6 +12,7 @@ const SRStateCard = ({ data }) => {
                 {item?.type_of_representation_link ? (
                   <a
                     target="_blank"
+                    className="underline hover:no-underline"
                     href={item.type_of_representation_link.url}
                   >
                     {item?.representation}
