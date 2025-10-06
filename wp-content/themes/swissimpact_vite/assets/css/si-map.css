@@ -215,11 +215,11 @@
   display: flex;
   align-items: stretch;
   width: 100%;
-  height: 75%;
+  height: 77%;
 }
 
 .labels-column {
-  width: 30%;
+  width: 35%;
   height: 95%;
   display: flex;
   flex-flow: column wrap;
@@ -240,7 +240,7 @@
 .bars-column {
   flex: 1 1 auto; /* allow shrinking and growing */
   min-width: 0; /* allow flexbox to shrink below content size */
-  width: 70%; /* ensure full width inside flex container */
+  width: 65%; /* ensure full width inside flex container */
 }
 
 .bars-column canvas {
