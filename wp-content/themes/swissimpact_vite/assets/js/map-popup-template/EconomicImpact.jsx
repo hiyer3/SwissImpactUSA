@@ -595,7 +595,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
       {/* Body */}
       <div className="chart-container flex gap-6 mt-5 flex-col lg:flex-row overflow-y-scroll">
         {/* Left column: charts */}
-        <div className="bg-white p-3 md:p-6 rounded-3xl max-h-[1200px] h-full xl:max-h-[67vh] overflow-y-auto flex-1">
+        <div className="bg-white p-3 md:p-6 rounded-3xl max-h-[1200px] h-full md:max-h-[67vh] overflow-y-auto flex-1">
           <h2 className="text-xl mb-4">
             Employment Supported by Foreign Affiliates, 2022
           </h2>
