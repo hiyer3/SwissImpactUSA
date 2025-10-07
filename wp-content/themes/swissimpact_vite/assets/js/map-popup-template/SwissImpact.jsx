@@ -6,6 +6,7 @@ import Card from "./components/SwissImpactCard/Card";
 import CardContent from "./components/SwissImpactCard/CardContent";
 import CardWrapper from "./components/SwissImpactCard/CardWrapper";
 import SRStateCard from "./components/SwissImpactCard/SRStateCard";
+import RecommendedPosts from "./RecomendedPosts";
 
 // ---- tiny helpers ----
 const toNumber = (v) => {
@@ -78,38 +79,38 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
       </div>
 
       {/* Body */}
-      {loading ? (
-        <div className="bg-swissred rounded-3xl popup-table-content mt-5">
-          <div className="flex justify-center items-center py-20">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white" />
-            <span className="ml-3 text-white">
-              Loading Swiss impact data...
-            </span>
-          </div>
-        </div>
-      ) : error ? (
-        <div className="bg-swissred rounded-3xl popup-table-content mt-5">
-          <div className="flex justify-center items-center py-20">
-            <div className="text-white text-center">
-              <p className="text-lg font-semibold">Error loading data</p>
-              <p className="text-sm">{String(error)}</p>
+      <div className="lg:max-h-[110vh] overflow-y-auto">
+        {loading ? (
+          <div className="bg-swissred rounded-3xl popup-table-content mt-5">
+            <div className="flex justify-center items-center py-20">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white" />
+              <span className="ml-3 text-white">
+                Loading Swiss impact data...
+              </span>
             </div>
           </div>
-        </div>
-      ) : !hasAnyContent ? (
-        <div className="bg-swissred rounded-3xl popup-table-content mt-5">
-          <div className="flex justify-center items-center py-20">
-            <div className="text-white text-center">
-              <p className="text-lg font-semibold">No Swiss Impact Data</p>
-              <p className="text-sm">
-                No Swiss impact information available for {name}
-              </p>
+        ) : error ? (
+          <div className="bg-swissred rounded-3xl popup-table-content mt-5">
+            <div className="flex justify-center items-center py-20">
+              <div className="text-white text-center">
+                <p className="text-lg font-semibold">Error loading data</p>
+                <p className="text-sm">{String(error)}</p>
+              </div>
             </div>
           </div>
-        </div>
-      ) : (
-        <div className="overflow-hidden h-full">
-          <div className="bg-swissred rounded-3xl popup-table-content mt-5 h-[95%] overflow-y-auto">
+        ) : !hasAnyContent ? (
+          <div className="bg-swissred rounded-3xl popup-table-content mt-5">
+            <div className="flex justify-center items-center py-20">
+              <div className="text-white text-center">
+                <p className="text-lg font-semibold">No Swiss Impact Data</p>
+                <p className="text-sm">
+                  No Swiss impact information available for {name}
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-swissred rounded-3xl popup-table-content mt-5">
             {/* Top metrics */}
             <CardWrapper cols={2}>
               {impact.totalJobs > 0 && (
@@ -238,8 +239,13 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                 </CardWrapper>
               )}
           </div>
-        </div> 
-      )}
+        )}
+
+        {/* Featured posts based on swiss-impact tag*/}
+        <div className="w-full">
+          <RecommendedPosts tag="swiss-impact" />
+        </div>
+      </div>
     </div>
   );
 };

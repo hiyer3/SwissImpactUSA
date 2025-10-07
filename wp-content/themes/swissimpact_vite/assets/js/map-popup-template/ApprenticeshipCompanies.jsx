@@ -203,6 +203,11 @@ const ApprenticeshipCompanies = (props) => {
           <DataTable data={filteredData} columns={columns} />
         )}
       </div>
+
+      {/* Featured posts based on economic-impact tag*/}
+      <div className="w-full">
+        <RecommendedPosts tag="economic-impact" />
+      </div>
     </div>
   );
 };

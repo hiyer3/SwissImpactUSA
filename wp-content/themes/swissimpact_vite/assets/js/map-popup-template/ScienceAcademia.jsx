@@ -201,6 +201,11 @@ const ScienceAcademia = (props) => {
           />
         )}
       </div>
+
+      {/* Featured posts based on science-academia tag*/}
+      <div className="w-full">
+        <RecommendedPosts tag="science-academia" />
+      </div>
     </div>
   );
 };

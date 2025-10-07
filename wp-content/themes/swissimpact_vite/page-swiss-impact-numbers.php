@@ -129,10 +129,10 @@
         </div>
         <div class="popup-width-wrapper">
             <div></div>
-            <div class="popup-content-wrapper h-full px-5">
+            <div class="popup-content-wrapper px-5">
             </div> 
         </div>
-
+ 
     </div>
 
     <div class="slider-wrapper w-11/12 mx-auto lg:mr-0" id="highlights">
