@@ -223,12 +223,14 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
 
   // Bar thickness for vertical employment chart (unchanged)
   const barThickness =
-    bp === "lg" ? (window.innerWidth * 2.5) / 100 : (window.innerWidth * 4.68) / 100;
+    bp === "lg"
+      ? (window.innerWidth * 2.5) / 100
+      : (window.innerWidth * 4.68) / 100;
 
   // Bar thickness for horizontal import/export charts (increased)
   const horizontalBarThickness =
     bp === "lg"
-      ? (window.innerWidth * 2.5) / 100 
+      ? (window.innerWidth * 2.5) / 100
       : (window.innerWidth * 4.68) / 100;
 
   // Chart heights
@@ -388,9 +390,9 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
       },
       x: {
         grid: { display: false, drawBorder: false },
-        ticks: { 
+        ticks: {
           font: { size: labelFontSize },
-          color: "#000" 
+          color: "#000",
         },
       },
     },
@@ -593,179 +595,189 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
       </div>
 
       {/* Body */}
-      <div className="chart-container flex gap-6 mt-5 flex-col lg:flex-row overflow-y-scroll">
-        {/* Left column: charts */}
-        <div className="bg-white p-3 md:p-6 rounded-3xl max-h-[1200px] h-full md:max-h-[67vh] overflow-y-auto flex-1">
-          <h2 className="text-xl mb-4">
-            Employment Supported by Foreign Affiliates, 2022
-          </h2>
+      <div className="lg:max-h-[115vh] overflow-y-scroll">
+        <div className="chart-container flex gap-6 mt-5 flex-col lg:flex-row">
+          {/* Left column: charts */}
+          <div className="bg-white p-3 md:p-6 rounded-3xl max-h-[1200px] h-full lg:max-h-[73vh] overflow-y-auto flex-1">
+            <h2 className="text-xl mb-4">
+              Employment Supported by Foreign Affiliates, 2022
+            </h2>
 
-          <div className="flex gap-2 flex-col md:flex-row">
-            {/* Employment */}
-            {employmentLabels.length > 0 && (
-              <div
-                data-chart="employment"
-                className="bg-white p-2 rounded-2xl w-full lg:w-1/2"
-              >
-                {isVisible.employment && (
-                  <div style={{ height: employmentChartHeight }}>
-                    <Bar
-                      data={employmentChartData}
-                      options={employmentChartOptions}
-                    />
-                  </div>
-                )}
-                <p className="text-sm text-gray-600 mt-4">
-                  Swiss Affiliates account for{" "}
-                  {data?.esbfa_affiliate_percentage || 0}% of the{" "}
-                  {data?.esbfa_foreign_jobs
-                    ? formatUSNumber(data?.esbfa_foreign_jobs)
-                    : 0}{" "}
-                  jobs created by all foreign affiliates in{" "}
-                  {name === "United States" ? "the United States" : name}.
-                </p>
-              </div>
-            )}
-
-            {/* Jobs Doughnut */}
-            {jobsSlices.some((v) => v > 0) && (
-              <div
-                data-chart="jobs"
-                className="bg-white p-6 rounded-2xl w-full lg:w-1/2"
-              >
+            <div className="flex gap-2 flex-col md:flex-row">
+              {/* Employment */}
+              {employmentLabels.length > 0 && (
                 <div
-                  className="w-full max-w-md mx-auto"
-                  style={{ height: donutHeight }}
+                  data-chart="employment"
+                  className="bg-white p-2 rounded-2xl w-full lg:w-1/2"
                 >
-                  {isVisible.jobs && (
-                    <Doughnut data={jobsChartData} options={jobsChartOptions} />
+                  {isVisible.employment && (
+                    <div style={{ height: employmentChartHeight }}>
+                      <Bar
+                        data={employmentChartData}
+                        options={employmentChartOptions}
+                      />
+                    </div>
                   )}
+                  <p className="text-sm text-gray-600 mt-4">
+                    Swiss Affiliates account for{" "}
+                    {data?.esbfa_affiliate_percentage || 0}% of the{" "}
+                    {data?.esbfa_foreign_jobs
+                      ? formatUSNumber(data?.esbfa_foreign_jobs)
+                      : 0}{" "}
+                    jobs created by all foreign affiliates in{" "}
+                    {name === "United States" ? "the United States" : name}.
+                  </p>
                 </div>
-                <ul className="ei-donut-legend mt-4 text-sm text-gray-600 list-none">
-                  <li>Jobs Supported by Swiss Affiliates</li>
-                  <li>Jobs Supported by Services Exports to Switzerland</li>
-                  <li>Jobs Supported by Goods Exports to Switzerland</li>
-                </ul>
-              </div>
-            )}
+              )}
+
+              {/* Jobs Doughnut */}
+              {jobsSlices.some((v) => v > 0) && (
+                <div
+                  data-chart="jobs"
+                  className="bg-white p-6 rounded-2xl w-full lg:w-1/2"
+                >
+                  <div
+                    className="w-full max-w-md mx-auto"
+                    style={{ height: donutHeight }}
+                  >
+                    {isVisible.jobs && (
+                      <Doughnut
+                        data={jobsChartData}
+                        options={jobsChartOptions}
+                      />
+                    )}
+                  </div>
+                  <ul className="ei-donut-legend mt-4 text-sm text-gray-600 list-none">
+                    <li>Jobs Supported by Swiss Affiliates</li>
+                    <li>Jobs Supported by Services Exports to Switzerland</li>
+                    <li>Jobs Supported by Goods Exports to Switzerland</li>
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            {/* Export/Import */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+              {exportLabels.length > 0 && (
+                <div
+                  data-chart="export"
+                  className="bg-white p-4 rounded-3xl"
+                  ref={exportCardRef}
+                >
+                  <h2 className="text-lg font-semibold mb-4 leading-[1.2]">
+                    Top Exports of Goods by Industry from {name} to Switzerland,
+                    2023
+                  </h2>
+                  {isVisible.export && (
+                    <div className="chart-with-labels">
+                      <div className="labels-column">
+                        {exportLabels.map((label, idx) => (
+                          <div className="label-cell" key={idx}>
+                            {label}
+                          </div>
+                        ))}
+                      </div>
+                      <div className="bars-column">
+                        <Bar
+                          data={{
+                            ...exportChartData,
+                            labels: exportLabels.map(() => ""),
+                          }}
+                          options={{
+                            ...exportChartOptions,
+                            scales: {
+                              ...exportChartOptions.scales,
+                              y: {
+                                ...exportChartOptions.scales.y,
+                                ticks: { display: false },
+                              },
+                            },
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                  <div className="text-sm mt-4">
+                    Total Export Value of Goods ={" "}
+                    {formatCurrency(data?.export_total_export_value_of_goods) ||
+                      "$0"}
+                  </div>
+                </div>
+              )}
+
+              {importLabels.length > 0 && (
+                <div
+                  data-chart="import"
+                  className="bg-white p-4 rounded-3xl"
+                  ref={importCardRef}
+                >
+                  <h2 className="text-lg font-semibold mb-4 leading-[1.2]">
+                    Top Imports of Goods by Industry from {name} from
+                    Switzerland, 2023
+                  </h2>
+                  {isVisible.import && (
+                    <div className="chart-with-labels">
+                      <div className="labels-column">
+                        {importLabels.map((label, idx) => (
+                          <div className="label-cell" key={idx}>
+                            {label}
+                          </div>
+                        ))}
+                      </div>
+                      <div className="bars-column">
+                        <Bar
+                          data={{
+                            ...importChartData,
+                            labels: importLabels.map(() => ""),
+                          }}
+                          options={{
+                            ...importChartOptions,
+                            scales: {
+                              ...importChartOptions.scales,
+                              y: {
+                                ...importChartOptions.scales.y,
+                                ticks: { display: false },
+                              },
+                            },
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                  <div className="text-sm mt-4">
+                    Total Import Value of Goods ={" "}
+                    {data?.import_total_import_value
+                      ? formatCurrency(data?.import_total_import_value)
+                      : "$0"}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Export/Import */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            {exportLabels.length > 0 && (
-              <div
-                data-chart="export"
-                className="bg-white p-4 rounded-3xl"
-                ref={exportCardRef}
-              >
-                <h2 className="text-lg font-semibold mb-4 leading-[1.2]">
-                  Top Exports of Goods by Industry from {name} to Switzerland,
-                  2023
-                </h2>
-                {isVisible.export && (
-                  <div className="chart-with-labels">
-                    <div className="labels-column">
-                      {exportLabels.map((label, idx) => (
-                        <div className="label-cell" key={idx}>
-                          {label}
-                        </div>
-                      ))}
-                    </div>
-                    <div className="bars-column">
-                      <Bar
-                        data={{
-                          ...exportChartData,
-                          labels: exportLabels.map(() => ""),
-                        }}
-                        options={{
-                          ...exportChartOptions,
-                          scales: {
-                            ...exportChartOptions.scales,
-                            y: {
-                              ...exportChartOptions.scales.y,
-                              ticks: { display: false },
-                            },
-                          },
-                        }}
-                      />
-                    </div>
+          {/* Right column: companies */}
+          <div className="overflow-hidden lg:max-h-[73vh]">
+            {Array.isArray(data?.companies_located_in_state) &&
+              data.companies_located_in_state.length > 0 && (
+                <div className="bg-white p-6 rounded-3xl lg:min-w-[300px] lg:max-w-xs max-h-[800px] h-full lg:max-h-[78vw]">
+                  <h2 className="text-xl mb-4">
+                    Swiss Companies Located in {name}
+                  </h2>
+                  <div className="grid max-h-[700px] xl:max-h-[56vh] overflow-y-auto grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-2">
+                    {data.companies_located_in_state.map((company, index) => (
+                      <div key={index} className="text-sm text-gray-700 py-1">
+                        {company.company_name}
+                      </div>
+                    ))}
                   </div>
-                )}
-                <div className="text-sm mt-4">
-                  Total Export Value of Goods ={" "}
-                  {formatCurrency(data?.export_total_export_value_of_goods) ||
-                    "$0"}
                 </div>
-              </div>
-            )}
-
-            {importLabels.length > 0 && (
-              <div
-                data-chart="import"
-                className="bg-white p-4 rounded-3xl"
-                ref={importCardRef}
-              >
-                <h2 className="text-lg font-semibold mb-4 leading-[1.2]">
-                  Top Imports of Goods by Industry from {name} from Switzerland,
-                  2023
-                </h2>
-                {isVisible.import && (
-                  <div className="chart-with-labels">
-                    <div className="labels-column">
-                      {importLabels.map((label, idx) => (
-                        <div className="label-cell" key={idx}>
-                          {label}
-                        </div>
-                      ))}
-                    </div>
-                    <div className="bars-column">
-                      <Bar
-                        data={{
-                          ...importChartData,
-                          labels: importLabels.map(() => ""),
-                        }}
-                        options={{
-                          ...importChartOptions,
-                          scales: {
-                            ...importChartOptions.scales,
-                            y: {
-                              ...importChartOptions.scales.y,
-                              ticks: { display: false },
-                            },
-                          },
-                        }}
-                      />
-                    </div>
-                  </div>
-                )}
-                <div className="text-sm mt-4">
-                  Total Import Value of Goods ={" "}
-                  {data?.import_total_import_value
-                    ? formatCurrency(data?.import_total_import_value)
-                    : "$0"}
-                </div>
-              </div>
-            )}
+              )}
           </div>
         </div>
 
-        {/* Right column: companies */}
-        <div className="overflow-hidden xl:max-h-[67vh]">
-          {Array.isArray(data?.companies_located_in_state) &&
-            data.companies_located_in_state.length > 0 && (
-              <div className="bg-white p-6 rounded-3xl lg:min-w-[300px] lg:max-w-xs max-h-[800px] h-full lg:max-h-[78vw]">
-                <h2 className="text-xl mb-4">
-                  Swiss Companies Located in {name}
-                </h2>
-                <div className="grid max-h-[700px] xl:max-h-[56vh] overflow-y-auto grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-2">
-                  {data.companies_located_in_state.map((company, index) => (
-                    <div key={index} className="text-sm text-gray-700 py-1">
-                      {company.company_name}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+        {/* Featured posts based on economic-impact tag*/}
+        <div className="w-full">
+          <RecommendedPosts tag="economic-impact" />
         </div>
       </div>
     </div>
