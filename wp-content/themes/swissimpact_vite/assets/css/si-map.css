@@ -249,3 +249,8 @@
   height: auto !important;
   max-width: 100% !important;
 }
+
+/* Hide scrollbar thumb when not hovering */
+.chart-container > div:not(:hover)::-webkit-scrollbar-thumb {
+  background: transparent;
+}
