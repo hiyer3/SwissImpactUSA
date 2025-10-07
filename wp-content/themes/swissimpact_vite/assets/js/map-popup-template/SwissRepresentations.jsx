@@ -218,6 +218,11 @@ const SwissRepresentations = (props) => {
           <DataTable data={filteredData} columns={columns} />
         )}
       </div>
+
+      {/* Featured posts based on swiss-representations tag*/}
+      <div className="w-full">
+        <RecommendedPosts tag="swiss-representations" />
+      </div>
     </div>
   );
 };

@@ -696,17 +696,24 @@ export default function SIMapControl() {
           industry_clusters: aggClusters,
           swiss_representations: aggReps.filter(
             (obj, index, self) =>
-              self.findIndex((o) => o.representation.toLowerCase() === obj.representation.toLowerCase()) ===
-              index
-          ), 
+              self.findIndex(
+                (o) =>
+                  o.representation.toLowerCase() ===
+                  obj.representation.toLowerCase()
+              ) === index
+          ),
         };
         if (!usACF.economic_impact) usACF.economic_impact = {};
         usACF.economic_impact.companies_located_in_state = aggCompanies
           .filter(
             (obj, index, self) =>
-              self.findIndex((o) => o.company_name.toLowerCase() === obj.company_name.toLowerCase()) === index
+              self.findIndex(
+                (o) =>
+                  o.company_name.toLowerCase() ===
+                  obj.company_name.toLowerCase()
+              ) === index
           )
-          .sort((a, b) => a.company_name.localeCompare(b.company_name)); 
+          .sort((a, b) => a.company_name.localeCompare(b.company_name));
         cache["united-states"] = usACF;
 
         rawStateCacheRef.current = cache;
@@ -1382,6 +1389,33 @@ export default function SIMapControl() {
       setSingleStateData((p) => ({ ...p, isLoadingTabs: false }));
     }
   }, [singleStateData.selectedFilter, singleStateData.stateId, isAllLoaded]);
+
+  // Footer height adjustment for popup positioning
+  useEffect(() => {
+    const footer = document.querySelector("footer");
+    
+    function adjustPopupHeight() {
+      const footerHeight = footer?.offsetHeight || 0;
+      console.log("Footer height:", footerHeight);
+      document.documentElement.style.setProperty(
+        "--footer-height",
+        `${footerHeight}px`
+      );
+    }
+
+    // Initial adjustment
+    adjustPopupHeight();
+
+    // Add event listeners
+    window.addEventListener("resize", adjustPopupHeight);
+    window.addEventListener("load", adjustPopupHeight);
+
+    // Cleanup event listeners on unmount
+    return () => {
+      window.removeEventListener("resize", adjustPopupHeight);
+      window.removeEventListener("load", adjustPopupHeight);
+    };
+  }, []);
 
   return (
     <div>

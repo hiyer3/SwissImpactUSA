@@ -595,10 +595,10 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
       </div>
 
       {/* Body */}
-      <div className="lg:max-h-[115vh] overflow-y-scroll">
+      <div className="lg:max-h-[110vh] overflow-y-auto">
         <div className="chart-container flex gap-6 mt-5 flex-col lg:flex-row">
           {/* Left column: charts */}
-          <div className="bg-white p-3 md:p-6 rounded-3xl max-h-[1200px] h-full lg:max-h-[73vh] overflow-y-auto flex-1">
+          <div className="bg-white p-3 md:p-6 rounded-3xl max-h-[1200px] h-full lg:max-h-[100vh] overflow-y-auto flex-1">
             <h2 className="text-xl mb-4">
               Employment Supported by Foreign Affiliates, 2022
             </h2>
@@ -756,7 +756,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
           </div>
 
           {/* Right column: companies */}
-          <div className="overflow-hidden lg:max-h-[73vh]">
+          <div className="overflow-hidden max-h-[1200px] lg:max-h-[100vh]">
             {Array.isArray(data?.companies_located_in_state) &&
               data.companies_located_in_state.length > 0 && (
                 <div className="bg-white p-6 rounded-3xl lg:min-w-[300px] lg:max-w-xs max-h-[800px] h-full lg:max-h-[78vw]">

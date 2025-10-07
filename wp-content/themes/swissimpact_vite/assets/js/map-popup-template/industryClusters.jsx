@@ -214,6 +214,11 @@ const IndustryClusters = (props) => {
           {props.name === "United States" ? "national" : "state"} GDP.
         </p>
       </div>
+
+      {/* Featured posts based on industry-clusters tag*/}
+      <div className="w-full">
+        <RecommendedPosts tag="industry-clusters" />
+      </div>
     </div>
   );
 };
