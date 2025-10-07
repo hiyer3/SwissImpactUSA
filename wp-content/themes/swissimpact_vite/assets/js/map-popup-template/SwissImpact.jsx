@@ -108,133 +108,136 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
           </div>
         </div>
       ) : (
-        <div className="bg-swissred rounded-3xl popup-table-content mt-5 max-h-[1200px] h-full lg:max-h-[78vw] overflow-scroll">
-          {/* Top metrics */}
-          <CardWrapper cols={2}>
-            {impact.totalJobs > 0 && (
-              <Card>
-                <CardTitle
-                  title="Economic Impact"
-                  imageURL="/wp-content/themes/swissimpact_vite/assets/img/si-number-map/icon-ei-2x.png"
-                  alt="Economic Impact Icon"
-                  iconWidth={70}
-                  iconPadding={10}
-                />
-                <CardContent
-                  type="fullWidth"
-                  description={`Total Jobs Supported in ${placeLabel}`}
-                >
-                  <CardStatNumber
-                    style={{ marginLeft: "0", marginRight: "auto" }}
-                    number={formatUS(impact.totalJobs)}
-                  />
-                </CardContent>
-              </Card>
-            )}
-
-            {impact.counts.scienceAcademia > 0 && (
-              <Card>
-                <CardTitle
-                  title="Science & Academia"
-                  imageURL="/wp-content/themes/swissimpact_vite/assets/img/si-number-map/icon-sa-2x.png"
-                  alt="Academic Institutions Icon"
-                  iconWidth={60}
-                  iconPadding={20}
-                />
-                <CardContent
-                  description={`Total Swiss Academics and Scientists in ${placeLabel}`}
-                >
-                  <CardStatNumber
-                    number={formatUS(impact.counts.scienceAcademia)}
-                  />
-                </CardContent>
-              </Card>
-            )}
-
-            {impact.counts.apprenticeshipCompanies > 0 && (
-              <Card>
-                <CardTitle
-                  title="Apprenticeship Companies"
-                  imageURL="/wp-content/themes/swissimpact_vite/assets/img/si-number-map/icon-ec-2x.png"
-                  alt="Apprenticeship Companies Icon"
-                  iconWidth={80}
-                  iconPadding={0}
-                />
-                <CardContent
-                  description={`Total Apprenticeships in ${placeLabel}`}
-                >
-                  <CardStatNumber
-                    number={formatUS(impact.counts.apprenticeshipCompanies)}
-                  />
-                </CardContent>
-              </Card>
-            )}
-
-            {impact.industryClusters && impact.industryClusters.length > 0 && (
-              <Card>
-                <CardTitle
-                  title="Industry Clusters"
-                  imageURL="/wp-content/themes/swissimpact_vite/assets/img/si-number-map/icon-ic-2x.png"
-                  alt="Industry Clusters Icon"
-                  iconWidth={30}
-                  iconPadding={40}
-                />
-                <div className="flex">
-                  <div className="max-w-[80px] w-full"></div>
-                  <div className={`flex flex-col mt-4`}>
-                    {stateId == "united-states" ? (
-                      <>
-                        <p className="text-xl lg:text-2xl font-bold">
-                          Top Industry Cluster in {placeLabel}
-                        </p>
-                        <p
-                          style={{ lineHeight: "1.1" }}
-                          className={`text-lg lg:text-xl leading-[1.4] font-medium`}
-                        >
-                          {impact.industryClusters.join(", ")}
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        <p className="text-xl lg:text-2xl font-bold">
-                          Top Industry Cluster in {placeLabel}
-                        </p>
-                        <p
-                          style={{ lineHeight: "1.1" }}
-                          className={`text-[30px] lg:text-[40px] xl:text-[40px] leading-[1.1] font-bold`}
-                        >
-                          {impact.industryClusters[0]}
-                        </p>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </Card>
-            )}
-          </CardWrapper>
-
-          {/* Swiss Representations */}
-          {impact.swissRepresentations &&
-            impact.swissRepresentations.length > 0 && (
-              <CardWrapper style={{ gap: 0 }}>
-                <Card
-                  style={{
-                    paddingBottom: "0px",
-                    borderBottomLeftRadius: "0px",
-                    borderBottomRightRadius: "0px",
-                  }}
-                >
+        <div className="overflow-hidden h-full">
+          <div className="bg-swissred rounded-3xl popup-table-content mt-5 h-[95%] overflow-y-scroll">
+            {/* Top metrics */}
+            <CardWrapper cols={2}>
+              {impact.totalJobs > 0 && (
+                <Card>
                   <CardTitle
-                    title="Swiss Representations"
-                    imageURL="/wp-content/themes/swissimpact_vite/assets/img/si-number-map/icon-sr-2x.png"
-                    alt="Swiss Representations Icon"
-                    iconWidth={50}
-                    iconPadding={30}
+                    title="Economic Impact"
+                    imageURL="/wp-content/themes/swissimpact_vite/assets/img/si-number-map/icon-ei-2x.png"
+                    alt="Economic Impact Icon"
+                    iconWidth={70}
+                    iconPadding={10}
                   />
+                  <CardContent
+                    type="fullWidth"
+                    description={`Total Jobs Supported in ${placeLabel}`}
+                  >
+                    <CardStatNumber
+                      style={{ marginLeft: "0", marginRight: "auto" }}
+                      number={formatUS(impact.totalJobs)}
+                    />
+                  </CardContent>
                 </Card>
-                <SRStateCard data={impact.swissRepresentations} />
-              </CardWrapper>
-            )}
+              )}
+
+              {impact.counts.scienceAcademia > 0 && (
+                <Card>
+                  <CardTitle
+                    title="Science & Academia"
+                    imageURL="/wp-content/themes/swissimpact_vite/assets/img/si-number-map/icon-sa-2x.png"
+                    alt="Academic Institutions Icon"
+                    iconWidth={60}
+                    iconPadding={20}
+                  />
+                  <CardContent
+                    description={`Total Swiss Academics and Scientists in ${placeLabel}`}
+                  >
+                    <CardStatNumber
+                      number={formatUS(impact.counts.scienceAcademia)}
+                    />
+                  </CardContent>
+                </Card>
+              )}
+
+              {impact.counts.apprenticeshipCompanies > 0 && (
+                <Card>
+                  <CardTitle
+                    title="Apprenticeship Companies"
+                    imageURL="/wp-content/themes/swissimpact_vite/assets/img/si-number-map/icon-ec-2x.png"
+                    alt="Apprenticeship Companies Icon"
+                    iconWidth={80}
+                    iconPadding={0}
+                  />
+                  <CardContent
+                    description={`Total Apprenticeships in ${placeLabel}`}
+                  >
+                    <CardStatNumber
+                      number={formatUS(impact.counts.apprenticeshipCompanies)}
+                    />
+                  </CardContent>
+                </Card>
+              )}
+
+              {impact.industryClusters &&
+                impact.industryClusters.length > 0 && (
+                  <Card>
+                    <CardTitle
+                      title="Industry Clusters"
+                      imageURL="/wp-content/themes/swissimpact_vite/assets/img/si-number-map/icon-ic-2x.png"
+                      alt="Industry Clusters Icon"
+                      iconWidth={30}
+                      iconPadding={40}
+                    />
+                    <div className="flex">
+                      <div className="max-w-[80px] w-full"></div>
+                      <div className={`flex flex-col mt-4`}>
+                        {stateId == "united-states" ? (
+                          <>
+                            <p className="text-xl lg:text-2xl font-bold">
+                              Top Industry Cluster in {placeLabel}
+                            </p>
+                            <p
+                              style={{ lineHeight: "1.1" }}
+                              className={`text-lg lg:text-xl leading-[1.4] font-medium`}
+                            >
+                              {impact.industryClusters.join(", ")}
+                            </p>
+                          </>
+                        ) : (
+                          <>
+                            <p className="text-xl lg:text-2xl font-bold">
+                              Top Industry Cluster in {placeLabel}
+                            </p>
+                            <p
+                              style={{ lineHeight: "1.1" }}
+                              className={`text-[30px] lg:text-[40px] xl:text-[40px] leading-[1.1] font-bold`}
+                            >
+                              {impact.industryClusters[0]}
+                            </p>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </Card>
+                )}
+            </CardWrapper>
+
+            {/* Swiss Representations */}
+            {impact.swissRepresentations &&
+              impact.swissRepresentations.length > 0 && (
+                <CardWrapper style={{ gap: 0 }}>
+                  <Card
+                    style={{
+                      paddingBottom: "0px",
+                      borderBottomLeftRadius: "0px",
+                      borderBottomRightRadius: "0px",
+                    }}
+                  >
+                    <CardTitle
+                      title="Swiss Representations"
+                      imageURL="/wp-content/themes/swissimpact_vite/assets/img/si-number-map/icon-sr-2x.png"
+                      alt="Swiss Representations Icon"
+                      iconWidth={50}
+                      iconPadding={30}
+                    />
+                  </Card>
+                  <SRStateCard data={impact.swissRepresentations} />
+                </CardWrapper>
+              )}
+          </div>
         </div>
       )}
     </div>

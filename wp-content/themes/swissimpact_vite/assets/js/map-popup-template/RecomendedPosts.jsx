@@ -8,7 +8,7 @@ function decodeHTMLEntities(text) {
   return textArea.value;
 }
 
-const RecomendedPosts = ({ tab = "Economic Impact" }) => {
+const RecomendedPosts = ({ tag = "economic-impact" }) => {
   // fetch posts from WordPress REST API for posts tagged with economic-impact
 
   const [posts, setPosts] = useState([]);
@@ -17,87 +17,42 @@ const RecomendedPosts = ({ tab = "Economic Impact" }) => {
 
   useEffect(() => {
     const fetchPosts = async () => {
-      // fetch the acf options page
-
+      if (!tag) {
+        setLoading(false);
+        return;
+      }
+      
       setLoading(true);
       try {
-        const optionsResponse = await fetch(`/wp-json/myacf/v1/options`);
-
-        if (!optionsResponse.ok) {
-          throw new Error(
-            "Error fetching options, please try again. Error code: " +
-              optionsResponse.status
-          );
+        // First, get the tag ID from the tag slug
+        const tagResponse = await fetch(`/wp-json/wp/v2/tags?slug=${tag}`);
+        if (!tagResponse.ok) {
+          throw new Error(`Error fetching tag: ${tagResponse.status}`);
         }
-        const optionsData = await optionsResponse.json();
-
-        const postIDs = [];
-
-        switch (tab) {
-          case "Economic Impact":
-            optionsData.economic_impact.map((post) => {
-              postIDs.push(post.ID);
-            });
-            break;
-          case "Science & Academia":
-            optionsData.science_academia.map((post) => {
-              postIDs.push(post.ID);
-            });
-            break;
-          case "Apprenticeship Companies":
-            optionsData.apprenticeship_companies.map((post) => {
-              postIDs.push(post.ID);
-            });
-            break;
-          case "Industry Clusters":
-            optionsData.industry_clusters.map((post) => {
-              postIDs.push(post.ID);
-            });
-            break;
-          case "Swiss Representations":
-            optionsData.swiss_representations.map((post) => {
-              postIDs.push(post.ID);
-            });
-          default:
-            break;
+        
+        const tagData = await tagResponse.json();
+        if (tagData.length === 0) {
+          throw new Error(`Tag "${tag}" not found`);
         }
-
-        const response = await fetch(
-          `/wp-json/wp/v2/posts?include=${postIDs.join(",")}&_embed`
+        
+        const tagId = tagData[0].id;
+        
+        // Then fetch posts with that tag ID
+        const postsResponse = await fetch(
+          `/wp-json/wp/v2/posts?tags=${tagId}&_embed&per_page=10&orderby=date&order=desc`
         );
-        if (!response.ok) {
+        
+        if (!postsResponse.ok) {
           throw new Error(
             "Error fetching posts, please try again. Error code: " +
-              response.status
+              postsResponse.status
           );
         }
-        const data = await response.json();
-        setPosts(data);
-
-        // Initialize Swiper after posts are set
-        const swiper = new Swiper(".tab-featured-events", {
-          modules: [Navigation, Pagination, Scrollbar],
-          slidesPerView: 1,
-          spaceBetween: 20,
-          navigation: {
-            nextEl: ".swiper-button-next",
-            prevEl: ".swiper-button-prev",
-          },
-          breakpoints: {
-            640: {
-              slidesPerView: 2,
-              spaceBetween: 20,
-            },
-            1024: {
-              slidesPerView: 3,
-              spaceBetween: 30,
-            },
-          },
-        });
-
-        console.log("swiper state", swiper);
-        setError(null);
+        
+        const postsData = await postsResponse.json();
+        setPosts(postsData);
       } catch (error) {
+        console.error('Error fetching posts:', error);
         setError(error);
       } finally {
         setLoading(false);
@@ -105,10 +60,10 @@ const RecomendedPosts = ({ tab = "Economic Impact" }) => {
     };
 
     fetchPosts();
-  }, [tab]);
-
+  }, [tag]);
+ 
   return (
-    <div class="slider-wrapper w-full my-10 tab-featured-events">
+    <div class="slider-wrapper w-full mt-16 mb-10 tab-featured-events">
       <div class="title flex">
         <h1 class="inline-block text-white">Featured events</h1>
         <div class="swiper-nav inline-flex gap-7 ml-5">
@@ -167,9 +122,14 @@ const RecomendedPosts = ({ tab = "Economic Impact" }) => {
           </div>
         </div>
       )}
-      {!loading && posts.length === 0 && (
+      {error && (
         <div class="grid text-white grid-cols-1 gap-x-16 gap-y-10 upcoming-post-wrapper">
-          <h3>Check back soon for featured events.</h3>
+          <h3>Error loading events: {error.message}</h3>
+        </div>
+      )}
+      {!loading && !error && posts.length === 0 && (
+        <div class="grid text-white grid-cols-1 gap-x-16 gap-y-10 upcoming-post-wrapper">
+          <h3>No events found for tag "{tag}". Check back soon for featured events.</h3>
         </div>
       )}
     </div>
