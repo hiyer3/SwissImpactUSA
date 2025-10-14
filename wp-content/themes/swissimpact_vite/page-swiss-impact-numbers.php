@@ -145,31 +145,35 @@
         </div>
         <div class="slider w-swiper">
             <?php
-            $args = array(
-                'post_type' => 'post',
-                'posts_per_page' => 6,
-                'meta_key' => 'wpcf-event-to-date',
-                'orderby' => 'meta_value_num',
-                'order' => 'DESC',
-                'meta_query' => array(
-                    array(
-                        'key' => 'wpcf-is-featured-event',
-                        'value' => '1',
-                        'compare' => '='
-                    )
-                ),
-            );
-
-            $featured_posts = new WP_Query($args);
-
-            if (!$featured_posts->have_posts()) {
-                $args = array(
-                    'post_type' => 'post',
-                    'meta_key' => 'wpcf-event-to-date',
-                    'orderby' => 'meta_value_num',
-                    'order' => 'DESC',
-                );
-                $featured_posts = new WP_Query($args);
+            // Get featured events from ACF options page
+            $featured_events = get_field('map_featured_events', 'option');
+            
+            if ($featured_events && is_array($featured_events)) {
+                // Get post IDs from the ACF field
+                $post_ids = array();
+                foreach ($featured_events as $event) {
+                    if (is_object($event) && isset($event->ID)) {
+                        $post_ids[] = $event->ID;
+                    } elseif (is_array($event) && isset($event['ID'])) {
+                        $post_ids[] = $event['ID'];
+                    } elseif (is_numeric($event)) {
+                        $post_ids[] = $event;
+                    }
+                }
+                
+                if (!empty($post_ids)) {
+                    $args = array(
+                        'post_type' => 'post',
+                        'post__in' => $post_ids,
+                        'orderby' => 'post__in',
+                        'posts_per_page' => count($post_ids)
+                    );
+                    $featured_posts = new WP_Query($args);
+                } else {
+                    $featured_posts = new WP_Query(array('post__in' => array(0))); // Empty query
+                }
+            } else {
+                $featured_posts = new WP_Query(array('post__in' => array(0))); // Empty query
             }
             ?>
 
