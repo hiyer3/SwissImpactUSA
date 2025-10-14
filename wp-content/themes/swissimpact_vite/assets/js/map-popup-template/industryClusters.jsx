@@ -3,6 +3,7 @@ import BackToMapButton from "./components/backToMapButton";
 import PopupSearchInput from "./components/popupSearchInput";
 import DataTable from "./components/dataTable";
 import { useEffect, useState, useMemo } from "preact/hooks";
+import RecommendedPosts from "./RecomendedPosts";
 
 const IndustryClusters = (props) => {
   const [industryClustersData, setIndustryClustersData] = useState([]);

@@ -4,6 +4,7 @@ import PopupSearchInput from "./components/popupSearchInput";
 import DataTable from "./components/dataTable";
 import { useEffect, useState, useMemo } from "preact/hooks";
 import constructLink from "./components/constructLink";
+import RecommendedPosts from "./RecomendedPosts";
 
 const SwissRepresentations = (props) => {
   const [swissRepresentationsData, setSwissRepresentationsData] = useState([]);

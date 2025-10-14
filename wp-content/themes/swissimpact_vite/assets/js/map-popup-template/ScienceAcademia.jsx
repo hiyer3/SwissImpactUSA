@@ -4,6 +4,7 @@ import PopupSearchInput from "./components/popupSearchInput";
 import DataTable from "./components/dataTable";
 import { useEffect, useState, useMemo } from "preact/hooks";
 import constructLink from "./components/constructLink";
+import RecommendedPosts from "./RecomendedPosts";
 
 const ScienceAcademia = (props) => {
   const [scienceAcademiaData, setScienceAcademiaData] = useState([]);
@@ -18,7 +19,7 @@ const ScienceAcademia = (props) => {
       setLoading(props.preloadedData.loading || false);
       setError(props.preloadedData.error || null);
       return;
-    }
+    } 
 
     // Fallback to original fetch logic if no preloaded data
     const fetchData = async () => {
