@@ -97,22 +97,24 @@ const RecomendedPosts = ({ tag = "economic-impact" }) => {
 
     fetchPosts();
   }, [tag]);
- 
+  
   return (
     <div class="slider-wrapper w-full mt-16 mb-10 tab-featured-events">
-      <div class="title flex">
-        <h1 class="inline-block text-white">Featured events</h1>
-        <div class="swiper-nav inline-flex gap-7 ml-5">
-          <div class="swiper-button-prev text-white"></div>
-          <div class="swiper-button-next text-white"></div>
+      {(!loading && posts.length > 0) && (
+        <div class="title flex">
+          <h1 class="inline-block text-white">Featured events</h1>
+          <div class="swiper-nav inline-flex gap-7 ml-5">
+            <div class="swiper-button-prev text-white"></div>
+            <div class="swiper-button-next text-white"></div>
+          </div>
         </div>
-      </div>
+      )}
       {loading && (
         <div class="grid grid-cols-1 gap-x-16 gap-y-10 upcoming-post-wrapper text-white">
           <h3>Loading featured events...</h3>
         </div>
       )}
-      {!loading && !error && (
+      {!loading && !error && posts.length > 0 && (
         <div class="slider w-swiper">
           <div class="swiper-wrapper">
             {posts.map((post) => (
