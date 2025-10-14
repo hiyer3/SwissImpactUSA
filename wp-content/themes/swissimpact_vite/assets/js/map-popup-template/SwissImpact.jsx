@@ -249,5 +249,5 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     </div>
   );
 };
-
+ 
 export default SwissImpact;

@@ -15,41 +15,77 @@ const RecomendedPosts = ({ tag = "economic-impact" }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchPosts = async () => {
+  useEffect(() => { 
+    const fetchPosts = async () => { 
       if (!tag) {
         setLoading(false);
         return;
-      }
-      
+      } 
+       
       setLoading(true);
-      try {
-        // First, get the tag ID from the tag slug
-        const tagResponse = await fetch(`/wp-json/wp/v2/tags?slug=${tag}`);
-        if (!tagResponse.ok) {
-          throw new Error(`Error fetching tag: ${tagResponse.status}`);
-        }
+      try { 
+        let postsData = [];
         
-        const tagData = await tagResponse.json();
-        if (tagData.length === 0) {
-          throw new Error(`Tag "${tag}" not found`);
-        }
-        
-        const tagId = tagData[0].id;
-        
-        // Then fetch posts with that tag ID
-        const postsResponse = await fetch(
-          `/wp-json/wp/v2/posts?tags=${tagId}&_embed&per_page=10&orderby=date&order=desc`
-        );
-        
-        if (!postsResponse.ok) {
-          throw new Error(
-            "Error fetching posts, please try again. Error code: " +
-              postsResponse.status
+        if (tag === "map") {
+          // Fetch from ACF options page for map featured events
+          const optionsResponse = await fetch(`/wp-json/acf/v3/options/options`);
+          if (!optionsResponse.ok) {
+            throw new Error(`Error fetching options: ${optionsResponse.status}`);
+          }
+          
+          const optionsData = await optionsResponse.json();
+          const featuredEvents = optionsData.acf?.map_featured_events;
+          
+          if (featuredEvents && Array.isArray(featuredEvents)) {
+            // featuredEvents should contain post objects or post IDs
+            // If they are post IDs, we need to fetch the full post data
+            const postIds = featuredEvents.map(event => 
+              typeof event === 'object' ? event.ID : event
+            ).filter(id => id);
+            
+            if (postIds.length > 0) {
+              const postsResponse = await fetch(
+                `/wp-json/wp/v2/posts?include=${postIds.join(',')}&_embed`
+              );
+              
+              if (postsResponse.ok) {
+                postsData = await postsResponse.json();
+                // Maintain the order from the ACF field
+                postsData.sort((a, b) => {
+                  return postIds.indexOf(a.id) - postIds.indexOf(b.id);
+                });
+              }
+            }
+          }
+        } else {
+          // Original tag-based fetching logic
+          const tagResponse = await fetch(`/wp-json/wp/v2/tags?slug=${tag}`);
+          if (!tagResponse.ok) {
+            throw new Error(`Error fetching tag: ${tagResponse.status}`);
+          }
+          
+          const tagData = await tagResponse.json();
+          if (tagData.length === 0) {
+            throw new Error(`Tag "${tag}" not found`);
+          }
+          
+          const tagId = tagData[0].id;
+          
+          // Then fetch posts with that tag ID
+          const postsResponse = await fetch(
+            `/wp-json/wp/v2/posts?tags=${tagId}&_embed&per_page=10&orderby=date&order=desc`
           );
+          
+          if (!postsResponse.ok) {
+            throw new Error(
+              "Error fetching posts, please try again. Error code: " +
+                postsResponse.status
+            );
+          }
+          
+          postsData = await postsResponse.json();
         }
         
-        const postsData = await postsResponse.json();
         setPosts(postsData);
       } catch (error) {
         console.error('Error fetching posts:', error);
@@ -122,16 +158,7 @@ const RecomendedPosts = ({ tag = "economic-impact" }) => {
           </div>
         </div>
       )}
-      {error && (
-        <div class="grid text-white grid-cols-1 gap-x-16 gap-y-10 upcoming-post-wrapper">
-          <h3>Error loading events: {error.message}</h3>
-        </div>
-      )}
-      {!loading && !error && posts.length === 0 && (
-        <div class="grid text-white grid-cols-1 gap-x-16 gap-y-10 upcoming-post-wrapper">
-          <h3>No events found for tag "{tag}". Check back soon for featured events.</h3>
-        </div>
-      )}
+
     </div>
   );
 };
