@@ -205,9 +205,9 @@ const ApprenticeshipCompanies = (props) => {
         )}
       </div>
 
-      {/* Featured posts based on economic-impact tag*/}
+      {/* Featured posts based on apprenticeship-companies tag*/}
       <div className="w-full">
-        <RecommendedPosts tag="economic-impact" />
+        <RecommendedPosts tag="apprenticeship-companies" />
       </div>
     </div>
   );
