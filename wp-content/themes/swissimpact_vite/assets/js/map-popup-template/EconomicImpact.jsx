@@ -763,7 +763,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                   <h2 className="text-xl mb-4">
                     Swiss Companies Located in {name}
                   </h2>
-                  <div className="grid max-h-[700px] xl:max-h-[56vh] overflow-y-auto grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-2">
+                  <div className="grid max-h-[700px] xl:max-h-[85vh] overflow-y-auto grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-2">
                     {data.companies_located_in_state.map((company, index) => (
                       <div key={index} className="text-sm text-gray-700 py-1">
                         {company.company_name}
