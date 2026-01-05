@@ -36,14 +36,14 @@ const Render = (postData, filter) => {
               <p class="text-swissred text-base font-black ml-2">
                 {
                   post["toolset-meta"]["post-options"]["event-from-date"][
-                    "formatted"
+                  "formatted"
                   ]
                 }
               </p>
             </div>
             <div class="tags w-full md:w-1/3 flex place-content-end gap-2">
               {post.custom_fields.category.map((cat, i) => (
-                <a class="single-category z-5 relative" href={cat.slug}>
+                <a class="single-category z-5 relative" href={"/category/" + cat.slug}>
                   <figure>
                     <img alt={cat.name} src={cat.icon} class="img" />
                   </figure>
@@ -64,9 +64,8 @@ const Render = (postData, filter) => {
                 {tag.icon && (
                   <figure>
                     <img
-                      class={`img ${
-                        tag.slug == "virtual" ? "w-4" : "w-6"
-                      } inline-block gap-5`}
+                      class={`img ${tag.slug == "virtual" ? "w-4" : "w-6"
+                        } inline-block gap-5`}
                       src={tag.icon}
                       alt={tag.name + "map"}
                     />
@@ -76,9 +75,8 @@ const Render = (postData, filter) => {
                 {!tag.icon && <div class="w-4 inline-block gap-5"></div>}
 
                 <h5
-                  class={`inline-block ${
-                    tag.slug == "virtual" ? "text-normal" : "text-lg"
-                  } font-black ml-1 uppercase`}
+                  class={`inline-block ${tag.slug == "virtual" ? "text-normal" : "text-lg"
+                    } font-black ml-1 uppercase`}
                 >
                   {tag.name}
                 </h5>
