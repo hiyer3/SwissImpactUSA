@@ -24,9 +24,9 @@
         </div>
 
         <div class="pt-12 pb-20">
-            <a href="/explore-swiss-impact-by-the-numbers/" class="btn transparent">SWISS IMPACT By the Numbers</a>
-        </div>
-
+            <a href="/explore-swiss-impact-by-the-numbers/" class="btn transparent text-xl">SWISS IMPACT By the Numbers</a>
+        </div> 
+ 
         <div class="absolute md:relative bottom-3 md:bottom-0">
             <picture>
                 <source srcset="<?php echo get_template_directory_uri(); ?>/assets/img/home/hero-scroll-down-2x.webp" />

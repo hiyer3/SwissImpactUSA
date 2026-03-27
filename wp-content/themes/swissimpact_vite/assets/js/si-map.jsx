@@ -1161,6 +1161,8 @@ export default function SIMapControl() {
       "West Virginia",
       "Wisconsin",
       "Wyoming",
+      "District of Columbia",
+      "Puerto Rico",
     ];
 
     const stateList = document.getElementById("state-list");
