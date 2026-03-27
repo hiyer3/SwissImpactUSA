@@ -7,18 +7,7 @@ import CardContent from "./components/SwissImpactCard/CardContent";
 import CardWrapper from "./components/SwissImpactCard/CardWrapper";
 import SRStateCard from "./components/SwissImpactCard/SRStateCard";
 import RecommendedPosts from "./RecomendedPosts";
-
-// ---- tiny helpers ----
-const toNumber = (v) => {
-  if (v == null) return 0;
-  if (typeof v === "number") return v;
-  if (typeof v === "string") {
-    const n = Number(v.replace(/,/g, "").trim());
-    return Number.isFinite(n) ? n : 0;
-  }
-  return 0;
-};
-const formatUS = (n) => toNumber(n).toLocaleString("en-US");
+import { toNumber, formatUS } from "./utils";
 
 const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
   const loading = !!preloadedData?.loading;
@@ -60,10 +49,10 @@ const SwissImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     (impact.swissRepresentations && impact.swissRepresentations.length > 0);
 
   return (
-    <div className="pt-12 pb-5">
+    <div className="pb-5">
       {/* Header */}
       <div
-        className="flex flex-row items-end"
+        className="popup-tab-header flex flex-row items-end"
         style={{ justifyContent: "space-between" }}
       >
         <div>

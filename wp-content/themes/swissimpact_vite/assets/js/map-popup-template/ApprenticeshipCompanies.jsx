@@ -4,44 +4,42 @@ import PopupSearchInput from "./components/popupSearchInput";
 import DataTable from "./components/dataTable";
 import { useEffect, useState, useMemo } from "preact/hooks";
 import RecommendedPosts from "./RecomendedPosts";
+import {
+  LoadingState,
+  ErrorState,
+  EmptyState,
+  NoResultsState,
+} from "./components/tableStates";
 
-const ApprenticeshipCompanies = (props) => {
+const ApprenticeshipCompanies = ({ name, stateId, preloadedData }) => {
   const [apprenticeshipData, setApprenticeshipData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState(""); // Add search state
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    // FIXED: Check if preloadedData exists and use it
-    if (props.preloadedData && typeof props.preloadedData === "object") {
-      setApprenticeshipData(props.preloadedData.data || []);
-      setLoading(props.preloadedData.loading || false);
-      setError(props.preloadedData.error || null);
+    if (preloadedData && typeof preloadedData === "object") {
+      setApprenticeshipData(preloadedData.data || []);
+      setLoading(preloadedData.loading || false);
+      setError(preloadedData.error || null);
       return;
     }
 
-    // Fallback to original fetch logic if no preloaded data
+    // Fallback fetch if no preloaded data
     const fetchData = async () => {
       try {
         setLoading(true);
-        let fetchURL = `/wp-json/wp/v2/mapstate?slug=${props.stateId}`;
-
-        if (props.stateId == "united-states") {
-          fetchURL = `/wp-json/wp/v2/mapstate`;
-        }
+        const fetchURL =
+          stateId === "united-states"
+            ? `/wp-json/wp/v2/mapstate`
+            : `/wp-json/wp/v2/mapstate?slug=${stateId}`;
         const response = await fetch(fetchURL);
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         const apprenticeshipFields = [];
         data.forEach((item) => {
-          const fields = item.acf?.apprenticeship_companies || [];
-          apprenticeshipFields.push(...fields);
+          apprenticeshipFields.push(...(item.acf?.apprenticeship_companies || []));
         });
-
         setApprenticeshipData(
           Array.isArray(apprenticeshipFields) ? apprenticeshipFields : []
         );
@@ -55,55 +53,38 @@ const ApprenticeshipCompanies = (props) => {
       }
     };
 
-    if (props.stateId) {
-      fetchData();
-    }
-  }, [props.stateId, props.preloadedData]);
+    if (stateId) fetchData();
+  }, [stateId, preloadedData]);
 
-  // Updated search handler that works with React state (like ScienceAcademia)
-  const handleInputChange = (event) => {
-    const searchValue = event.target.value;
-    setSearchTerm(searchValue);
-  };
+  const handleInputChange = (event) => setSearchTerm(event.target.value);
 
-  // Memoize the transformed data to avoid recalculation on every render
-  const transformedData = useMemo(() => {
-    return apprenticeshipData.map((item, index) => ({
-      id: index + 1,
-      location: item?.location || item?.city_state || item?.address || "",
-      company: item?.company || item?.company_name || item?.name || "",
-      field: item?.field || item?.industry || item?.sector || "",
-      program:
-        item?.program ||
-        item?.program_duration ||
-        item?.apprenticeship_program ||
-        "",
-    }));
-  }, [apprenticeshipData]);
+  const transformedData = useMemo(
+    () =>
+      apprenticeshipData.map((item, index) => ({
+        id: index + 1,
+        location: item?.location || item?.city_state || item?.address || "",
+        company: item?.company || item?.company_name || item?.name || "",
+        field: item?.field || item?.industry || item?.sector || "",
+        program:
+          item?.program ||
+          item?.program_duration ||
+          item?.apprenticeship_program ||
+          "",
+      })),
+    [apprenticeshipData]
+  );
 
-  // Filter data based on search term (like ScienceAcademia)
   const filteredData = useMemo(() => {
-    if (!searchTerm.trim()) {
-      return transformedData;
-    }
-
-    const searchLower = searchTerm.toLowerCase();
-    return transformedData.filter((item) => {
-      // Search across all text fields
-      const searchableText = [
-        item.location,
-        item.company,
-        item.field,
-        item.program
-      ]
-        .join(' ')
-        .toLowerCase();
-
-      return searchableText.includes(searchLower);
-    });
+    if (!searchTerm.trim()) return transformedData;
+    const q = searchTerm.toLowerCase();
+    return transformedData.filter((item) =>
+      [item.location, item.company, item.field, item.program]
+        .join(" ")
+        .toLowerCase()
+        .includes(q)
+    );
   }, [transformedData, searchTerm]);
 
-  // Memoize columns to prevent unnecessary re-renders
   const columns = useMemo(
     () => [
       { key: "location", label: "City, State" },
@@ -114,63 +95,18 @@ const ApprenticeshipCompanies = (props) => {
     []
   );
 
-  // Loading component for DataTable
-  const LoadingDataTable = () => (
-    <div className="flex justify-center items-center py-20">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-      <span className="ml-3 text-gray-600">
-        Loading apprenticeship companies data...
-      </span>
-    </div>
-  );
-
-  // Error component for DataTable
-  const ErrorDataTable = () => (
-    <div className="flex justify-center items-center py-20">
-      <div className="text-red-600">
-        <p className="text-lg font-semibold">Error loading data</p>
-        <p className="text-sm">{error}</p>
-      </div>
-    </div>
-  );
-
-  // Empty state component
-  const EmptyDataTable = () => (
-    <div className="flex justify-center items-center py-20">
-      <div className="text-gray-600">
-        <p className="text-lg font-semibold">
-          No Apprenticeship Companies Data
-        </p>
-        <p className="text-sm">
-          No apprenticeship companies information available for {props.name}
-        </p>
-      </div>
-    </div>
-  );
-
-  // Search results empty state (like ScienceAcademia)
-  const NoSearchResults = () => (
-    <div className="flex justify-center items-center py-20">
-      <div className="text-gray-600">
-        <p className="text-lg font-semibold">No Results Found</p>
-        <p className="text-sm">
-          No apprenticeship companies match your search "{searchTerm}"
-        </p>
-      </div>
-    </div>
-  );
-
   return (
-    <div className="pt-12 pb-5">
+    <div className="pb-5">
       <div
-        className="flex flex-row items-end space-evenly"
+        className="popup-tab-header flex flex-row items-end space-evenly"
         style={{ justifyContent: "space-between" }}
       >
         <div>
-          <h2 className="popup-title text-white">{props.name}</h2>
+          <h2 className="popup-title text-white">{name}</h2>
           <p className="popup-description text-white mt-2 mb-0">
             Apprenticeship Opportunities and Companies in{" "}
-            {props.name === "united-states" ? "the United States" : props.name}: <strong>{filteredData.length}</strong>
+            {name === "united-states" ? "the United States" : name}:{" "}
+            <strong>{filteredData.length}</strong>
             {searchTerm && transformedData.length !== filteredData.length && (
               <span className="text-gray-300"> (of {transformedData.length} total)</span>
             )}
@@ -184,28 +120,28 @@ const ApprenticeshipCompanies = (props) => {
           <p className="text-xl font-black pb-0">
             Investing in the Next Generation of Skilled Workers
           </p>
-          <PopupSearchInput 
-            onChange={handleInputChange} 
+          <PopupSearchInput
+            onChange={handleInputChange}
             value={searchTerm}
             placeholder="Search companies..."
           />
         </div>
 
-        {/* Conditional rendering for DataTable area only */}
         {loading ? (
-          <LoadingDataTable />
+          <LoadingState message="Loading apprenticeship companies data..." />
         ) : error ? (
-          <ErrorDataTable />
+          <ErrorState error={error} />
         ) : transformedData.length === 0 ? (
-          <EmptyDataTable />
+          <EmptyState
+            message={`No apprenticeship companies information available for ${name}`}
+          />
         ) : filteredData.length === 0 && searchTerm ? (
-          <NoSearchResults />
+          <NoResultsState searchTerm={searchTerm} entityLabel="apprenticeship companies" />
         ) : (
           <DataTable data={filteredData} columns={columns} />
         )}
       </div>
 
-      {/* Featured posts based on apprenticeship-companies tag*/}
       <div className="w-full">
         <RecommendedPosts tag="apprenticeship-companies" />
       </div>

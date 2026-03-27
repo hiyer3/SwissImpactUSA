@@ -208,7 +208,9 @@ shareButton?.addEventListener("click", function (ev) {
   shareIconWrapper.classList.toggle("active");
 });
 
-// Initialize the map control on the Swiss Impact by the Numbers page
+// Initialize the map control wherever [si_impact_map] is rendered
 const container = document.querySelector(".popup-content-wrapper");
-render(html`<${SIMapControl} />`, container);
+if (container) {
+  render(html`<${SIMapControl} />`, container);
+}
   

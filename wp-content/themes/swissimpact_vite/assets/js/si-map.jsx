@@ -49,10 +49,56 @@ const MAP_FILTER_TO_POPUP = {
   "si-filter-swiss-representatives": FILTERS.SWISS_REPRESENTATIVES,
 };
 
+// United States always has every tab available
+const ALL_TABS_TRUE = {
+  [FILTERS.SEE_ALL]: true,
+  [FILTERS.ECON]: true,
+  [FILTERS.SCIENCE]: true,
+  [FILTERS.APPRENTICESHIP]: true,
+  [FILTERS.INDUSTRY]: true,
+  [FILTERS.SWISS_REPRESENTATIVES]: true,
+};
+
 const normId = (id) =>
   String(id || "")
     .toLowerCase()
     .replace(/\s+/g, "-");
+
+// ---------- Canonical URL resolver ----------
+// Given an array of state-specific links for the same company (e.g. "acme.com/kentucky",
+// "acme.com/texas"), returns the deepest path prefix common to all of them.
+// This gives us the main site URL when the US aggregate is shown.
+const getCanonicalUrl = (urls) => {
+  const valid = urls.map((u) => String(u || "").trim()).filter(Boolean);
+  if (valid.length === 0) return "";
+  if (valid.length === 1) return valid[0];
+
+  const toAbsolute = (u) => (u.startsWith("http") ? u : "https://" + u);
+  try {
+    const parsed = valid.map((u) => new URL(toAbsolute(u)));
+    const origins = [...new Set(parsed.map((p) => p.origin))];
+    // Different domains — can't reconcile, return the shortest (most likely root)
+    if (origins.length > 1) {
+      return valid.reduce((a, b) => (a.length <= b.length ? a : b));
+    }
+    // Same domain — find the deepest common path prefix
+    const segments = parsed.map((p) =>
+      p.pathname.split("/").filter(Boolean)
+    );
+    const minLen = Math.min(...segments.map((s) => s.length));
+    const common = [];
+    for (let i = 0; i < minLen; i++) {
+      if (segments.every((s) => s[i] === segments[0][i])) {
+        common.push(segments[0][i]);
+      } else {
+        break;
+      }
+    }
+    return parsed[0].origin + (common.length ? "/" + common.join("/") : "");
+  } catch {
+    return valid[0];
+  }
+};
 
 // ---------- Consulate-based fill colors (by state slug) ----------
 const CONSULATE_STATE_COLOR = (() => {
@@ -302,29 +348,23 @@ const niceStep = (targetStep) => {
   return m * base;
 };
 
-const buildFiveLabelsFromMaxTotal = (maxTotal) => {
-  const max = Math.max(0, Math.floor(Number(maxTotal) || 0));
-  if (max <= 0) return ["0", "0", "0", "0", "≥ 0"];
+const buildFiveLabelsFromRange = (min, max) => {
+  const range = max - min;
+  if (range <= 0) return [`${min}`, `${min}`, `${min}`, `${min}`, `≥ ${min}`];
 
-  const step = niceStep(max / 5);
-  const e1 = step - 1;
-  const e2 = 2 * step - 1;
-  const e3 = 3 * step - 1;
-  const e4 = 4 * step - 1;
-
-  const s1 = 0;
-  const s2 = e1 + 1;
-  const s3 = e2 + 1;
-  const s4 = e3 + 1;
-  const s5 = e4 + 1;
-
-  return [
-    `${s1} - ${e1}`,
-    `${s2} - ${e2}`,
-    `${s3} - ${e3}`,
-    `${s4} - ${e4}`,
-    `≥ ${s5}`,
-  ];
+  const step = niceStep(range / 5);
+  const labels = [];
+  let start = min;
+  for (let i = 0; i < 5; i++) {
+    if (i < 4) {
+      const end = start + step - 1;
+      labels.push(`${Math.floor(start)} - ${Math.floor(end)}`);
+      start = end + 1;
+    } else {
+      labels.push(`≥ ${Math.floor(start)}`);
+    }
+  }
+  return labels;
 };
 
 export default function SIMapControl() {
@@ -349,7 +389,6 @@ export default function SIMapControl() {
   const svgRootRef = useRef(null);
   const [isAllLoaded, setIsAllLoaded] = useState(false);
   const [prefetchError, setPrefetchError] = useState(null);
-  const [, forceUpdate] = useState(0);
 
   // ---- persist last popup tab
   const lastSelectedFilterRef = useRef(FILTERS.SEE_ALL);
@@ -359,7 +398,6 @@ export default function SIMapControl() {
 
   // ---- map filter + popup state
   const currentMapFilterRef = useRef("si-filter-see-all");
-  const hasUserClickedMapFilterRef = useRef(false);
   const popupOpenRef = useRef(false);
   const userTabOverrideRef = useRef(null);
 
@@ -371,39 +409,6 @@ export default function SIMapControl() {
     maxScience: 0,
     maxTotal: 0,
   });
-
-  // Add this helper function for building 5 legend labels from min-max range
-  const buildFiveLabelsFromRange = (min, max) => {
-    const niceStep = (targetStep) => {
-      const t = Math.max(1, Number(targetStep) || 1);
-      const exp = Math.floor(Math.log10(t));
-      const base = Math.pow(10, exp);
-      const f = t / base;
-      let m = 1;
-      if (f > 5) m = 10;
-      else if (f > 2) m = 5;
-      else if (f > 1) m = 2;
-      else m = 1;
-      return m * base;
-    };
-
-    const range = max - min;
-    if (range <= 0) return [`${min}`, `${min}`, `${min}`, `${min}`, `≥ ${min}`];
-
-    const step = niceStep(range / 5);
-    const labels = [];
-    let start = min;
-    for (let i = 0; i < 5; i++) {
-      if (i < 4) {
-        const end = start + step - 1;
-        labels.push(`${Math.floor(start)} - ${Math.floor(end)}`);
-        start = end + 1;
-      } else {
-        labels.push(`≥ ${Math.floor(start)}`);
-      }
-    }
-    return labels;
-  };
 
   // Modify updateSciApprLegend to accept labels and update DOM accordingly
   const updateSciApprLegend = useCallback((category, labels) => {
@@ -449,19 +454,11 @@ export default function SIMapControl() {
         hide(swiss);
 
         if (filterId === "si-filter-science-academia") {
-          const min = Math.min(...heatmapArray.map((r) => r.scienceAcademia));
           const max = Math.max(...heatmapArray.map((r) => r.scienceAcademia));
-          const labels = buildFiveLabelsFromRange(1, max);
-          updateSciApprLegend("science", labels);
+          updateSciApprLegend("science", buildFiveLabelsFromRange(1, max));
         } else {
-          const min = Math.min(
-            ...heatmapArray.map((r) => r.apprenticeshipCompanies)
-          );
-          const max = Math.max(
-            ...heatmapArray.map((r) => r.apprenticeshipCompanies)
-          );
-          const labels = buildFiveLabelsFromRange(1, max);
-          updateSciApprLegend("apprenticeship", labels);
+          const max = Math.max(...heatmapArray.map((r) => r.apprenticeshipCompanies));
+          updateSciApprLegend("apprenticeship", buildFiveLabelsFromRange(1, max));
         }
       } else if (filterId === "si-filter-swiss-representatives") {
         hide(sciAppr);
@@ -704,15 +701,23 @@ export default function SIMapControl() {
           ),
         };
         if (!usACF.economic_impact) usACF.economic_impact = {};
-        usACF.economic_impact.companies_located_in_state = aggCompanies
-          .filter(
-            (obj, index, self) =>
-              self.findIndex(
-                (o) =>
-                  o.company_name.toLowerCase() ===
-                  obj.company_name.toLowerCase()
-              ) === index
-          )
+        // Group by company name, collect all state-specific links, then resolve
+        // each company's canonical (root) URL so the US view shows the main site.
+        const companyMap = new Map();
+        aggCompanies.forEach((c) => {
+          const key = c.company_name.toLowerCase();
+          if (!companyMap.has(key)) {
+            companyMap.set(key, { ...c, _links: [] });
+          }
+          if (c.link_to_company) {
+            companyMap.get(key)._links.push(c.link_to_company);
+          }
+        });
+        usACF.economic_impact.companies_located_in_state = [...companyMap.values()]
+          .map(({ _links, ...c }) => ({
+            ...c,
+            link_to_company: getCanonicalUrl(_links),
+          }))
           .sort((a, b) => a.company_name.localeCompare(b.company_name));
         cache["united-states"] = usACF;
 
@@ -754,7 +759,6 @@ export default function SIMapControl() {
         setHeatmapStats({ maxApprenticeship, maxScience, maxTotal });
 
         setIsAllLoaded(true);
-        forceUpdate((n) => n + 1);
       } catch (e) {
         if (e.name !== "AbortError") {
           setPrefetchError(String(e?.message || e));
@@ -776,22 +780,14 @@ export default function SIMapControl() {
     }
 
     if (stateId === "united-states") {
-      const allTrue = {
-        [FILTERS.SEE_ALL]: true,
-        [FILTERS.ECON]: true,
-        [FILTERS.SCIENCE]: true,
-        [FILTERS.APPRENTICESHIP]: true,
-        [FILTERS.INDUSTRY]: true,
-        [FILTERS.SWISS_REPRESENTATIVES]: true,
-      };
       const nextSel = pickSelectedFilter(
         preferredFilter,
         lastSelectedFilterRef.current,
-        allTrue
+        ALL_TABS_TRUE
       );
       setSingleStateData((prev) => ({
         ...prev,
-        activeTabs: allTrue,
+        activeTabs: ALL_TABS_TRUE,
         selectedFilter: nextSel,
         isLoadingTabs: false,
       }));
@@ -922,6 +918,49 @@ export default function SIMapControl() {
     applyCurrentOverlay();
   }, [applyCurrentOverlay]);
 
+  // ===== Shared state-opening logic (SVG click + state-list click) =====
+  const openStatePopup = useCallback(
+    (name, id) => {
+      const mapFilterId = currentMapFilterRef.current;
+      const preferredFromMap = MAP_FILTER_TO_POPUP[mapFilterId] || FILTERS.SEE_ALL;
+
+      const requestedTab =
+        popupOpenRef.current && userTabOverrideRef.current
+          ? userTabOverrideRef.current
+          : mapFilterId === "si-filter-see-all"
+          ? lastSelectedFilterRef.current
+          : preferredFromMap;
+
+      const activeTabs =
+        normId(id) === "united-states"
+          ? ALL_TABS_TRUE
+          : computeActiveTabsForAcf(rawStateCacheRef.current[normId(id)]);
+
+      const nextSelected = pickSelectedFilter(
+        requestedTab,
+        lastSelectedFilterRef.current,
+        activeTabs
+      );
+
+      setSingleStateData((prev) => ({
+        ...prev,
+        name,
+        stateId: normId(id),
+        isLoadingTabs: !isAllLoaded,
+        selectedFilter: nextSelected,
+      }));
+
+      lastSelectedFilterRef.current = nextSelected;
+      popupOpenRef.current = true;
+
+      document.querySelector(".data-popup")?.classList.remove("hidden");
+      document.querySelector(".data-popup")?.classList.add("popup-open");
+      document.querySelector("#si-map")?.classList.add("active-hide-on-mobile");
+      document.querySelector(".popup-width-wrapper")?.scrollTo({ top: 0 });
+    },
+    [isAllLoaded]
+  );
+
   // -------- wiring: SVG, map filters, state list, popup tabs --------
   useEffect(() => {
     let svgEl;
@@ -1007,60 +1046,9 @@ export default function SIMapControl() {
       // Optional: avoid default browser <title> popups overlapping your tooltip
       svgEl.querySelectorAll("title").forEach((n) => n.remove());
 
-      const openState = (name, id) => {
-        const mapFilterId = currentMapFilterRef.current;
-        const preferredFromMap =
-          MAP_FILTER_TO_POPUP[mapFilterId] || FILTERS.SEE_ALL;
-
-        // RULES (respect user tab while popup open)
-        let requestedTab;
-        if (popupOpenRef.current && userTabOverrideRef.current) {
-          requestedTab = userTabOverrideRef.current;
-        } else {
-          requestedTab =
-            mapFilterId === "si-filter-see-all"
-              ? lastSelectedFilterRef.current
-              : preferredFromMap;
-        }
-
-        const activeTabs =
-          normId(id) === "united-states"
-            ? {
-                [FILTERS.SEE_ALL]: true,
-                [FILTERS.ECON]: true,
-                [FILTERS.SCIENCE]: true,
-                [FILTERS.APPRENTICESHIP]: true,
-                [FILTERS.INDUSTRY]: true,
-                [FILTERS.SWISS_REPRESENTATIVES]: true,
-              }
-            : computeActiveTabsForAcf(rawStateCacheRef.current[normId(id)]);
-
-        const nextSelected = pickSelectedFilter(
-          requestedTab,
-          lastSelectedFilterRef.current,
-          activeTabs
-        );
-
-        setSingleStateData((prev) => ({
-          ...prev,
-          name,
-          stateId: normId(id),
-          isLoadingTabs: !isAllLoaded, // only show loader if data isn't ready yet
-          selectedFilter: nextSelected,
-        }));
-
-        lastSelectedFilterRef.current = nextSelected;
-        popupOpenRef.current = true;
-
-        document.querySelector(".data-popup")?.classList.remove("hidden");
-        document
-          .querySelector("#si-map")
-          ?.classList.add("active-hide-on-mobile");
-      };
-
       const onSvgClick = (e) => {
         if (isMobileViewport()) {
-          openState("United States", "united-states");
+          openStatePopup("United States", "united-states");
           return;
         }
 
@@ -1072,7 +1060,7 @@ export default function SIMapControl() {
         const stateName = firstChild?.getAttribute("data-name");
         const stateId = firstChild?.classList[0];
         if (stateId && stateName) {
-          openState(stateName, stateId);
+          openStatePopup(stateName, stateId);
         }
       };
 
@@ -1088,7 +1076,6 @@ export default function SIMapControl() {
           (e) => {
             const filterId = e.currentTarget.getAttribute("id");
             currentMapFilterRef.current = filterId;
-            hasUserClickedMapFilterRef.current = true;
 
             // marker visibility
             for (const child of svgEl.querySelectorAll("[class*='si-']")) {
@@ -1112,6 +1099,14 @@ export default function SIMapControl() {
       // After listeners are bound, apply current overlay once
       applyCurrentOverlay();
     });
+
+    return () => ac.abort();
+  }, [applyCurrentOverlay, openStatePopup]);
+
+  // -------- wiring: state list, controls, popup tabs --------
+  useEffect(() => {
+    const ac = new AbortController();
+    const { signal } = ac;
 
     // State list build & interactions
     const states = [
@@ -1222,58 +1217,14 @@ export default function SIMapControl() {
       const id = a.getAttribute("href")?.substring(1) || "";
       const name = a.textContent || "";
 
-      const mapFilterId = currentMapFilterRef.current;
-      const preferredFromMap =
-        MAP_FILTER_TO_POPUP[mapFilterId] || FILTERS.SEE_ALL;
+      openStatePopup(name, id);
 
-      let requestedTab;
-      if (popupOpenRef.current && userTabOverrideRef.current) {
-        requestedTab = userTabOverrideRef.current;
-      } else {
-        requestedTab =
-          mapFilterId === "si-filter-see-all"
-            ? lastSelectedFilterRef.current
-            : preferredFromMap;
-      }
-
-      const activeTabs =
-        normId(id) === "united-states"
-          ? {
-              [FILTERS.SEE_ALL]: true,
-              [FILTERS.ECON]: true,
-              [FILTERS.SCIENCE]: true,
-              [FILTERS.APPRENTICESHIP]: true,
-              [FILTERS.INDUSTRY]: true,
-              [FILTERS.SWISS_REPRESENTATIVES]: true,
-            }
-          : computeActiveTabsForAcf(rawStateCacheRef.current[normId(id)]);
-
-      const nextSelected = pickSelectedFilter(
-        requestedTab,
-        lastSelectedFilterRef.current,
-        activeTabs
-      );
-
-      setSingleStateData((prev) => ({
-        ...prev,
-        stateId: normId(id),
-        name,
-        isLoadingTabs: !isAllLoaded,
-        selectedFilter: nextSelected,
-      }));
-      lastSelectedFilterRef.current = nextSelected;
-
-      document.querySelector(".data-popup")?.classList.remove("hidden");
+      // Close the state list dropdown
       document.querySelector(".state-selector")?.classList.remove("active");
-      document
-        .querySelector(".state-list-container")
-        ?.classList.remove("active");
+      document.querySelector(".state-list-container")?.classList.remove("active");
       mapWrapper?.classList.remove("active");
       popupWidthWrapper?.classList.remove("active");
       popupFilterWrapper?.classList.remove("active");
-
-      popupOpenRef.current = true;
-      document.querySelector("#si-map")?.classList.add("active-hide-on-mobile");
     };
 
     const links = document.querySelectorAll(".state-link");
@@ -1298,7 +1249,7 @@ export default function SIMapControl() {
     popupFilterRoot?.addEventListener("click", onFilter, { signal });
 
     return () => ac.abort();
-  }, [applyCurrentOverlay, isAllLoaded]);
+  }, [openStatePopup]);
 
   // If data loads after user selected an overlay filter, reapply + fix legends
   useEffect(() => {
@@ -1350,7 +1301,7 @@ export default function SIMapControl() {
     return () => observer.disconnect();
   }, [resetToMapFilterTab]);
 
-  // reflect active class on popup pills
+  // reflect active class on popup pills + reset scroll on tab change
   useEffect(() => {
     const items = document.querySelectorAll(
       "#si-map-popup-filter .single-popup-filter"
@@ -1358,6 +1309,7 @@ export default function SIMapControl() {
     items.forEach((i) =>
       i.classList.toggle("active", i.id === singleStateData.selectedFilter)
     );
+    document.querySelector(".popup-width-wrapper")?.scrollTo({ top: 0 });
   }, [singleStateData.selectedFilter]);
 
   // toggle tab availability + loading indicator
@@ -1396,7 +1348,6 @@ export default function SIMapControl() {
     
     function adjustPopupHeight() {
       const footerHeight = footer?.offsetHeight || 0;
-      console.log("Footer height:", footerHeight);
       document.documentElement.style.setProperty(
         "--footer-height",
         `${footerHeight}px`

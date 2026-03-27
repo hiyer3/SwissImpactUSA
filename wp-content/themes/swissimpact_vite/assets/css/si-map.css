@@ -36,6 +36,21 @@
   transition-property: left, top;
 }
 
+/* On mobile: raise button and dropdown above the site header,
+   and neutralise the position:relative that .post-content a injects —
+   otherwise top-20 (which has no lg: prefix) shifts the button 5rem
+   into the map on the shortcode/embedded page. */
+@media (max-width: 1023px) {
+  .si-map-wrapper .state-selector,
+  .si-map-wrapper .state-list-container {
+    z-index: 98;
+  }
+
+  .post-content .map-page-wrapper a {
+    position: static;
+  }
+}
+
 .si-map-wrapper .state-selector.active {
   @apply fixed left-60 lg:left-4 rotate-[270deg] top-44 lg:top-[5.1rem] lg:absolute lg:translate-x-[250px] lg:translate-y-[21px] rounded-t-none shadow-[inset_0_-2px_6px_rgba(112,112,112,0.75)];
   transition-property: all;
@@ -211,6 +226,29 @@
   @apply min-h-[1440px];
 }
 
+/* Full-bleed breakout when the map is embedded via shortcode inside a
+   constrained content area (e.g. page.php's w-11/12 md:w-10/12 container).
+   Has no effect on page-swiss-impact-numbers.php which has no .post-content wrapper. */
+.post-content .map-page-wrapper {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+}
+
+/* Reset .post-content a styles that leak into the map:
+   border-bottom red underline, white-on-hover color, and red slide-up overlay. */
+.post-content .map-page-wrapper a {
+  border-bottom: none;
+}
+
+.post-content .map-page-wrapper a:not(.social-icon):hover {
+  color: inherit;
+}
+
+.post-content .map-page-wrapper a::after,
+.post-content .map-page-wrapper a:hover::after {
+  display: none;
+}
+
 .chart-with-labels {
   display: flex;
   align-items: stretch;
@@ -253,5 +291,34 @@
 /* Hide scrollbar thumb when not hovering */
 .chart-container > div:not(:hover)::-webkit-scrollbar-thumb {
   background: transparent;
+}
+
+/* Desktop: contain popup content — filter bar pinned, content area scrolls.
+   Uses .popup-open (added by JS when popup opens, removed on close) so it
+   never conflicts with Tailwind's .hidden (display:none). */
+@media (min-width: 1024px) {
+  .data-popup.popup-open {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .data-popup.popup-open .data-popup-filter-wrapper {
+    flex-shrink: 0;
+  }
+
+  .data-popup.popup-open .popup-width-wrapper {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+  }
+}
+
+/* Sticky popup tab header — sticks to top of the scrollable .popup-width-wrapper */
+.popup-tab-header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background-color: #dc0018;
+  padding-top: 3rem;
 }
 

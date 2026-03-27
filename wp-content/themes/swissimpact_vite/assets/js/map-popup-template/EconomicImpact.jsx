@@ -15,6 +15,7 @@ import { Bar, Doughnut } from "react-chartjs-2";
 import BackToMapButton from "./components/backToMapButton";
 import DownloadPDF from "./components/downloadPDF";
 import RecommendedPosts from "./RecomendedPosts";
+import { toNumber } from "./utils";
 
 /* ---------- donut center text ---------- */
 const centerTextPlugin = {
@@ -121,15 +122,6 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
   const error = preloadedData?.error || null;
 
   /* ---------- number helpers ---------- */
-  const toNumber = (v) => {
-    if (v == null) return 0;
-    if (typeof v === "number") return v;
-    if (typeof v === "string") {
-      const n = Number(v.replace(/,/g, "").trim());
-      return Number.isFinite(n) ? n : 0;
-    }
-    return 0;
-  };
   const formatUSNumber = (n) => toNumber(n).toLocaleString("en-US");
   const formatCurrency = (amount) => {
     if (!amount) return "$0";
@@ -172,8 +164,8 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
       ? "Error loading economic impact data"
       : "No economic impact data available";
     return (
-      <div className="pt-12 pb-5">
-        <div className="flex flex-row items-end justify-between">
+      <div className="pb-5">
+        <div className="popup-tab-header flex flex-row items-end justify-between">
           <div>
             <h2 className="popup-title text-white">{name}</h2>
             <p className="popup-description text-white mt-2 mb-0">{msg}</p>
@@ -574,9 +566,9 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
     `/wp-content/uploads/2025/09/${name} 2025 Swiss Impact.pdf`;
 
   return (
-    <div ref={containerRef} className="pt-12 pb-5">
+    <div ref={containerRef} className="pb-5">
       {/* Header */}
-      <div className="flex flex-row items-end justify-between">
+      <div className="popup-tab-header flex flex-row items-end justify-between">
         <div>
           <h2 className="popup-title text-white">{name}</h2>
           <p className="popup-description text-white mt-2 mb-0">
@@ -600,7 +592,8 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
           {/* Left column: charts */}
           <div className="bg-white p-3 md:p-6 rounded-3xl max-h-[1200px] h-full lg:max-h-[100vh] overflow-y-auto flex-1">
             <h2 className="text-xl mb-4">
-              Employment Supported by Foreign Affiliates, 2022
+              Employment Supported by Foreign Affiliates,{" "}
+              {data?.employment_supported_by_foreign_affiliates_year}
             </h2>
 
             <div className="flex gap-2 flex-col md:flex-row">
@@ -665,8 +658,8 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                   ref={exportCardRef}
                 >
                   <h2 className="text-lg font-semibold mb-4 leading-[1.2]">
-                    Top Exports of Goods by Industry from {name} to Switzerland,
-                    2023
+                    Top Exports of Goods by Industry from {name} to Switzerland,{" "}
+                    {data?.top_importexport_of_goods_by_industry_year}
                   </h2>
                   {isVisible.export && (
                     <div className="chart-with-labels">
@@ -713,7 +706,8 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                 >
                   <h2 className="text-lg font-semibold mb-4 leading-[1.2]">
                     Top Imports of Goods by Industry from {name} from
-                    Switzerland, 2023
+                    Switzerland,{" "}
+                    {data?.top_importexport_of_goods_by_industry_year}
                   </h2>
                   {isVisible.import && (
                     <div className="chart-with-labels">
@@ -766,7 +760,18 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                   <div className="grid max-h-[700px] xl:max-h-[85vh] overflow-y-auto grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-2">
                     {data.companies_located_in_state.map((company, index) => (
                       <div key={index} className="text-sm text-gray-700 py-1">
-                        {company.company_name}
+                        {company.link_to_company ? (
+                          <a
+                            href={company.link_to_company}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hover:text-swissred underline-offset-2 hover:underline"
+                          >
+                            {company.company_name}
+                          </a>
+                        ) : (
+                          company.company_name
+                        )}
                       </div>
                     ))}
                   </div>

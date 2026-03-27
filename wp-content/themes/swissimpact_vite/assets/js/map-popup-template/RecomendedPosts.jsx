@@ -1,6 +1,7 @@
 import { h } from "preact";
-import { useState, useEffect } from "preact/hooks";
-import Swiper, { Navigation, Pagination, Scrollbar } from "swiper";
+import { useState, useEffect, useRef } from "preact/hooks";
+import Swiper from "swiper";
+import { Navigation } from "swiper/modules";
 
 function decodeHTMLEntities(text) {
   var textArea = document.createElement("textarea");
@@ -14,40 +15,42 @@ const RecomendedPosts = ({ tag = "economic-impact" }) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const swiperContainerRef = useRef(null);
+  const swiperInstanceRef = useRef(null);
 
-  useEffect(() => { 
-    const fetchPosts = async () => { 
+  useEffect(() => {
+    const fetchPosts = async () => {
       if (!tag) {
         setLoading(false);
         return;
-      } 
-       
+      }
+
       setLoading(true);
-      try { 
+      try {
         let postsData = [];
-        
+
         if (tag === "map") {
           // Fetch from ACF options page for map featured events
           const optionsResponse = await fetch(`/wp-json/acf/v3/options/options`);
           if (!optionsResponse.ok) {
             throw new Error(`Error fetching options: ${optionsResponse.status}`);
           }
-          
+
           const optionsData = await optionsResponse.json();
           const featuredEvents = optionsData.acf?.map_featured_events;
-          
+
           if (featuredEvents && Array.isArray(featuredEvents)) {
             // featuredEvents should contain post objects or post IDs
             // If they are post IDs, we need to fetch the full post data
-            const postIds = featuredEvents.map(event => 
+            const postIds = featuredEvents.map(event =>
               typeof event === 'object' ? event.ID : event
             ).filter(id => id);
-            
+
             if (postIds.length > 0) {
               const postsResponse = await fetch(
                 `/wp-json/wp/v2/posts?include=${postIds.join(',')}&_embed`
               );
-              
+
               if (postsResponse.ok) {
                 postsData = await postsResponse.json();
                 // Maintain the order from the ACF field
@@ -63,29 +66,29 @@ const RecomendedPosts = ({ tag = "economic-impact" }) => {
           if (!tagResponse.ok) {
             throw new Error(`Error fetching tag: ${tagResponse.status}`);
           }
-          
+
           const tagData = await tagResponse.json();
           if (tagData.length === 0) {
             throw new Error(`Tag "${tag}" not found`);
           }
-          
+
           const tagId = tagData[0].id;
-          
+
           // Then fetch posts with that tag ID
           const postsResponse = await fetch(
             `/wp-json/wp/v2/posts?tags=${tagId}&_embed&per_page=10&orderby=date&order=desc`
           );
-          
+
           if (!postsResponse.ok) {
             throw new Error(
               "Error fetching posts, please try again. Error code: " +
                 postsResponse.status
             );
           }
-          
+
           postsData = await postsResponse.json();
         }
-        
+
         setPosts(postsData);
       } catch (error) {
         console.error('Error fetching posts:', error);
@@ -97,7 +100,32 @@ const RecomendedPosts = ({ tag = "economic-impact" }) => {
 
     fetchPosts();
   }, [tag]);
-  
+
+  // Initialize Swiper after posts are rendered
+  useEffect(() => {
+    if (!loading && posts.length > 0 && swiperContainerRef.current) {
+      if (swiperInstanceRef.current) {
+        swiperInstanceRef.current.destroy(true, true);
+        swiperInstanceRef.current = null;
+      }
+      swiperInstanceRef.current = new Swiper(swiperContainerRef.current, {
+        modules: [Navigation],
+        speed: 500,
+        spaceBetween: 20,
+        navigation: {
+          nextEl: ".tab-featured-events .swiper-button-next",
+          prevEl: ".tab-featured-events .swiper-button-prev",
+        },
+      });
+    }
+    return () => {
+      if (swiperInstanceRef.current) {
+        swiperInstanceRef.current.destroy(true, true);
+        swiperInstanceRef.current = null;
+      }
+    };
+  }, [loading, posts]);
+
   return (
     <div class="slider-wrapper w-full mt-16 mb-10 tab-featured-events">
       {(!loading && posts.length > 0) && (
@@ -115,7 +143,7 @@ const RecomendedPosts = ({ tag = "economic-impact" }) => {
         </div>
       )}
       {!loading && !error && posts.length > 0 && (
-        <div class="slider w-swiper">
+        <div class="slider w-swiper" ref={swiperContainerRef}>
           <div class="swiper-wrapper">
             {posts.map((post) => (
               <div class="swiper-slide flex flex-col">
@@ -142,18 +170,6 @@ const RecomendedPosts = ({ tag = "economic-impact" }) => {
                       LEARN MORE <span class="">&gt;</span>
                     </a>
                   </div>
-                  {/*<div class="tags w-full md:w-3/4 flex place-content-end gap-2">
-                    <a class="single-category relative z-50" href="">
-                      <figure>
-                        <img
-                          alt="<?php echo $single_post_category->name; ?>"
-                          src="<?php echo get_term_meta($single_post_category->cat_ID, "
-                          class="img"
-                        />
-                      </figure>
-                      <span class="label -z-1 transition-all font-medium duration-300 -right-[5%] lg:-right-[250%] absolute top-[102%] leading-[1.15] h-auto w-36 text-center text-xs opacity-0 bg-black px-2 py-1 text-white"></span>
-                    </a>
-                  </div>*/}
                 </div>
               </div>
             ))}

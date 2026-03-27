@@ -5,48 +5,43 @@ import DataTable from "./components/dataTable";
 import { useEffect, useState, useMemo } from "preact/hooks";
 import constructLink from "./components/constructLink";
 import RecommendedPosts from "./RecomendedPosts";
+import {
+  LoadingState,
+  ErrorState,
+  EmptyState,
+  NoResultsState,
+} from "./components/tableStates";
 
-const ScienceAcademia = (props) => {
+const ScienceAcademia = ({ name, stateId, preloadedData }) => {
   const [scienceAcademiaData, setScienceAcademiaData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState(""); // Add search state
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    // If preloaded data is available, use it instead of fetching
-    if (props.preloadedData && typeof props.preloadedData === "object") {
-      setScienceAcademiaData(props.preloadedData.data || []);
-      setLoading(props.preloadedData.loading || false);
-      setError(props.preloadedData.error || null);
+    if (preloadedData && typeof preloadedData === "object") {
+      setScienceAcademiaData(preloadedData.data || []);
+      setLoading(preloadedData.loading || false);
+      setError(preloadedData.error || null);
       return;
-    } 
+    }
 
-    // Fallback to original fetch logic if no preloaded data
+    // Fallback fetch if no preloaded data
     const fetchData = async () => {
       try {
         setLoading(true);
-
-        let fetchURL = `/wp-json/wp/v2/mapstate?slug=${props.stateId}`;
-
-        if (props.stateId == "united-states") {
-          fetchURL = `/wp-json/wp/v2/mapstate`;
-        }
+        const fetchURL =
+          stateId === "united-states"
+            ? `/wp-json/wp/v2/mapstate`
+            : `/wp-json/wp/v2/mapstate?slug=${stateId}`;
         const response = await fetch(fetchURL);
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         const academiaFields = [];
         data.forEach((item) => {
-          const fields = item.acf?.["science_&_academia_fields"] || [];
-          academiaFields.push(...fields);
+          academiaFields.push(...(item.acf?.["science_&_academia_fields"] || []));
         });
-
-        setScienceAcademiaData(
-          Array.isArray(academiaFields) ? academiaFields : []
-        );
+        setScienceAcademiaData(Array.isArray(academiaFields) ? academiaFields : []);
         setError(null);
       } catch (e) {
         console.error("Error in ScienceAcademia useEffect:", e.message);
@@ -57,52 +52,35 @@ const ScienceAcademia = (props) => {
       }
     };
 
-    if (props.stateId) {
-      fetchData();
-    }
-  }, [props.stateId, props.preloadedData]);
+    if (stateId) fetchData();
+  }, [stateId, preloadedData]);
 
-  // Updated search handler that works with React state
-  const handleInputChange = (event) => {
-    const searchValue = event.target.value;
-    setSearchTerm(searchValue);
-  };
+  const handleInputChange = (event) => setSearchTerm(event.target.value);
 
-  // Memoize the transformed data to avoid recalculation on every render
-  const transformedData = useMemo(() => {
-    return scienceAcademiaData.map((item, index) => ({
-      id: index + 1,
-      institution: item?.institution || "",
-      name: constructLink(item?.name, item?.department_link?.url) || "",
-      position: item?.position || "",
-      field: item?.department || "",
-    }));
-  }, [scienceAcademiaData]);
+  const transformedData = useMemo(
+    () =>
+      scienceAcademiaData.map((item, index) => ({
+        id: index + 1,
+        institution: item?.institution || "",
+        name: constructLink(item?.name, item?.department_link?.url) || "",
+        position: item?.position || "",
+        field: item?.department || "",
+      })),
+    [scienceAcademiaData]
+  );
 
-  // Filter data based on search term
   const filteredData = useMemo(() => {
-    if (!searchTerm.trim()) {
-      return transformedData;
-    }
-
-    const searchLower = searchTerm.toLowerCase();
-    return transformedData.filter((item) => {
-      // Search across all text fields
-      const searchableText = [
-        item.institution,
-        item.name,
-        item.position,
-        item.field
-      ]
-        .join(' ')
+    if (!searchTerm.trim()) return transformedData;
+    const q = searchTerm.toLowerCase();
+    return transformedData.filter((item) =>
+      [item.institution, item.name, item.position, item.field]
+        .join(" ")
         .toLowerCase()
-        .replace(/<[^>]*>/g, ''); // Remove HTML tags for search
-
-      return searchableText.includes(searchLower);
-    });
+        .replace(/<[^>]*>/g, "")
+        .includes(q)
+    );
   }, [transformedData, searchTerm]);
 
-  // Memoize columns to prevent unnecessary re-renders
   const columns = useMemo(
     () => [
       { key: "institution", label: "Institution" },
@@ -113,58 +91,16 @@ const ScienceAcademia = (props) => {
     []
   );
 
-  // Loading component for DataTable
-  const LoadingDataTable = () => (
-    <div className="flex justify-center items-center py-20">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-      <span className="ml-3 text-gray-600">Loading data...</span>
-    </div>
-  );
-
-  // Error component for DataTable
-  const ErrorDataTable = () => (
-    <div className="flex justify-center items-center py-20">
-      <div className="text-red-600">
-        <p className="text-lg font-semibold">Error loading data</p>
-        <p className="text-sm">{error}</p>
-      </div>
-    </div>
-  );
-
-  // Empty state component
-  const EmptyDataTable = () => (
-    <div className="flex justify-center items-center py-20">
-      <div className="text-gray-600">
-        <p className="text-lg font-semibold">No Data Available</p>
-        <p className="text-sm">
-          No science and academia data available for {props.name}
-        </p>
-      </div>
-    </div>
-  );
-
-  // Search results empty state
-  const NoSearchResults = () => (
-    <div className="flex justify-center items-center py-20">
-      <div className="text-gray-600">
-        <p className="text-lg font-semibold">No Results Found</p>
-        <p className="text-sm">
-          No academics or scientists match your search "{searchTerm}"
-        </p>
-      </div>
-    </div>
-  );
-
   return (
-    <div className="pt-12 pb-5">
+    <div className="pb-5">
       <div
-        className="flex flex-row items-end space-evenly"
+        className="popup-tab-header flex flex-row items-end space-evenly"
         style={{ justifyContent: "space-between" }}
       >
         <div>
-          <h2 className="popup-title text-white">{props.name}</h2>
+          <h2 className="popup-title text-white">{name}</h2>
           <p className="popup-description text-white mt-2 mb-0">
-            Swiss Academics and Scientists in {props.name}:{" "}
+            Swiss Academics and Scientists in {name}:{" "}
             <strong>{filteredData.length}</strong>
             {searchTerm && transformedData.length !== filteredData.length && (
               <span className="text-gray-300"> (of {transformedData.length} total)</span>
@@ -179,31 +115,26 @@ const ScienceAcademia = (props) => {
           <p className="text-xl font-black pb-0">
             Creating Positive Impact in U.S. Academia and Science
           </p>
-          <PopupSearchInput 
-            onChange={handleInputChange} 
+          <PopupSearchInput
+            onChange={handleInputChange}
             value={searchTerm}
             placeholder="Search academics..."
           />
         </div>
 
-        {/* Conditional rendering for DataTable area only */}
         {loading ? (
-          <LoadingDataTable />
+          <LoadingState message="Loading data..." />
         ) : error ? (
-          <ErrorDataTable />
+          <ErrorState error={error} />
         ) : transformedData.length === 0 ? (
-          <EmptyDataTable />
+          <EmptyState message={`No science and academia data available for ${name}`} />
         ) : filteredData.length === 0 && searchTerm ? (
-          <NoSearchResults />
+          <NoResultsState searchTerm={searchTerm} entityLabel="academics or scientists" />
         ) : (
-          <DataTable
-            data={filteredData}
-            columns={columns}
-          />
+          <DataTable data={filteredData} columns={columns} />
         )}
       </div>
 
-      {/* Featured posts based on science-academia tag*/}
       <div className="w-full">
         <RecommendedPosts tag="science-academia" />
       </div>

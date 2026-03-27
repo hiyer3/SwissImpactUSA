@@ -1,5 +1,6 @@
 // Import Swiper and modules
-import Swiper, { Navigation, Pagination, Scrollbar } from "swiper";
+import Swiper from "swiper";
+import { Navigation, Pagination, Scrollbar } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -7,17 +8,18 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 
 // Now you can use Swiper
-const swiper = new Swiper(".slider", {
-  // Install modules
-  modules: [Navigation, Pagination, Scrollbar],
-  speed: 500,
-  spaceBetween: 20,
-  navigation: {
-    nextEl: ".swiper-button-next",
-    prevEl: ".swiper-button-prev",
-  },
-  // ...
-});
+const sliderEl = document.querySelector(".slider");
+if (sliderEl && sliderEl.querySelector(".swiper-wrapper")) {
+  new Swiper(sliderEl, {
+    modules: [Navigation, Pagination, Scrollbar],
+    speed: 500,
+    spaceBetween: 20,
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+  }); 
+}
 
 const postGalleries = document.querySelectorAll(
   ".post-content .wp-block-gallery"
@@ -87,33 +89,35 @@ postGalleries.forEach((gallery) => {
   });
 });
 
-const postswiper = new Swiper("#gallery-slider ", {
-  // Install modules
-  modules: [Navigation, Pagination, Scrollbar],
-  speed: 500,
-  spaceBetween: 20,
-  slidesPerView: 2,
-  navigation: {
-    nextEl: ".post-swiper-button-next",
-    prevEl: ".post-swiper-button-prev",
-  },
-  scrollbar: {
-    el: ".swiper-scrollbar",
-    draggable: true,
-  },
-  breakpoints: {
-    320: {
-      slidesPerView: 1,
-      spaceBetween: 20,
-      scrollbar: false,
-      pagination: {
-        el: ".swiper-pagination",
-        type: "bullets",
+const gallerySliderEl = document.querySelector("#gallery-slider");
+if (gallerySliderEl) {
+  new Swiper(gallerySliderEl, {
+    modules: [Navigation, Pagination, Scrollbar],
+    speed: 500,
+    spaceBetween: 20,
+    slidesPerView: 2,
+    navigation: {
+      nextEl: ".post-swiper-button-next",
+      prevEl: ".post-swiper-button-prev",
+    },
+    scrollbar: {
+      el: ".swiper-scrollbar",
+      draggable: true,
+    },
+    breakpoints: {
+      320: {
+        slidesPerView: 1,
+        spaceBetween: 20,
+        scrollbar: false,
+        pagination: {
+          el: ".swiper-pagination",
+          type: "bullets",
+        },
+      },
+      768: {
+        slidesPerView: 2,
+        spaceBetween: 30,
       },
     },
-    768: {
-      slidesPerView: 2,
-      spaceBetween: 30,
-    },
-  },
-});
+  });
+}

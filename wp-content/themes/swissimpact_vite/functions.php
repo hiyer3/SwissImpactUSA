@@ -21,9 +21,9 @@ function wpdocs_custom_excerpt_length($length)
 add_filter('excerpt_length', 'wpdocs_custom_excerpt_length', 999);
 
 function new_excerpt_more($more)
-{
+{ 
     return '...';
-}
+} 
 add_filter('excerpt_more', 'new_excerpt_more');
 
 function disable_sharedaddy()
@@ -221,6 +221,34 @@ add_action('rest_api_init', function () {
 
 function myacf_get_options_page_data() {
     // Replace 'option' with the specific ID of your options page if you registered it with a custom ID
-    $options_data = get_fields('option'); 
+    $options_data = get_fields('option');
     return rest_ensure_response($options_data);
 }
+
+// [si_impact_map] shortcode — embeds the interactive Swiss Impact map with filters and popup.
+//
+// Attributes:
+//   tab — sets the initially active map filter. Accepted values:
+//         see-all (default), economic-impact, science-academia,
+//         apprenticeship-companies, industry-clusters, swiss-representatives
+//
+// Example: [si_impact_map tab="economic-impact"]
+add_shortcode('si_impact_map', function ($atts) {
+    $valid_tabs = [
+        'see-all',
+        'economic-impact',
+        'science-academia',
+        'apprenticeship-companies',
+        'industry-clusters',
+        'swiss-representatives',
+    ];
+
+    $atts = shortcode_atts(['tab' => 'see-all'], $atts, 'si_impact_map');
+    $tab  = in_array($atts['tab'], $valid_tabs, true) ? $atts['tab'] : 'see-all';
+
+    set_query_var('si_map_active_tab', $tab);
+    ob_start();
+    get_template_part('template-parts/si-impact-map');
+    set_query_var('si_map_active_tab', ''); // reset after render
+    return ob_get_clean();
+});
