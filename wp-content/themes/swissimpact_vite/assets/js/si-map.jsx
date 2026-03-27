@@ -1119,6 +1119,7 @@ export default function SIMapControl() {
       "Colorado",
       "Connecticut",
       "Delaware",
+      "District of Columbia",
       "Florida",
       "Georgia",
       "Hawaii",
@@ -1149,6 +1150,7 @@ export default function SIMapControl() {
       "Oklahoma",
       "Oregon",
       "Pennsylvania",
+      "Puerto Rico",
       "Rhode Island",
       "South Carolina",
       "South Dakota",
@@ -1161,8 +1163,6 @@ export default function SIMapControl() {
       "West Virginia",
       "Wisconsin",
       "Wyoming",
-      "District of Columbia",
-      "Puerto Rico",
     ];
 
     const stateList = document.getElementById("state-list");
