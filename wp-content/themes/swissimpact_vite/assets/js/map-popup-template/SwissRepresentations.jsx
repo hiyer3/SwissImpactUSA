@@ -87,7 +87,7 @@ const SwissRepresentations = ({ name, stateId, preloadedData }) => {
 
   const columns = useMemo(
     () => [
-      { key: "state", label: "State" },
+      { key: "state", label: "State", hideOnMobile: true },
       { key: "representation", label: "Representation", allowHTML: true },
       { key: "type", label: "Type of Representation" },
     ],

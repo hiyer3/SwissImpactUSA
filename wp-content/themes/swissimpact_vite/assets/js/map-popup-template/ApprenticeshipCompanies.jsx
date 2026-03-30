@@ -87,7 +87,7 @@ const ApprenticeshipCompanies = ({ name, stateId, preloadedData }) => {
 
   const columns = useMemo(
     () => [
-      { key: "location", label: "City, State" },
+      { key: "location", label: "City, State", hideOnMobile: true },
       { key: "company", label: "Company" },
       { key: "field", label: "Field" },
       { key: "program", label: "Program (Duration)" },

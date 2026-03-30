@@ -124,10 +124,12 @@ const DataTable = ({
         {data.map((item, index) => {
           const itemId = item.id || index;
           const isOpen = openItems.has(itemId);
-          
+          const mobileColumns = columns.filter((c) => !c.hideOnMobile);
+          const mobileHeaderColumn = columns[0];
+
           return (
             <div
-              key={itemId} 
+              key={itemId}
               className="border-b border-[#ccc] bg-white shadow-sm"
             >
               {/* Accordion Header */}
@@ -136,10 +138,9 @@ const DataTable = ({
                 onClick={() => toggleItem(itemId)}
               >
                 <div className="flex items-center">
-                  {/* Show only first column value as main content */}
-                  {columns.length > 0 && (
+                  {mobileHeaderColumn && (
                     <span className="text-sm font-semibold text-gray-900">
-                      {renderCellContent(columns[0], item)}
+                      {renderCellContent(mobileHeaderColumn, item)}
                     </span>
                   )}
                 </div>
@@ -164,7 +165,7 @@ const DataTable = ({
               {isOpen && (
                 <div className="px-4 pb-4 border-t border-[#ccc]">
                   <div className="space-y-3 pt-3">
-                    {columns.map((column) => (
+                    {mobileColumns.map((column) => (
                       <div key={column.key} className="flex flex-col space-y-1">
                         <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
                           {column.label}

@@ -83,7 +83,7 @@ const ScienceAcademia = ({ name, stateId, preloadedData }) => {
 
   const columns = useMemo(
     () => [
-      { key: "institution", label: "Institution" },
+      { key: "institution", label: "Institution", hideOnMobile: true },
       { key: "name", label: "Name", allowHTML: true },
       { key: "position", label: "Position" },
       { key: "field", label: "Field/Department" },
