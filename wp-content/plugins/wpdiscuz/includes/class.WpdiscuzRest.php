@@ -73,8 +73,12 @@ class WpdiscuzRest extends WP_REST_Controller {
     public function checkNewComments($data) {
         $params   = $data->get_params();
         $response = ["ids" => [], "commentIDsToRemove" => []];
-        $status   = current_user_can("moderate_comments") ? "all" : "approved";
-        $args     = ["status" => $status, "post_id" => $params["postId"]];
+        $post     = get_post($params["postId"]);
+        if (!WpdiscuzHelper::canCurrentUserAccessPost($post)) {
+            return $response;
+        }
+        $status = current_user_can("moderate_comments") ? "all" : "approved";
+        $args   = ["status" => $status, "post_id" => $params["postId"]];
         global $wpdiscuz;
         $wpdiscuz->isWpdiscuzLoaded = true;
         $commentId                  = $this->dbManager->getLastCommentId($args);

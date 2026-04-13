@@ -41,7 +41,6 @@ if (!post_password_required($post->ID) && $load) {
     }
 
     $isShowSubscribeBar = $form->isShowSubscriptionBar() && WpdiscuzHelper::isUserCanFollowOrSubscribe($currentUserEmail);
-    $isPostmaticActive  = !class_exists("Prompt_Comment_Form_Handling") || (class_exists("Prompt_Comment_Form_Handling") && !$wpdiscuz->options->subscription["usePostmaticForCommentNotification"]);
 
     $wpdiscuz->helper->superSocializerFix();
     if ($commentsOpen) {
@@ -65,7 +64,7 @@ if (!post_password_required($post->ID) && $load) {
             <div class="wpd-form-wrap">
                 <div class="wpd-form-head">
                     <?php
-                    if ($isShowSubscribeBar && $isPostmaticActive) {
+                    if ($isShowSubscribeBar) {
                         ?>
                         <div class="wpd-sbs-toggle">
                             <i class="far fa-envelope"></i> <span
@@ -110,7 +109,7 @@ if (!post_password_required($post->ID) && $load) {
                 </div>
                 <?php do_action("comment_main_form_after_head"); ?>
                 <?php
-                if ($isShowSubscribeBar && $isPostmaticActive) {
+                if ($isShowSubscribeBar) {
                     $wpdiscuz->subscriptionData = $wpdiscuz->dbManager->hasSubscription($post->ID, $currentUser->user_email);
                     $subscriptionType           = null;
                     if ($wpdiscuz->subscriptionData) {

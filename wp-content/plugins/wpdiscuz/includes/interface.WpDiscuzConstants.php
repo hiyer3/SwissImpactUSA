@@ -9,6 +9,7 @@ interface WpDiscuzConstants {
     const OPTION_SLUG_OPTIONS = "wc_options";
     const OPTION_SLUG_VERSION = "wc_plugin_version";
     const OPTION_SLUG_DEACTIVATION = "wc_deactivation_modal_never_show";
+    const DEACTIVATION_NONCE_ACTION = "wpd_deactivation_nonce";
     const OPTION_SLUG_SHOW_DEMO = "wc_show_addons_demo";
     const OPTION_SLUG_HASH_KEY = "wc_hash_key";
     const OPTION_SLUG_NONCE_DATA = "wpdiscuz_nonce_data";

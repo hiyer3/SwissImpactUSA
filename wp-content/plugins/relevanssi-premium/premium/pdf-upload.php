@@ -548,6 +548,10 @@ function relevanssi_process_server_response( $response, $post_id ) {
 			$content_error = RELEVANSSI_ERROR_06;
 		}
 
+		if ( $content && stristr( $content, 'cURL error 35' ) ) {
+			$content_error = RELEVANSSI_ERROR_06;
+		}
+
 		if ( empty( $content ) ) {
 			$content_error = RELEVANSSI_ERROR_06;
 		}
@@ -800,7 +804,7 @@ function relevanssi_pdf_action_javascript() {
 			}
 			jQuery.post(ajaxurl, data, function(response ) {
 				var delete_response = JSON.parse(response);
-				if ( ! delete_response.deleted_rows ) {
+				if ( ! delete_response.deleted_rows && delete_response.deleted_rows !== 0 ) {
 					alert( relevanssi.error_reset_problems );
 				} else {
 					alert( relevanssi.error_reset_done );

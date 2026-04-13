@@ -194,29 +194,6 @@ if (!defined("ABSPATH")) {
 </div>
 <!-- Option end -->
 
-<?php if (class_exists("Prompt_Comment_Form_Handling")) { ?>
-    <!-- Option start -->
-    <div class="wpd-opt-row" data-wpd-opt="usePostmaticForCommentNotification">
-        <div class="wpd-opt-name">
-            <label for="usePostmaticForCommentNotification"><?php echo esc_html($setting["options"]["usePostmaticForCommentNotification"]["label"]) ?></label>
-            <p class="wpd-desc"><?php echo esc_html($setting["options"]["usePostmaticForCommentNotification"]["description"]) ?></p>
-        </div>
-        <div class="wpd-opt-input">
-            <div class="wpd-switcher">
-                <input type="checkbox" <?php checked($this->subscription["usePostmaticForCommentNotification"] == 1) ?>
-                       value="1"
-                       name="<?php echo esc_attr(WpdiscuzCore::TAB_SUBSCRIPTION); ?>[usePostmaticForCommentNotification]"
-                       id="usePostmaticForCommentNotification"/>
-                <label for="usePostmaticForCommentNotification"></label>
-            </div>
-        </div>
-        <div class="wpd-opt-doc">
-            <?php $this->printDocLink($setting["options"]["usePostmaticForCommentNotification"]["docurl"]) ?>
-        </div>
-    </div>
-    <!-- Option end -->
-<?php } ?>
-
 <!-- Option start -->
 <div class="wpd-opt-row" data-wpd-opt="isFollowActive">
     <div class="wpd-opt-name">

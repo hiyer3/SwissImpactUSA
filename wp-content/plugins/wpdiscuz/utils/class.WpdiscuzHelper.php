@@ -184,14 +184,13 @@ class WpdiscuzHelper implements WpDiscuzConstants {
     }
 
     public function validateNonce() {
-        if (is_user_logged_in() || apply_filters('wpdiscuz_validate_nonce_for_guests', false)) {
+        if (is_user_logged_in() || apply_filters('wpdiscuz_validate_nonce_for_guests', true)) {
             $nonce         = !empty($_COOKIE[self::GLOBAL_NONCE_NAME . '_' . COOKIEHASH]) ? sanitize_text_field($_COOKIE[self::GLOBAL_NONCE_NAME . '_' . COOKIEHASH]) : "";
             $timeDependent = wp_verify_nonce($nonce, $this->generateNonceKey());
             if (!$timeDependent) {
                 wp_die(__("Nonce is invalid.", "wpdiscuz"));
             }
 
-//            unset($_COOKIE[self::GLOBAL_NONCE_NAME . '_' . COOKIEHASH]);
             $this->setNonceInCookies($timeDependent, false);
         }
     }
@@ -201,7 +200,7 @@ class WpdiscuzHelper implements WpDiscuzConstants {
             return;
         }
 
-        $validateNonceForGuests = apply_filters('wpdiscuz_validate_nonce_for_guests', false);
+        $validateNonceForGuests = apply_filters('wpdiscuz_validate_nonce_for_guests', true);
 
         if (!$validateNonceForGuests && !is_user_logged_in()) {
             return;
@@ -230,6 +229,82 @@ class WpdiscuzHelper implements WpDiscuzConstants {
         } else {
             setcookie(self::GLOBAL_NONCE_NAME . '_' . COOKIEHASH, $nonce, $expires, '/', "", false, true);
         }
+    }
+
+
+    /**
+     * Check rate limit for an action to prevent abuse
+     *
+     * @security This method mitigates IDOR (Insecure Direct Object Reference) vulnerabilities
+     *           by implementing server-side rate limiting on sensitive AJAX actions.
+     * @security-fix CVE-2025-68997 - Rate limiting to prevent mass voting/rating abuse
+     * @param string $action Action identifier (e.g., 'vote', 'rate', 'subscribe')
+     * @param int $maxAttempts Maximum attempts allowed within the time window
+     * @param int $timeWindow Time window in seconds (default: 60 seconds)
+     * @return true|WP_Error Returns true if within limit, WP_Error if exceeded
+     * @since 7.6.44
+     *
+     */
+    public function checkRateLimit($action, $maxAttempts = 20, $timeWindow = 60) {
+        $identifier   = $this->getClientFingerprint();
+        $rateLimitKey = 'wpd_rate_' . $action . '_' . $identifier;
+
+        $attempts = get_transient($rateLimitKey);
+
+        if ($attempts !== false && $attempts >= $maxAttempts) {
+            return new WP_Error('wc_rate_limit_exceeded', __('Too many requests. Please slow down.', 'wpdiscuz'));
+        }
+
+        set_transient($rateLimitKey, ($attempts ? $attempts + 1 : 1), $timeWindow);
+
+        return true;
+    }
+
+    public static function validatePostAccess($post) {
+        if (!self::canCurrentUserAccessPost($post)) {
+            wp_send_json_error("wc_msg_post_not_found");
+        }
+    }
+
+    public static function canCurrentUserAccessPost($post) {
+        if (!$post) {
+            return false;
+        }
+
+        if (post_password_required($post)) {
+            return false;
+        }
+
+        if ('publish' === $post->post_status) {
+            return true;
+        }
+
+        return is_user_logged_in() && current_user_can('read_post', $post->ID);
+    }
+
+    /**
+     * Get a fingerprint for the current client for rate limiting purposes
+     * Uses multiple factors to create a more robust identifier than IP alone
+     *
+     * @security Enhanced fingerprinting prevents bypass via IP rotation/proxies
+     * @security-fix CVE-2025-68997 - Improved client identification
+     * @return string MD5 hash of client fingerprint
+     * @since 7.6.44
+     *
+     */
+    public function getClientFingerprint() {
+        if (is_user_logged_in()) {
+            return 'user_' . get_current_user_id();
+        }
+
+        // For guests, combine multiple factors for better fingerprinting
+        $factors = [
+            $this->getRealIPAddr(),
+            isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '',
+            isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '',
+        ];
+
+        return md5(implode('|', $factors));
     }
 
     //==========================================================================
@@ -1221,7 +1296,10 @@ class WpdiscuzHelper implements WpDiscuzConstants {
                 foreach ($matchesAfter as $k => $matchAfter) {
                     if (isset($matchAfter[3])) {
                         if (function_exists("use_block_editor_for_post") && use_block_editor_for_post($post_ID)) {
-                            $matchAfter[3] = json_decode('"' . $matchAfter[3] . '"');
+                            $params = json_decode('"' . $matchAfter[3] . '"');
+                            if ($params && isset($params->attrs->id)) {
+                                $matchAfter[3] = $params;
+                            }
                         }
                         $atts            = shortcode_parse_atts($matchAfter[3]);
                         $atts["content"] = $matchAfter[5];
@@ -1291,7 +1369,10 @@ class WpdiscuzHelper implements WpDiscuzConstants {
                     if (isset($matchAfter[3])) {
                         $matchAfter[3] = str_replace('\"', "'", addslashes($matchAfter[3]));
                         if (function_exists("use_block_editor_for_post") && use_block_editor_for_post($post_ID)) {
-                            $matchAfter[3] = json_decode('"' . $matchAfter[3] . '"');
+                            $params = json_decode('"' . $matchAfter[3] . '"');
+                            if ($params && isset($params->attrs->id)) {
+                                $matchAfter[3] = json_decode('"' . $matchAfter[3] . '"');
+                            }
                         }
                         if (preg_match_all(self::$inlineFormAttsPattern, $matchAfter[3], $attsAfter, PREG_SET_ORDER)) {
                             $atts = [];
@@ -1402,13 +1483,22 @@ class WpdiscuzHelper implements WpDiscuzConstants {
         }
     }
 
+    /**
+     * Checks if there are any unapproved comments within the given comments tree.
+     *
+     * @param $comments WP_Comment[]
+     * @param array $comments An array of comments to be checked, potentially with nested children.
+     * @return bool Returns true if an unapproved comment exists in the tree, otherwise false.
+     */
     public function isUnapprovedInTree($comments) {
         foreach ($comments as $comment) {
-            if ($comment->comment_approved === "0") {
+            if (empty($comment->comment_approved) || $comment->comment_approved === "0") {
                 return true;
             }
             if ($children = $comment->get_children()) {
-                return $this->isUnapprovedInTree($children);
+                if ($this->isUnapprovedInTree($children)) {
+                    return true;
+                }
             }
         }
 
@@ -1456,12 +1546,8 @@ class WpdiscuzHelper implements WpDiscuzConstants {
                     $user["socIcon"] = "<i><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path d='M256 8C119.3 8 8 119.2 8 256c0 136.7 111.3 248 248 248s248-111.3 248-248C504 119.2 392.7 8 256 8zM33 256c0-32.3 6.9-63 19.3-90.7l106.4 291.4C84.3 420.5 33 344.2 33 256zm223 223c-21.9 0-43-3.2-63-9.1l66.9-194.4 68.5 187.8c.5 1.1 1 2.1 1.6 3.1-23.1 8.1-48 12.6-74 12.6zm30.7-327.5c13.4-.7 25.5-2.1 25.5-2.1 12-1.4 10.6-19.1-1.4-18.4 0 0-36.1 2.8-59.4 2.8-21.9 0-58.7-2.8-58.7-2.8-12-.7-13.4 17.7-1.4 18.4 0 0 11.4 1.4 23.4 2.1l34.7 95.2L200.6 393l-81.2-241.5c13.4-.7 25.5-2.1 25.5-2.1 12-1.4 10.6-19.1-1.4-18.4 0 0-36.1 2.8-59.4 2.8-4.2 0-9.1-.1-14.4-.3C109.6 73 178.1 33 256 33c58 0 110.9 22.2 150.6 58.5-1-.1-1.9-.2-2.9-.2-21.9 0-37.4 19.1-37.4 39.6 0 18.4 10.6 33.9 21.9 52.3 8.5 14.8 18.4 33.9 18.4 61.5 0 19.1-7.3 41.2-17 72.1l-22.2 74.3-80.7-239.6zm81.4 297.2l68.1-196.9c12.7-31.8 17-57.2 17-79.9 0-8.2-.5-15.8-1.5-22.9 17.4 31.8 27.3 68.2 27.3 107 0 82.3-44.6 154.1-110.9 192.7z'/></svg></i>";
                 } else if ($socialProvider === "linkedin") {
                     $user["socIcon"] = "<i><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 448 512'><path d='M100.3 448H7.4V148.9h92.9zM53.8 108.1C24.1 108.1 0 83.5 0 53.8a53.8 53.8 0 0 1 107.6 0c0 29.7-24.1 54.3-53.8 54.3zM447.9 448h-92.7V302.4c0-34.7-.7-79.2-48.3-79.2-48.3 0-55.7 37.7-55.7 76.7V448h-92.8V148.9h89.1v40.8h1.3c12.4-23.5 42.7-48.3 87.9-48.3 94 0 111.3 61.9 111.3 142.3V448z'/></svg></i>";
-                } else if ($socialProvider === "ok") {
-                    $user["socIcon"] = "<i><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 512'><path d='M275.1 334c-27.4 17.4-65.1 24.3-90 26.9l20.9 20.6 76.3 76.3c27.9 28.6-17.5 73.3-45.7 45.7-19.1-19.4-47.1-47.4-76.3-76.6L84 503.4c-28.2 27.5-73.6-17.6-45.4-45.7 19.4-19.4 47.1-47.4 76.3-76.3l20.6-20.6c-24.6-2.6-62.9-9.1-90.6-26.9-32.6-21-46.9-33.3-34.3-59 7.4-14.6 27.7-26.9 54.6-5.7 0 0 36.3 28.9 94.9 28.9s94.9-28.9 94.9-28.9c26.9-21.1 47.1-8.9 54.6 5.7 12.4 25.7-1.9 38-34.5 59.1zM30.3 129.7C30.3 58 88.6 0 160 0s129.7 58 129.7 129.7c0 71.4-58.3 129.4-129.7 129.4s-129.7-58-129.7-129.4zm66 0c0 35.1 28.6 63.7 63.7 63.7s63.7-28.6 63.7-63.7c0-35.4-28.6-64-63.7-64s-63.7 28.6-63.7 64z'/></svg></i>";
                 } else if ($socialProvider === "yandex") {
                     $user["socIcon"] = "<i><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 512'><path d='M129.5 512V345.9L18.5 48h55.8l81.8 229.7L250.2 0h51.3L180.8 347.8V512h-51.3z'/></svg></i>";
-                } else if ($socialProvider === "mailru") {
-                    $user["socIcon"] = "<i><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path d='M256 64C150 64 64 150 64 256s86 192 192 192c17.7 0 32 14.3 32 32s-14.3 32-32 32C114.6 512 0 397.4 0 256S114.6 0 256 0S512 114.6 512 256l0 32c0 53-43 96-96 96c-29.3 0-55.6-13.2-73.2-33.9C320 371.1 289.5 384 256 384c-70.7 0-128-57.3-128-128s57.3-128 128-128c27.9 0 53.7 8.9 74.7 24.1c5.7-5 13.1-8.1 21.3-8.1c17.7 0 32 14.3 32 32l0 80 0 32c0 17.7 14.3 32 32 32s32-14.3 32-32l0-32c0-106-86-192-192-192zm64 192a64 64 0 1 0 -128 0 64 64 0 1 0 128 0z'/></svg></i>";
                 } else if ($socialProvider === "baidu") {
                     $user["socIcon"] = "<i><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path d='M226.5 92.9c14.3 42.9-.3 86.2-32.6 96.8s-70.1-15.6-84.4-58.5s.3-86.2 32.6-96.8s70.1 15.6 84.4 58.5zM100.4 198.6c18.9 32.4 14.3 70.1-10.2 84.1s-59.7-.9-78.5-33.3S-2.7 179.3 21.8 165.3s59.7 .9 78.5 33.3zM69.2 401.2C121.6 259.9 214.7 224 256 224s134.4 35.9 186.8 177.2c3.6 9.7 5.2 20.1 5.2 30.5l0 1.6c0 25.8-20.9 46.7-46.7 46.7c-11.5 0-22.9-1.4-34-4.2l-88-22c-15.3-3.8-31.3-3.8-46.6 0l-88 22c-11.1 2.8-22.5 4.2-34 4.2C84.9 480 64 459.1 64 433.3l0-1.6c0-10.4 1.6-20.8 5.2-30.5zM421.8 282.7c-24.5-14-29.1-51.7-10.2-84.1s54-47.3 78.5-33.3s29.1 51.7 10.2 84.1s-54 47.3-78.5 33.3zM310.1 189.7c-32.3-10.6-46.9-53.9-32.6-96.8s52.1-69.1 84.4-58.5s46.9 53.9 32.6 96.8s-52.1 69.1-84.4 58.5z'/></svg></i>";
                 } else if ($socialProvider === "telegram") {
@@ -1469,10 +1555,11 @@ class WpdiscuzHelper implements WpDiscuzConstants {
                 }
             }
         } else {
+            $avatarEmail               = $comment->comment_author_email ? $comment->comment_author_email : md5($comment->comment_date) . "@" . md5($comment->comment_date) . ".com";
             $user["authorName"]        = $comment->comment_author ? $comment->comment_author : esc_html($this->options->getPhrase("wc_anonymous"));
-            $user["authorAvatarField"] = $comment->comment_author_email;
+            $user["authorAvatarField"] = $avatarEmail;
             $user["gravatarUserId"]    = 0;
-            $user["gravatarUserEmail"] = $comment->comment_author_email;
+            $user["gravatarUserEmail"] = $avatarEmail;
             $user["profileUrl"]        = "";
         }
         $user["authorName"] = apply_filters("wpdiscuz_comment_author", $user["authorName"], $comment);
@@ -1610,7 +1697,6 @@ class WpdiscuzHelper implements WpDiscuzConstants {
         return !in_array(strstr($email, "@"), [
             "@facebook.com",
             "@twitter.com",
-            "@ok.ru",
             "@wechat.com",
             "@weibo.com",
             "@baidu.com",

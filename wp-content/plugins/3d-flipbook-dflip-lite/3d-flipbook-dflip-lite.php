@@ -4,7 +4,7 @@
  * Plugin Name: 3D FlipBook : DearFlip Lite
  * Description: Realistic 3D Flip-books for WordPress <a href="https://dearflip.com/go/wp-lite-full-version" >Get Full Version Here</a><strong> NOTE : Deactivate this lite version before activating Full Version</strong>
  *
- * Version: 2.3.75
+ * Version: 2.4.27
  * Text Domain: 3d-flipbook-dflip-lite
  * Author: DearHive
  * Author URI: https://dearflip.com/go/wp-lite-author
@@ -45,7 +45,7 @@ if ( !class_exists( 'DFlip' ) ) {
      *
      * @var string
      */
-    public $version = '2.3.75';
+    public $version = '2.4.27';
 
     /**
      * The name of the plugin.
@@ -604,8 +604,8 @@ if ( !class_exists( 'DFlip' ) ) {
       //registers a variable that stores the location of plugin
       ?>
         <script data-cfasync="false">
-          var dFlipLocation = '<?php echo esc_url(plugins_url( 'assets/', __FILE__ ));?>';
-          var dFlipWPGlobal = <?php echo json_encode( $data );?>;
+            window.dFlipLocation = '<?php echo esc_url(plugins_url( 'assets/', __FILE__ ));?>';
+            window.dFlipWPGlobal = <?php echo json_encode( $data );?>;
         </script>
       <?php
 
@@ -740,7 +740,7 @@ if ( !class_exists( 'DFlip' ) ) {
      *
      */
     public function create_setting( $key, $setting = null, $value = null, $global_key = null, $global_value = '' ) {
-      
+
       $setting = is_null( $setting ) ? $this->defaults[ $key ] : $setting;
       if ( is_null( $setting ) ) {
         echo "<!--    " . esc_html( $key ) . " Not found   -->";
@@ -826,8 +826,8 @@ if ( !class_exists( 'DFlip' ) ) {
 		</div>';
 
     }
-    
-    
+
+
     public function dflip_lite_check() {
       if ( is_admin() ) {
         if ( $this->is_plugin_active( 'dflip/dflip.php' ) ) {

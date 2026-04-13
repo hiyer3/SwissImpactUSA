@@ -217,6 +217,9 @@ class Form {
     public function isShowSubscriptionBar() {
         // default enabled if the setting does not exist in the db
         $isSubscriptionBarEnabled = isset($this->generalOptions["show_subscription_bar"]) ? (int)$this->generalOptions["show_subscription_bar"] : 1;
+        if (!$isSubscriptionBarEnabled) {
+            return false;
+        }
         // default enabled if the setting does not exist in the db
         $guestCanSubscribe = isset($this->generalOptions["guest_can_subscribe"]) ? (int)$this->generalOptions["guest_can_subscribe"] : 1;
         // default roles if the setting does not exist in the db

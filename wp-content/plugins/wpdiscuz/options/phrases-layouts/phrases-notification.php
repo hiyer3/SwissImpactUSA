@@ -29,17 +29,6 @@ if (!defined("ABSPATH")) {
                                       id="wc_unsubscribe_message"><?php echo esc_html($this->phrases["wc_unsubscribe_message"]); ?></textarea>
             </td>
         </tr>
-        <?php if (class_exists("Prompt_Comment_Form_Handling") && $this->subscription["usePostmaticForCommentNotification"]) { ?>
-            <tr valign="top">
-                <th scope="row"><label
-                        for="wc_postmatic_subscription_label"><?php esc_html_e("Postmatic subscription label", "wpdiscuz"); ?></label>
-                </th>
-                <td colspan="3"><input type="text"
-                                       value="<?php echo esc_attr($this->phrases["wc_postmatic_subscription_label"]); ?>"
-                                       name="wc_postmatic_subscription_label" id="wc_postmatic_subscription_label"/>
-                </td>
-            </tr>
-        <?php } ?>
         <tr valign="top">
             <th scope="row"><label for="wc_log_in"><?php esc_html_e("Login", "wpdiscuz"); ?></label></th>
             <td colspan="3"><input type="text" value="<?php echo esc_attr($this->phrases["wc_log_in"]); ?>"

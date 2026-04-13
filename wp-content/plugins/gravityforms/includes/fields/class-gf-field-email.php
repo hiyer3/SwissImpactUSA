@@ -108,21 +108,19 @@ class GF_Field_Email extends GF_Field {
 	 * @return void
 	 */
 	public function validate( $value, $form ) {
-		$email = is_array( $value ) ? rgar( $value, 0 ) : $value; // Form objects created in 1.8 will supply a string as the value.
-		if ( rgblank( $email ) ) {
-			return;
-		}
+		$email     = is_array( $value ) ? rgar( $value, 0 ) : $value; // Form objects created in 1.8 will supply a string as the value.
+		$not_blank = ! rgblank( $email );
 
-		if ( ! GFCommon::is_valid_email( $email ) ) {
+		if ( $not_blank && ! GFCommon::is_valid_email( $email ) ) {
 			$this->failed_validation  = true;
 			$this->validation_message = $this->errorMessage ?: esc_html__( 'The email address entered is invalid, please check the formatting (e.g. email@domain.com).', 'gravityforms' );
-		} elseif ( $this->is_email_rejected( $email ) ) {
+		} elseif ( $not_blank && $this->is_email_rejected( $email ) ) {
 			$this->set_context_property( 'is_value_spam', true );
 			$this->failed_validation  = true;
 			$this->validation_message = $this->errorMessage ?: esc_html__( 'The email address entered is invalid.', 'gravityforms' );
 		} elseif ( $this->emailConfirmEnabled ) {
 			$confirm = is_array( $value ) ? rgar( $value, 1 ) : $this->get_input_value_submission( 'input_' . $this->id . '_2' );
-			if ( $confirm != $email ) {
+			if ( $confirm !== $email ) {
 				$this->failed_validation  = true;
 				$this->validation_message = esc_html__( 'Your emails do not match.', 'gravityforms' );
 			}
@@ -139,9 +137,9 @@ class GF_Field_Email extends GF_Field {
 	 * @return bool
 	 */
 	public function is_email_rejected( $email ) {
-		$form_id           = absint( $this->formId );
-		$field_id          = absint( $this->id );
-		$field             = $this;
+		$form_id  = absint( $this->formId );
+		$field_id = absint( $this->id );
+		$field    = $this;
 
 		if ( GFCommon::is_preview() ) {
 			$rejectable_values = array();
@@ -172,9 +170,10 @@ class GF_Field_Email extends GF_Field {
 			return false;
 		}
 
-		$pattern = '/' . implode( '|', array_map( 'preg_quote', $rejectable_values ) ) . '/i';
-		if ( preg_match( $pattern, $email ) ) {
-			return true;
+		foreach ( $rejectable_values as $value ) {
+			if ( stripos( $email, $value ) !== false ) {
+				return true;
+			}
 		}
 
 		return false;

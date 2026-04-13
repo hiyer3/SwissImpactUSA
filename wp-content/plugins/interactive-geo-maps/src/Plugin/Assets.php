@@ -432,6 +432,19 @@ class Assets {
             'version' => $this->core->version,
         ];
 
+        /**
+         * Use wp_add_inline_script to pass data if wp_localize_script fails to register properly
+         * This ensures compatibility with newer WordPress versions 6.9
+         * @ref : https://roots.io/stop-using-wp_localize_script-to-pass-data/
+         * @ref : https://developer.wordpress.org/reference/functions/wp_add_inline_script/
+         */
+        wp_add_inline_script(
+            $this->core->name . '_map_service',
+            'window.iMapsData = ' . json_encode( $final_data ) . ';',
+            'before'
+        );
+
+        // Also use wp_localize_script for backward compatibility
         wp_localize_script( $this->core->name . '_map_service', 'iMapsData', $final_data );
     }
 

@@ -4,8 +4,8 @@ Donate link: https://www.relevanssi.com/
 Tags: search, relevance, better search
 Requires at least: 4.9
 Requires PHP: 7.1
-Tested up to: 6.7
-Stable tag: 2.27.4.1
+Tested up to: 6.9
+Stable tag: 2.29.0
 
 Relevanssi Premium replaces the default search with a partial-match search that sorts results by relevance. It also indexes comments and shortcode content.
 
@@ -256,42 +256,24 @@ Each document database is full of useless words. All the little words that appea
 * John Calahan for extensive 2.0 beta testing.
 
 == Changelog ==
-= 2.27.4.1 =
-* Minor fix: Remove the update nag.
+= 2.29.0 =
+* Security: Fixes a vulnerability where a contributor-level user could make a SQL injection.
+* Minor fix: Correct broken cases where there are parameters after Relevanssi click-tracking parameters.
+* Minor fix: Remove errors from using some language codes without a country identifier.
+* Minor fix: The `relevanssi_missing_sort_key` hook did not fire for `menu_order`. It does now, if `menu_order` is 0.
+* Minor fix: Pinning weights did not work if the pinned word was in upper case. This case-sensitivity is now removed.
+* Minor fix: Click tracking is disabled in related posts fetching.
+* Minor fix: Relevanssi now ignores the contents of SVG tags.
+* Minor fix: Synced pattern contents are now indexed recursively so that, for example, the `relevanssi_noindex` class works.
+* Minor fix: Relevanssi no longer breaks image cloning in MultilingualPress.
 
-= 2.27.4 =
-* New feature: New filter hook `relevanssi_cached_post_object` can be used to modify the cached post objects.
-* Minor fix: Relevanssi cache population now creates stdClass objects instead of WP_Post objects to avoid out of memory issues. If you need WP_Post objects, use the `relevanssi_cached_post_object` filter hook to create them.
-
-= 2.27.3 =
-* Minor fix: Make click-tracking code more error-resistant.
-* Minor fix: Avoid problems with object custom field values.
-* Minor fix: Fix problems with click-tracking, pinning and WPML support.
-
-= 2.27.2 =
-* Minor fix: Fix excerpts broken in 2.27.0.
-
-= 2.27.1 =
-* Minor fix: Version 2.26.1 had broken the auto updates. This version fixes it.
-
-= 2.27.0 =
-* New feature: You can now set the `rlv_source` parameter in a search form and then filter the search logs based on that.
-* New feature: New filter hooks `relevanssi_after_index_doc_n` and `relevanssi_truncate_index` for potential compatibility integrations.
-* Minor fix: Related posts keyword source taxonomy list now shows the taxonomy slug to distinguish between taxonomies with the same name.
-* Minor fix: Building excerpts from PDF content didn't work in multisite context, leading to wrong excerpts or no excerpts at all.
-* Minor fix: Adjust post type parameter handling so that it doesn't change the `post_type` query var.
-* Minor fix: SEO Framework local search exclude option description now tells what the option actually does.
-* Minor fix: Click tracking code is now only used when click tracking option is enabled.
-* Minor fix: The relevanssi_post_type_archive_ok hook second parameter didn't match the documentation. It does now.
-* Minor fix: SEOPress compatibility mode is enabled again.
-* Minor fix: Update counts link had the wrong tab query parameter.
-* Minor fix: Stop fatal errors from pinning and `relevanssi_index_content` filter hooks.
-* Minor fix: Click tracking is disabled for non-existing posts.
-* Minor fix: Remove errors from textdomain loading.
-* Minor fix: Relevanssi cache population now creates WP_Post objects instead of stdClass objects.
-* Minor fix: Avoid fatal errors in installation process with Polylang enabled.
-* Minor fix: Make it possible to remove search queries with emoji from the log.
+= 2.28.0 =
+* New feature: The admin post list has a new column, 'Relevanssi', which has a cleaner, more compact view of the same features the previous columns used. The old columns are still available; this is just a new option.
+* New feature: New filter hook `relevanssi_index_excerpt` can be used to control which excerpts are indexed and which are not.
+* Minor fix: Enabling the 'Hide Relevanssi on edit pages' setting now disables Relevanssi from the quick edit as well.
+* Minor fix: The `tribe_events` shortcode is now blocked in indexing, as it caused problems.
+* Minor fix: Foolproofing the meta_query sorting to avoid errors from non-array values.
 
 == Upgrade notice ==
-= 2.27.4.1 =
-* Removes the update nag.
+= 2.29.0 =
+* SQL injection fix, many minor bug fixes.

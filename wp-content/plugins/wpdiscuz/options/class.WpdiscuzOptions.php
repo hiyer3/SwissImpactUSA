@@ -209,10 +209,6 @@ class WpdiscuzOptions implements WpDiscuzConstants {
         $this->social["enableYandexLogin"] = isset($options[self::TAB_SOCIAL]["enableYandexLogin"]) ? $options[self::TAB_SOCIAL]["enableYandexLogin"] : $defaultOptions[self::TAB_SOCIAL]["enableYandexLogin"];
         $this->social["yandexID"]          = isset($options[self::TAB_SOCIAL]["yandexID"]) ? $options[self::TAB_SOCIAL]["yandexID"] : $defaultOptions[self::TAB_SOCIAL]["yandexID"];
         $this->social["yandexPassword"]    = isset($options[self::TAB_SOCIAL]["yandexPassword"]) ? $options[self::TAB_SOCIAL]["yandexPassword"] : $defaultOptions[self::TAB_SOCIAL]["yandexPassword"];
-        // mail.ru
-        $this->social["enableMailruLogin"]  = isset($options[self::TAB_SOCIAL]["enableMailruLogin"]) ? $options[self::TAB_SOCIAL]["enableMailruLogin"] : $defaultOptions[self::TAB_SOCIAL]["enableMailruLogin"];
-        $this->social["mailruClientID"]     = isset($options[self::TAB_SOCIAL]["mailruClientID"]) ? $options[self::TAB_SOCIAL]["mailruClientID"] : $defaultOptions[self::TAB_SOCIAL]["mailruClientID"];
-        $this->social["mailruClientSecret"] = isset($options[self::TAB_SOCIAL]["mailruClientSecret"]) ? $options[self::TAB_SOCIAL]["mailruClientSecret"] : $defaultOptions[self::TAB_SOCIAL]["mailruClientSecret"];
         // weibo
         $this->social["enableWeiboLogin"] = isset($options[self::TAB_SOCIAL]["enableWeiboLogin"]) ? $options[self::TAB_SOCIAL]["enableWeiboLogin"] : $defaultOptions[self::TAB_SOCIAL]["enableWeiboLogin"];
         $this->social["weiboKey"]         = isset($options[self::TAB_SOCIAL]["weiboKey"]) ? $options[self::TAB_SOCIAL]["weiboKey"] : $defaultOptions[self::TAB_SOCIAL]["weiboKey"];
@@ -231,15 +227,7 @@ class WpdiscuzOptions implements WpDiscuzConstants {
         $this->social["baiduSecret"]      = isset($options[self::TAB_SOCIAL]["baiduSecret"]) ? $options[self::TAB_SOCIAL]["baiduSecret"] : $defaultOptions[self::TAB_SOCIAL]["baiduSecret"];
         // vk
         $this->social["enableVkLogin"] = isset($options[self::TAB_SOCIAL]["enableVkLogin"]) ? $options[self::TAB_SOCIAL]["enableVkLogin"] : $defaultOptions[self::TAB_SOCIAL]["enableVkLogin"];
-        $this->social["enableVkShare"] = isset($options[self::TAB_SOCIAL]["enableVkShare"]) ? $options[self::TAB_SOCIAL]["enableVkShare"] : $defaultOptions[self::TAB_SOCIAL]["enableVkShare"];
         $this->social["vkAppID"]       = isset($options[self::TAB_SOCIAL]["vkAppID"]) ? $options[self::TAB_SOCIAL]["vkAppID"] : $defaultOptions[self::TAB_SOCIAL]["vkAppID"];
-        $this->social["vkAppSecret"]   = isset($options[self::TAB_SOCIAL]["vkAppSecret"]) ? $options[self::TAB_SOCIAL]["vkAppSecret"] : $defaultOptions[self::TAB_SOCIAL]["vkAppSecret"];
-        // ok
-        $this->social["enableOkLogin"] = isset($options[self::TAB_SOCIAL]["enableOkLogin"]) ? $options[self::TAB_SOCIAL]["enableOkLogin"] : $defaultOptions[self::TAB_SOCIAL]["enableOkLogin"];
-        $this->social["enableOkShare"] = isset($options[self::TAB_SOCIAL]["enableOkShare"]) ? $options[self::TAB_SOCIAL]["enableOkShare"] : $defaultOptions[self::TAB_SOCIAL]["enableOkShare"];
-        $this->social["okAppID"]       = isset($options[self::TAB_SOCIAL]["okAppID"]) ? $options[self::TAB_SOCIAL]["okAppID"] : $defaultOptions[self::TAB_SOCIAL]["okAppID"];
-        $this->social["okAppKey"]      = isset($options[self::TAB_SOCIAL]["okAppKey"]) ? $options[self::TAB_SOCIAL]["okAppKey"] : $defaultOptions[self::TAB_SOCIAL]["okAppKey"];
-        $this->social["okAppSecret"]   = isset($options[self::TAB_SOCIAL]["okAppSecret"]) ? $options[self::TAB_SOCIAL]["okAppSecret"] : $defaultOptions[self::TAB_SOCIAL]["okAppSecret"];
         /* rating */
         $this->rating["enablePostRatingSchema"]  = isset($options[self::TAB_RATING]["enablePostRatingSchema"]) ? $options[self::TAB_RATING]["enablePostRatingSchema"] : $defaultOptions[self::TAB_RATING]["enablePostRatingSchema"];
         $this->rating["displayRatingOnPost"]     = isset($options[self::TAB_RATING]["displayRatingOnPost"]) ? $options[self::TAB_RATING]["displayRatingOnPost"] : $defaultOptions[self::TAB_RATING]["displayRatingOnPost"];
@@ -304,7 +292,6 @@ class WpdiscuzOptions implements WpDiscuzConstants {
         $this->subscription["subscriptionType"]                     = isset($options[self::TAB_SUBSCRIPTION]["subscriptionType"]) ? $options[self::TAB_SUBSCRIPTION]["subscriptionType"] : $defaultOptions[self::TAB_SUBSCRIPTION]["subscriptionType"];
         $this->subscription["showReplyCheckbox"]                    = isset($options[self::TAB_SUBSCRIPTION]["showReplyCheckbox"]) ? $options[self::TAB_SUBSCRIPTION]["showReplyCheckbox"] : $defaultOptions[self::TAB_SUBSCRIPTION]["showReplyCheckbox"];
         $this->subscription["isReplyDefaultChecked"]                = isset($options[self::TAB_SUBSCRIPTION]["isReplyDefaultChecked"]) ? $options[self::TAB_SUBSCRIPTION]["isReplyDefaultChecked"] : $defaultOptions[self::TAB_SUBSCRIPTION]["isReplyDefaultChecked"];
-        $this->subscription["usePostmaticForCommentNotification"]   = isset($options[self::TAB_SUBSCRIPTION]["usePostmaticForCommentNotification"]) ? $options[self::TAB_SUBSCRIPTION]["usePostmaticForCommentNotification"] : $defaultOptions[self::TAB_SUBSCRIPTION]["usePostmaticForCommentNotification"];
         $this->subscription["isFollowActive"]                       = isset($options[self::TAB_SUBSCRIPTION]["isFollowActive"]) ? $options[self::TAB_SUBSCRIPTION]["isFollowActive"] : $defaultOptions[self::TAB_SUBSCRIPTION]["isFollowActive"];
         $this->subscription["disableFollowConfirmForUsers"]         = isset($options[self::TAB_SUBSCRIPTION]["disableFollowConfirmForUsers"]) ? $options[self::TAB_SUBSCRIPTION]["disableFollowConfirmForUsers"] : $defaultOptions[self::TAB_SUBSCRIPTION]["disableFollowConfirmForUsers"];
         $this->subscription["emailSubjectPostComment"]              = isset($options[self::TAB_SUBSCRIPTION]["emailSubjectPostComment"]) ? wp_kses_post(__($options[self::TAB_SUBSCRIPTION]["emailSubjectPostComment"], "wpdiscuz")) : __($defaultOptions[self::TAB_SUBSCRIPTION]["emailSubjectPostComment"], "wpdiscuz");
@@ -411,8 +398,6 @@ class WpdiscuzOptions implements WpDiscuzConstants {
             "wc_share_facebook"                                 => esc_html__("Share On Facebook", "wpdiscuz"),
             "wc_share_twitter"                                  => esc_html__("Share On X", "wpdiscuz"),
             "wc_share_whatsapp"                                 => esc_html__("Share On WhatsApp", "wpdiscuz"),
-            "wc_share_vk"                                       => esc_html__("Share On VKontakte", "wpdiscuz"),
-            "wc_share_ok"                                       => esc_html__("Share On Odnoklassniki", "wpdiscuz"),
             "wc_hide_replies_text"                              => esc_html__("Hide Replies", "wpdiscuz"),
             "wc_show_replies_text"                              => esc_html__("View Replies", "wpdiscuz"),
             "wc_email_subject"                                  => esc_html__("New Comment", "wpdiscuz"),
@@ -462,6 +447,7 @@ class WpdiscuzOptions implements WpDiscuzConstants {
             "wc_vote_only_one_time"                             => esc_html__("You've already voted for this comment", "wpdiscuz"),
             "wc_voting_error"                                   => esc_html__("Voting Error", "wpdiscuz"),
             "wc_banned_user"                                    => esc_html__("You are banned", "wpdiscuz"),
+            "wc_rate_limit_exceeded"                            => esc_html__("Too many requests. Please slow down.", "wpdiscuz"),
             "wc_login_to_vote"                                  => esc_html__("You Must Be Logged In To Vote", "wpdiscuz"),
             "wc_self_vote"                                      => esc_html__("You cannot vote for your comment", "wpdiscuz"),
             "wc_deny_voting_from_same_ip"                       => esc_html__("You are not allowed to vote for this comment", "wpdiscuz"),
@@ -480,7 +466,6 @@ class WpdiscuzOptions implements WpDiscuzConstants {
             "wc_msg_required_fields"                            => esc_html__("Please fill out required fields", "wpdiscuz"),
             "wc_connect_with"                                   => esc_html__("Connect with", "wpdiscuz"),
             "wc_subscribed_to"                                  => esc_html__("You're subscribed to", "wpdiscuz"),
-            "wc_postmatic_subscription_label"                   => esc_html__("Participate in this discussion via email", "wpdiscuz"),
             "wc_form_subscription_submit"                       => esc_html__("&rsaquo;", "wpdiscuz"),
             "wc_comment_approved_email_subject"                 => esc_html__("Your comment is approved!", "wpdiscuz"),
             "wc_comment_approved_email_message"                 => __('Hi [COMMENT_AUTHOR],<br/><br/>your comment was approved.<br/><br/><a href="[COMMENT_URL]">[COMMENT_URL]</a><br/><br/>[COMMENT_CONTENT]', "wpdiscuz"),
@@ -702,10 +687,6 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                 "enableYandexLogin"            => $this->social["enableYandexLogin"],
                 "yandexID"                     => $this->social["yandexID"],
                 "yandexPassword"               => $this->social["yandexPassword"],
-                // mail.ru
-                "enableMailruLogin"            => $this->social["enableMailruLogin"],
-                "mailruClientID"               => $this->social["mailruClientID"],
-                "mailruClientSecret"           => $this->social["mailruClientSecret"],
                 // weibo
                 "enableWeiboLogin"             => $this->social["enableWeiboLogin"],
                 "weiboKey"                     => $this->social["weiboKey"],
@@ -724,15 +705,7 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                 "baiduSecret"                  => $this->social["baiduSecret"],
                 // vk
                 "enableVkLogin"                => $this->social["enableVkLogin"],
-                "enableVkShare"                => $this->social["enableVkShare"],
                 "vkAppID"                      => $this->social["vkAppID"],
-                "vkAppSecret"                  => $this->social["vkAppSecret"],
-                // ok
-                "enableOkLogin"                => $this->social["enableOkLogin"],
-                "enableOkShare"                => $this->social["enableOkShare"],
-                "okAppID"                      => $this->social["okAppID"],
-                "okAppKey"                     => $this->social["okAppKey"],
-                "okAppSecret"                  => $this->social["okAppSecret"],
             ],
             self::TAB_RATING         => [
                 "enablePostRatingSchema"  => $this->rating["enablePostRatingSchema"],
@@ -802,7 +775,6 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                 "subscriptionType"                     => $this->subscription["subscriptionType"],
                 "showReplyCheckbox"                    => $this->subscription["showReplyCheckbox"],
                 "isReplyDefaultChecked"                => $this->subscription["isReplyDefaultChecked"],
-                "usePostmaticForCommentNotification"   => $this->subscription["usePostmaticForCommentNotification"],
                 "isFollowActive"                       => $this->subscription["isFollowActive"],
                 "disableFollowConfirmForUsers"         => $this->subscription["disableFollowConfirmForUsers"],
                 "emailSubjectPostComment"              => $this->subscription["emailSubjectPostComment"],
@@ -977,9 +949,6 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                 "enableYandexLogin"            => 0,
                 "yandexID"                     => "",
                 "yandexPassword"               => "",
-                "enableMailruLogin"            => 0,
-                "mailruClientID"               => "",
-                "mailruClientSecret"           => "",
                 "enableWeiboLogin"             => 0,
                 "weiboKey"                     => "",
                 "weiboSecret"                  => "",
@@ -993,14 +962,7 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                 "baiduAppID"                   => "",
                 "baiduSecret"                  => "",
                 "enableVkLogin"                => 0,
-                "enableVkShare"                => 1,
                 "vkAppID"                      => "",
-                "vkAppSecret"                  => "",
-                "enableOkLogin"                => 0,
-                "enableOkShare"                => 1,
-                "okAppID"                      => "",
-                "okAppKey"                     => "",
-                "okAppSecret"                  => "",
             ],
             self::TAB_RATING         => [
                 "enablePostRatingSchema"  => 0,
@@ -1070,7 +1032,6 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                 "subscriptionType"                     => 1,
                 "showReplyCheckbox"                    => 1,
                 "isReplyDefaultChecked"                => 0,
-                "usePostmaticForCommentNotification"   => 0,
                 "isFollowActive"                       => 1,
                 "disableFollowConfirmForUsers"         => 1,
                 "emailSubjectPostComment"              => esc_html__("New Comment", "wpdiscuz"),
@@ -1175,7 +1136,7 @@ class WpdiscuzOptions implements WpDiscuzConstants {
     }
 
     public function isShareEnabled() {
-        return $this->social["enableFbShare"] || $this->social["enableTwitterShare"] || $this->social["enableVkShare"] || $this->social["enableOkShare"];
+        return $this->social["enableFbShare"] || $this->social["enableTwitterShare"];
     }
 
     public function getOptionsForJs() {
@@ -1195,6 +1156,7 @@ class WpdiscuzOptions implements WpDiscuzConstants {
         $jsArgs["wc_vote_only_one_time"]        = esc_html($this->phrases["wc_vote_only_one_time"]);
         $jsArgs["wc_voting_error"]              = esc_html($this->phrases["wc_voting_error"]);
         $jsArgs["wc_banned_user"]               = isset($this->phrases["wc_banned_user"]) ? esc_html($this->phrases["wc_banned_user"]) : esc_html__("You are banned", "wpdiscuz");
+        $jsArgs["wc_rate_limit_exceeded"]       = isset($this->phrases["wc_rate_limit_exceeded"]) ? esc_html($this->phrases["wc_rate_limit_exceeded"]) : esc_html__("Too many requests. Please slow down.", "wpdiscuz");
         $jsArgs["wc_comment_edit_not_possible"] = esc_html($this->phrases["wc_comment_edit_not_possible"]);
         $jsArgs["wc_comment_not_updated"]       = esc_html($this->phrases["wc_comment_not_updated"]);
         $jsArgs["wc_comment_not_edited"]        = esc_html($this->phrases["wc_comment_not_edited"]);
@@ -1232,9 +1194,6 @@ class WpdiscuzOptions implements WpDiscuzConstants {
             $jsArgs["storeCommenterData"] = null;
         } else {
             $jsArgs["storeCommenterData"] = $this->form["storeCommenterData"];
-        }
-        if (function_exists("zerospam_get_key")) {
-            $jsArgs["wpdiscuz_zs"] = md5(zerospam_get_key());
         }
         $jsArgs["socialLoginAgreementCheckbox"] = $this->social["socialLoginAgreementCheckbox"];
         $jsArgs["enableFbLogin"]                = $this->social["enableFbLogin"];
@@ -1488,10 +1447,6 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                 $this->social["enableYandexLogin"] = isset($_POST[self::TAB_SOCIAL]["enableYandexLogin"]) ? absint($_POST[self::TAB_SOCIAL]["enableYandexLogin"]) : 0;
                 $this->social["yandexID"]          = isset($_POST[self::TAB_SOCIAL]["yandexID"]) ? trim(sanitize_text_field($_POST[self::TAB_SOCIAL]["yandexID"])) : "";
                 $this->social["yandexPassword"]    = isset($_POST[self::TAB_SOCIAL]["yandexPassword"]) ? trim(sanitize_text_field($_POST[self::TAB_SOCIAL]["yandexPassword"])) : "";
-                // mail.ru
-                $this->social["enableMailruLogin"]  = isset($_POST[self::TAB_SOCIAL]["enableMailruLogin"]) ? absint($_POST[self::TAB_SOCIAL]["enableMailruLogin"]) : 0;
-                $this->social["mailruClientID"]     = isset($_POST[self::TAB_SOCIAL]["mailruClientID"]) ? trim(sanitize_text_field($_POST[self::TAB_SOCIAL]["mailruClientID"])) : "";
-                $this->social["mailruClientSecret"] = isset($_POST[self::TAB_SOCIAL]["mailruClientSecret"]) ? trim(sanitize_text_field($_POST[self::TAB_SOCIAL]["mailruClientSecret"])) : "";
                 // weibo
                 $this->social["enableWeiboLogin"] = isset($_POST[self::TAB_SOCIAL]["enableWeiboLogin"]) ? absint($_POST[self::TAB_SOCIAL]["enableWeiboLogin"]) : 0;
                 $this->social["weiboKey"]         = isset($_POST[self::TAB_SOCIAL]["weiboKey"]) ? trim(sanitize_text_field($_POST[self::TAB_SOCIAL]["weiboKey"])) : "";
@@ -1510,15 +1465,7 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                 $this->social["baiduSecret"]      = isset($_POST[self::TAB_SOCIAL]["baiduSecret"]) ? trim(sanitize_text_field($_POST[self::TAB_SOCIAL]["baiduSecret"])) : "";
                 // vk
                 $this->social["enableVkLogin"] = isset($_POST[self::TAB_SOCIAL]["enableVkLogin"]) ? absint($_POST[self::TAB_SOCIAL]["enableVkLogin"]) : 0;
-                $this->social["enableVkShare"] = isset($_POST[self::TAB_SOCIAL]["enableVkShare"]) ? absint($_POST[self::TAB_SOCIAL]["enableVkShare"]) : 0;
                 $this->social["vkAppID"]       = isset($_POST[self::TAB_SOCIAL]["vkAppID"]) ? trim(sanitize_text_field($_POST[self::TAB_SOCIAL]["vkAppID"])) : "";
-                $this->social["vkAppSecret"]   = isset($_POST[self::TAB_SOCIAL]["vkAppSecret"]) ? trim(sanitize_text_field($_POST[self::TAB_SOCIAL]["vkAppSecret"])) : "";
-                // ok
-                $this->social["enableOkLogin"] = isset($_POST[self::TAB_SOCIAL]["enableOkLogin"]) ? absint($_POST[self::TAB_SOCIAL]["enableOkLogin"]) : 0;
-                $this->social["enableOkShare"] = isset($_POST[self::TAB_SOCIAL]["enableOkShare"]) ? absint($_POST[self::TAB_SOCIAL]["enableOkShare"]) : 0;
-                $this->social["okAppID"]       = isset($_POST[self::TAB_SOCIAL]["okAppID"]) ? trim(sanitize_text_field($_POST[self::TAB_SOCIAL]["okAppID"])) : "";
-                $this->social["okAppKey"]      = isset($_POST[self::TAB_SOCIAL]["okAppKey"]) ? trim(sanitize_text_field($_POST[self::TAB_SOCIAL]["okAppKey"])) : "";
-                $this->social["okAppSecret"]   = isset($_POST[self::TAB_SOCIAL]["okAppSecret"]) ? trim(sanitize_text_field($_POST[self::TAB_SOCIAL]["okAppSecret"])) : "";
             } else if (self::TAB_RATING === $_POST["wpd_tab"]) {
                 $this->rating["enablePostRatingSchema"]  = isset($_POST[self::TAB_RATING]["enablePostRatingSchema"]) ? absint($_POST[self::TAB_RATING]["enablePostRatingSchema"]) : 0;
                 $this->rating["displayRatingOnPost"]     = isset($_POST[self::TAB_RATING]["displayRatingOnPost"]) ? $_POST[self::TAB_RATING]["displayRatingOnPost"] : [];
@@ -1586,7 +1533,6 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                 $this->subscription["subscriptionType"]                     = isset($_POST[self::TAB_SUBSCRIPTION]["subscriptionType"]) ? absint($_POST[self::TAB_SUBSCRIPTION]["subscriptionType"]) : 1;
                 $this->subscription["showReplyCheckbox"]                    = isset($_POST[self::TAB_SUBSCRIPTION]["showReplyCheckbox"]) ? absint($_POST[self::TAB_SUBSCRIPTION]["showReplyCheckbox"]) : 0;
                 $this->subscription["isReplyDefaultChecked"]                = isset($_POST[self::TAB_SUBSCRIPTION]["isReplyDefaultChecked"]) ? absint($_POST[self::TAB_SUBSCRIPTION]["isReplyDefaultChecked"]) : 0;
-                $this->subscription["usePostmaticForCommentNotification"]   = isset($_POST[self::TAB_SUBSCRIPTION]["usePostmaticForCommentNotification"]) ? absint($_POST[self::TAB_SUBSCRIPTION]["usePostmaticForCommentNotification"]) : 0;
                 $this->subscription["isFollowActive"]                       = isset($_POST[self::TAB_SUBSCRIPTION]["isFollowActive"]) ? absint($_POST[self::TAB_SUBSCRIPTION]["isFollowActive"]) : 0;
                 $this->subscription["disableFollowConfirmForUsers"]         = isset($_POST[self::TAB_SUBSCRIPTION]["disableFollowConfirmForUsers"]) ? absint($_POST[self::TAB_SUBSCRIPTION]["disableFollowConfirmForUsers"]) : 0;
                 $this->subscription["emailSubjectPostComment"]              = isset($_POST[self::TAB_SUBSCRIPTION]["emailSubjectPostComment"]) ? wp_kses_post(wp_unslash($_POST[self::TAB_SUBSCRIPTION]["emailSubjectPostComment"])) : wp_kses_post(wp_unslash($defaultOptions['emailSubjectPostComment']));
@@ -1701,8 +1647,6 @@ class WpdiscuzOptions implements WpDiscuzConstants {
             $this->phrases["wc_share_facebook"]                                 = sanitize_text_field($_POST["wc_share_facebook"]);
             $this->phrases["wc_share_twitter"]                                  = sanitize_text_field($_POST["wc_share_twitter"]);
             $this->phrases["wc_share_whatsapp"]                                 = sanitize_text_field($_POST["wc_share_whatsapp"]);
-            $this->phrases["wc_share_vk"]                                       = sanitize_text_field($_POST["wc_share_vk"]);
-            $this->phrases["wc_share_ok"]                                       = sanitize_text_field($_POST["wc_share_ok"]);
             $this->phrases["wc_hide_replies_text"]                              = sanitize_text_field($_POST["wc_hide_replies_text"]);
             $this->phrases["wc_show_replies_text"]                              = sanitize_text_field($_POST["wc_show_replies_text"]);
             $this->phrases["wc_email_subject"]                                  = sanitize_text_field($_POST["wc_email_subject"]);
@@ -1881,9 +1825,6 @@ class WpdiscuzOptions implements WpDiscuzConstants {
             $this->phrases["wmuAttachImage"]          = sanitize_text_field($_POST["wmuAttachImage"]);
             $this->phrases["wmuChangeImage"]          = sanitize_text_field($_POST["wmuChangeImage"]);
 
-            if (class_exists("Prompt_Comment_Form_Handling") && $this->subscription["usePostmaticForCommentNotification"]) {
-                $this->phrases["wc_postmatic_subscription_label"] = sanitize_text_field($_POST["wc_postmatic_subscription_label"]);
-            }
             foreach ($this->labels["blogRoles"] as $roleName => $roleVal) {
                 $this->phrases["wc_blog_role_" . $roleName] = sanitize_text_field($_POST["wc_blog_role_" . $roleName]);
             }
@@ -2189,7 +2130,7 @@ class WpdiscuzOptions implements WpDiscuzConstants {
     }
 
     public function isShowLoginButtons() {
-        return get_option('users_can_register') && ($this->social["enableFbLogin"] || $this->social["enableTwitterLogin"] || $this->social["enableGoogleLogin"] || $this->social["enableTelegramLogin"] || $this->social["enableDisqusLogin"] || $this->social["enableWordpressLogin"] || $this->social["enableVkLogin"] || $this->social["enableOkLogin"] || $this->social["enableInstagramLogin"] || $this->social["enableLinkedinLogin"] || $this->social["enableYandexLogin"] || $this->social["enableMailruLogin"] || $this->social["enableWeiboLogin"] || $this->social["enableWechatLogin"] || $this->social["enableQQLogin"] || $this->social["enableBaiduLogin"]);
+        return get_option('users_can_register') && ($this->social["enableFbLogin"] || $this->social["enableTwitterLogin"] || $this->social["enableGoogleLogin"] || $this->social["enableTelegramLogin"] || $this->social["enableDisqusLogin"] || $this->social["enableWordpressLogin"] || $this->social["enableVkLogin"] || $this->social["enableInstagramLogin"] || $this->social["enableLinkedinLogin"] || $this->social["enableYandexLogin"] || $this->social["enableWeiboLogin"] || $this->social["enableWechatLogin"] || $this->social["enableQQLogin"] || $this->social["enableBaiduLogin"]);
     }
 
     public function showEditorToolbar() {
@@ -2329,45 +2270,10 @@ class WpdiscuzOptions implements WpDiscuzConstants {
         } else if (isset($oldOptions[self::TAB_SOCIAL]["enableVkLogin"])) {
             $newOptions[self::TAB_SOCIAL]["enableVkLogin"] = $oldOptions[self::TAB_SOCIAL]["enableVkLogin"];
         }
-        if (isset($oldOptions["enableVkShare"])) {
-            $newOptions[self::TAB_SOCIAL]["enableVkShare"] = $oldOptions["enableVkShare"];
-        } else if (isset($oldOptions[self::TAB_SOCIAL]["enableVkShare"])) {
-            $newOptions[self::TAB_SOCIAL]["enableVkShare"] = $oldOptions[self::TAB_SOCIAL]["enableVkShare"];
-        }
         if (isset($oldOptions["vkAppID"])) {
             $newOptions[self::TAB_SOCIAL]["vkAppID"] = $oldOptions["vkAppID"];
         } else if (isset($oldOptions[self::TAB_SOCIAL]["vkAppID"])) {
             $newOptions[self::TAB_SOCIAL]["vkAppID"] = $oldOptions[self::TAB_SOCIAL]["vkAppID"];
-        }
-        if (isset($oldOptions["vkAppSecret"])) {
-            $newOptions[self::TAB_SOCIAL]["vkAppSecret"] = $oldOptions["vkAppSecret"];
-        } else if (isset($oldOptions[self::TAB_SOCIAL]["vkAppSecret"])) {
-            $newOptions[self::TAB_SOCIAL]["vkAppSecret"] = $oldOptions[self::TAB_SOCIAL]["vkAppSecret"];
-        }
-        if (isset($oldOptions["enableOkLogin"])) {
-            $newOptions[self::TAB_SOCIAL]["enableOkLogin"] = $oldOptions["enableOkLogin"];
-        } else if (isset($oldOptions[self::TAB_SOCIAL]["enableOkLogin"])) {
-            $newOptions[self::TAB_SOCIAL]["enableOkLogin"] = $oldOptions[self::TAB_SOCIAL]["enableOkLogin"];
-        }
-        if (isset($oldOptions["enableOkShare"])) {
-            $newOptions[self::TAB_SOCIAL]["enableOkShare"] = $oldOptions["enableOkShare"];
-        } else if (isset($oldOptions[self::TAB_SOCIAL]["enableOkShare"])) {
-            $newOptions[self::TAB_SOCIAL]["enableOkShare"] = $oldOptions[self::TAB_SOCIAL]["enableOkShare"];
-        }
-        if (isset($oldOptions["okAppID"])) {
-            $newOptions[self::TAB_SOCIAL]["okAppID"] = $oldOptions["okAppID"];
-        } else if (isset($oldOptions[self::TAB_SOCIAL]["okAppID"])) {
-            $newOptions[self::TAB_SOCIAL]["okAppID"] = $oldOptions[self::TAB_SOCIAL]["okAppID"];
-        }
-        if (isset($oldOptions["okAppKey"])) {
-            $newOptions[self::TAB_SOCIAL]["okAppKey"] = $oldOptions["okAppKey"];
-        } else if (isset($oldOptions[self::TAB_SOCIAL]["okAppKey"])) {
-            $newOptions[self::TAB_SOCIAL]["okAppKey"] = $oldOptions[self::TAB_SOCIAL]["okAppKey"];
-        }
-        if (isset($oldOptions["okAppSecret"])) {
-            $newOptions[self::TAB_SOCIAL]["okAppSecret"] = $oldOptions["okAppSecret"];
-        } else if (isset($oldOptions[self::TAB_SOCIAL]["okAppSecret"])) {
-            $newOptions[self::TAB_SOCIAL]["okAppSecret"] = $oldOptions[self::TAB_SOCIAL]["okAppSecret"];
         }
         if (isset($oldOptions["displayRatingOnPost"])) {
             $newOptions[self::TAB_RATING]["displayRatingOnPost"] = $oldOptions["displayRatingOnPost"];
@@ -2523,11 +2429,6 @@ class WpdiscuzOptions implements WpDiscuzConstants {
             $newOptions[self::TAB_SUBSCRIPTION]["isReplyDefaultChecked"] = $oldOptions["isReplyDefaultChecked"];
         } else if (isset($oldOptions[self::TAB_SUBSCRIPTION]["isReplyDefaultChecked"])) {
             $newOptions[self::TAB_SUBSCRIPTION]["isReplyDefaultChecked"] = $oldOptions[self::TAB_SUBSCRIPTION]["isReplyDefaultChecked"];
-        }
-        if (isset($oldOptions["wc_use_postmatic_for_comment_notification"])) {
-            $newOptions[self::TAB_SUBSCRIPTION]["usePostmaticForCommentNotification"] = $oldOptions["wc_use_postmatic_for_comment_notification"];
-        } else if (isset($oldOptions[self::TAB_SUBSCRIPTION]["usePostmaticForCommentNotification"])) {
-            $newOptions[self::TAB_SUBSCRIPTION]["usePostmaticForCommentNotification"] = $oldOptions[self::TAB_SUBSCRIPTION]["usePostmaticForCommentNotification"];
         }
         if (isset($oldOptions["isFollowActive"])) {
             $newOptions[self::TAB_SUBSCRIPTION]["isFollowActive"] = $oldOptions["isFollowActive"];
@@ -3134,27 +3035,6 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                             "description_original" => "",
                             "docurl"               => "https://wpdiscuz.com/docs/wpdiscuz-7/plugin-settings/social-login-and-share/yandex-app-configuration/",
                         ],
-                        "enableMailruLogin"            => [
-                            "label"                => esc_html__("Mail.ru Login Button", "wpdiscuz"),
-                            "label_original"       => "Mail.ru Login Button",
-                            "description"          => "",
-                            "description_original" => "",
-                            "docurl"               => "",
-                        ],
-                        "mailruClientID"               => [
-                            "label"                => esc_html__("Mail.ru Client ID", "wpdiscuz"),
-                            "label_original"       => "Mail.ru Client ID",
-                            "description"          => "",
-                            "description_original" => "",
-                            "docurl"               => "https://wpdiscuz.com/docs/wpdiscuz-7/plugin-settings/social-login-and-share/mail-ru-app-configuration/",
-                        ],
-                        "mailruClientSecret"           => [
-                            "label"                => esc_html__("Mail.ru Client Secret", "wpdiscuz"),
-                            "label_original"       => "Mail.ru Client Secret",
-                            "description"          => "",
-                            "description_original" => "",
-                            "docurl"               => "https://wpdiscuz.com/docs/wpdiscuz-7/plugin-settings/social-login-and-share/mail-ru-app-configuration/",
-                        ],
                         "enableWeiboLogin"             => [
                             "label"                => esc_html__("Weibo Login Button", "wpdiscuz"),
                             "label_original"       => "Weibo Login Button",
@@ -3240,67 +3120,18 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                             "docurl"               => "",
                         ],
                         "enableVkLogin"                => [
-                            "label"                => esc_html__("VK Login Button", "wpdiscuz"),
-                            "label_original"       => "VK Login Button",
-                            "description"          => "",
-                            "description_original" => "",
-                            "docurl"               => "",
-                        ],
-                        "enableVkShare"                => [
-                            "label"                => esc_html__("VK Share Button", "wpdiscuz"),
-                            "label_original"       => "VK Share Button",
+                            "label"                => esc_html__("VK ID", "wpdiscuz"),
+                            "label_original"       => "VK ID",
                             "description"          => "",
                             "description_original" => "",
                             "docurl"               => "",
                         ],
                         "vkAppID"                      => [
-                            "label"                => esc_html__("VK Application ID", "wpdiscuz"),
-                            "label_original"       => "VK Application ID",
+                            "label"                => esc_html__("App ID", "wpdiscuz"),
+                            "label_original"       => "App ID",
                             "description"          => "",
                             "description_original" => "",
                             "docurl"               => "https://wpdiscuz.com/docs/wpdiscuz-7/plugin-settings/social-login-and-share/vk-app-configuration/",
-                        ],
-                        "vkAppSecret"                  => [
-                            "label"                => esc_html__("VK Secure Key", "wpdiscuz"),
-                            "label_original"       => "VK Secure Key",
-                            "description"          => "",
-                            "description_original" => "",
-                            "docurl"               => "https://wpdiscuz.com/docs/wpdiscuz-7/plugin-settings/social-login-and-share/vk-app-configuration/",
-                        ],
-                        "enableOkLogin"                => [
-                            "label"                => esc_html__("OK Login Button", "wpdiscuz"),
-                            "label_original"       => "OK Login Button",
-                            "description"          => "",
-                            "description_original" => "",
-                            "docurl"               => "",
-                        ],
-                        "enableOkShare"                => [
-                            "label"                => esc_html__("OK Share Button", "wpdiscuz"),
-                            "label_original"       => "OK Share Button",
-                            "description"          => "",
-                            "description_original" => "",
-                            "docurl"               => "",
-                        ],
-                        "okAppID"                      => [
-                            "label"                => esc_html__("OK Application ID", "wpdiscuz"),
-                            "label_original"       => "OK Application ID",
-                            "description"          => "",
-                            "description_original" => "",
-                            "docurl"               => "https://apiok.ru/en/dev/app/create",
-                        ],
-                        "okAppKey"                     => [
-                            "label"                => esc_html__("OK Application Key", "wpdiscuz"),
-                            "label_original"       => "OK Application Key",
-                            "description"          => "",
-                            "description_original" => "",
-                            "docurl"               => "https://apiok.ru/en/dev/app/create",
-                        ],
-                        "okAppSecret"                  => [
-                            "label"                => esc_html__("OK Application Secret", "wpdiscuz"),
-                            "label_original"       => "OK Application Secret",
-                            "description"          => "",
-                            "description_original" => "",
-                            "docurl"               => "https://apiok.ru/en/dev/app/create",
                         ],
                     ],
                 ],
@@ -3631,13 +3462,6 @@ class WpdiscuzOptions implements WpDiscuzConstants {
                             "label_original"       => 'Keep checked the "Notify of new replies to this comment" option by default',
                             "description"          => "",
                             "description_original" => "",
-                            "docurl"               => "",
-                        ],
-                        "usePostmaticForCommentNotification"   => [
-                            "label"                => esc_html__("Use Postmatic for subscriptions and commenting by email", "wpdiscuz"),
-                            "label_original"       => "Use Postmatic for subscriptions and commenting by email",
-                            "description"          => esc_html__("Postmatic allows your users subscribe to comments. Instead of just being notified, they add a reply right from their inbox.", "wpdiscuz"),
-                            "description_original" => "Postmatic allows your users subscribe to comments. Instead of just being notified, they add a reply right from their inbox.",
                             "docurl"               => "",
                         ],
                         "isFollowActive"                       => [

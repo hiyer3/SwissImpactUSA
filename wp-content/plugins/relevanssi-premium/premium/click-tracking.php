@@ -48,7 +48,7 @@ function relevanssi_log_click() {
 		return;
 	}
 
-	if ( ! isset( $_REQUEST['_rt_nonce'] ) ) {
+	if ( ! isset( $_REQUEST['_rt_nonce'] ) || ! is_string( $_REQUEST['_rt_nonce'] ) ) {
 		return;
 	}
 
@@ -173,14 +173,12 @@ function relevanssi_add_tracking( string $permalink, $link_post = null ): string
 	$time  = time();
 	$value = "$position|$page|$query|$time";
 
-	$permalink = esc_attr(
-		add_query_arg(
-			array(
-				'_rt'       => relevanssi_base64url_encode( $value ),
-				'_rt_nonce' => $nonce,
-			),
-			$permalink
-		)
+	$permalink = add_query_arg(
+		array(
+			'_rt'       => relevanssi_base64url_encode( $value ),
+			'_rt_nonce' => $nonce,
+		),
+		$permalink
 	);
 
 	$relevanssi_tracking_permalink[ $id ] = $permalink;
@@ -232,7 +230,7 @@ function relevanssi_base64url_decode( string $data ): string {
  */
 function relevanssi_record_positions( array $hits ): array {
 	global $relevanssi_tracking_positions;
-
+	
 	$position = 0;
 	foreach ( $hits[0] as $hit ) {
 		++$position;
@@ -588,8 +586,6 @@ function relevanssi_show_insights( string $query ) {
  * @return string The link to the insights page.
  */
 function relevanssi_get_insights_url( $target ): string {
-	global $relevanssi_variables;
-
 	$parameter = is_int( $target ) ? 'post_insights' : 'insights';
 
 	return admin_url(
@@ -965,6 +961,9 @@ function relevanssi_remove_clicktracking() {
 	$script = <<<EOJS
 	var relevanssi_rt_regex = /(&|\?)_(rt|rt_nonce)=(\w+)/g
 	var newUrl = window.location.search.replace(relevanssi_rt_regex, '')
+	if (newUrl.substr(0, 1) == '&') {
+		newUrl = '?' + newUrl.substr(1)
+	}
 	history.replaceState(null, null, window.location.pathname + newUrl + window.location.hash)
 EOJS;
 	if ( function_exists( 'wp_print_inline_script_tag' ) ) {
@@ -984,7 +983,6 @@ EOJS;
  * @return string The HTML link tag to link to the insights page.
  */
 function relevanssi_insights_link( $query ): string {
-	global $relevanssi_variables;
 	$insights_url = admin_url( 'admin.php?page=relevanssi_user_searches' )
 		. '&insights=' . rawurlencode( $query->query );
 	$insights     = sprintf( "<a href='%s'>%s</a>", esc_url( $insights_url ), esc_html( relevanssi_hyphenate( $query->query ) ) );

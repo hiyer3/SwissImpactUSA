@@ -66,12 +66,8 @@ class SocialLogin {
             $response = $this->twitterLogin($postID, $response);
         } else if ($provider === "vk") {
             $response = $this->vkLogin($postID, $response);
-        } else if ($provider === "ok") {
-            $response = $this->okLogin($postID, $response);
         } else if ($provider === "yandex") {
             $response = $this->yandexLogin($postID, $response);
-        } else if ($provider === "mailru") {
-            $response = $this->mailruLogin($postID, $response);
         } else if ($provider === "linkedin") {
             $response = $this->linkedinLogin($postID, $response);
         } else if ($provider === "wechat") {
@@ -109,12 +105,8 @@ class SocialLogin {
             $response = $this->wordpressLoginCallBack();
         } else if ($provider === "vk") {
             $response = $this->vkLoginCallBack();
-        } else if ($provider === "ok") {
-            $response = $this->okLoginCallBack();
         } else if ($provider === "yandex") {
             $response = $this->yandexLoginCallBack();
-        } else if ($provider === "mailru") {
-            $response = $this->mailruLoginCallBack();
         } else if ($provider === "wechat") {
             $response = $this->wechatLoginCallBack();
         } else if ($provider === "qq") {
@@ -628,10 +620,10 @@ class SocialLogin {
             $this->redirect($postID, esc_html__("Disqus authentication failed (user_id does not exist).", "wpdiscuz"));
         }
         $userID                = $disqusAccesTokenData["user_id"];
-        $accesToken            = $disqusAccesTokenData["access_token"];
+        $accessToken           = $disqusAccesTokenData["access_token"];
         $disqusGetUserDataURL  = "https://disqus.com/api/3.0/users/details.json";
         $disqusGetUserDataAttr = [
-            "access_token" => $accesToken,
+            "access_token" => $accessToken,
             "api_key"      => $this->generalOptions->social["disqusPublicKey"],
         ];
 
@@ -793,68 +785,102 @@ class SocialLogin {
         }
     }
 
-    // https://vk.com/editapp?act=create
+    //https://id.vk.com/about/business/go/docs/ru/vkid/latest/vk-id/connection/start-integration/auth-without-sdk/auth-without-sdk-web
     public function vkLogin($postID, $response) {
-        if (!$this->generalOptions->social["vkAppID"] || !$this->generalOptions->social["vkAppSecret"]) {
-            $response["message"] = esc_html__("VK Client ID and Client Secret  required.", "wpdiscuz");
+        if (!$this->generalOptions->social["vkAppID"]) {
+            $response["message"] = esc_html__("VK App ID required.", "wpdiscuz");
             return $response;
         }
-        $vkAuthorizeURL = "https://oauth.vk.com/authorize";
+        $vkAuthorizeURL = "https://id.vk.ru/authorize";
         $vkCallBack     = $this->createCallBackURL("vk");
         $state          = Utils::generateOAuthState($this->generalOptions->social["vkAppID"]);
-        Utils::addOAuthState("vk", $state, $postID);
-        $oautAttributs       = ["client_id"     => $this->generalOptions->social["vkAppID"],
-                                "client_secret" => $this->generalOptions->social["vkAppSecret"],
-                                "redirect_uri"  => urlencode($vkCallBack),
-                                "response_type" => "code",
-                                "scope"         => "email",
-                                "state"         => $state,
-                                "v"             => "5.78"];
-        $oautURL             = add_query_arg($oautAttributs, $vkAuthorizeURL);
+        $codeVerifier   = $this->generateCodeVerifier();
+        $codeChallenge  = $this->generateCodeChallenge($codeVerifier);
+        Utils::addOAuthState("vk," . $codeVerifier, $state, $postID);
+        $oauthAttributes     = ["response_type"         => "code",
+                                "client_id"             => $this->generalOptions->social["vkAppID"],
+                                "code_challenge"        => $codeChallenge,
+                                "code_challenge_method" => "S256",
+                                "redirect_uri"          => urlencode($vkCallBack),
+                                "scope"                 => "email",
+                                "state"                 => $state];
+        $oauthURL            = add_query_arg($oauthAttributes, $vkAuthorizeURL);
         $response["code"]    = 200;
         $response["message"] = "";
-        $response["url"]     = $oautURL;
+        $response["url"]     = $oauthURL;
         return $response;
     }
 
+
+    private function generateCodeVerifier(int $length = 128): string {
+        if ($length < 43 || $length > 128) {
+            throw new InvalidArgumentException("code_verifier length must be between 43 and 128 characters");
+        }
+        $bytes     = random_bytes(32);
+        $base64url = rtrim(strtr(base64_encode($bytes), '+/', '-_'), '=');
+        if (strlen($base64url) < $length) {
+            $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~';
+            while (strlen($base64url) < $length) {
+                $base64url .= $chars[random_int(0, strlen($chars) - 1)];
+            }
+        }
+        return substr($base64url, 0, $length);
+    }
+
+
+    private function generateCodeChallenge(string $code_verifier): string {
+        // BASE64URL-ENCODE(SHA256(ASCII(code_verifier)))
+        return rtrim(strtr(
+            base64_encode(hash('sha256', $code_verifier, true)),
+            '+/',
+            '-_'
+        ), '=');
+    }
+
     public function vkLoginCallBack() {
-        $code         = Sanitizer::sanitize(INPUT_GET, "code", "FILTER_SANITIZE_STRING");
-        $state        = Sanitizer::sanitize(INPUT_GET, "state", "FILTER_SANITIZE_STRING");
-        $providerData = Utils::getProviderByState($state);
-        $provider     = $providerData[wpdFormConst::WPDISCUZ_OAUTH_STATE_PROVIDER];
-        $postID       = $providerData[wpdFormConst::WPDISCUZ_OAUTH_CURRENT_POSTID];
-        if (!$state || ($provider !== "vk")) {
+        $code                 = Sanitizer::sanitize(INPUT_GET, "code", "FILTER_SANITIZE_STRING");
+        $state                = Sanitizer::sanitize(INPUT_GET, "state", "FILTER_SANITIZE_STRING");
+        $deviceId             = Sanitizer::sanitize(INPUT_GET, "device_id", "FILTER_SANITIZE_STRING");
+        $providerData         = Utils::getProviderByState($state);
+        $providerCodeVerifier = explode(',', $providerData[wpdFormConst::WPDISCUZ_OAUTH_STATE_PROVIDER]);
+        $provider             = $providerCodeVerifier[0];
+        $codeVerifier         = !empty($providerCodeVerifier[1]) ? $providerCodeVerifier[1] : '';
+        $postID               = $providerData[wpdFormConst::WPDISCUZ_OAUTH_CURRENT_POSTID];
+        if (!$state || ($provider !== "vk") || !$codeVerifier) {
             $this->redirect($postID, esc_html__("VK authentication failed (OAuth state does not exist).", "wpdiscuz"));
         }
         if (!$code) {
             $this->redirect($postID, esc_html__("VK authentication failed (OAuth code does not exist).", "wpdiscuz"));
         }
-        $vkCallBack           = $this->createCallBackURL("vk");
-        $vkAccessTokenURL     = "https://oauth.vk.com/access_token";
-        $accessTokenArgs      = ["client_id"     => $this->generalOptions->social["vkAppID"],
-                                 "client_secret" => $this->generalOptions->social["vkAppSecret"],
-                                 "redirect_uri"  => $vkCallBack,
-                                 "code"          => $code];
-        $vkAccesTokenResponse = wp_remote_post($vkAccessTokenURL, ["body" => $accessTokenArgs]);
+        $vkCallBack            = $this->createCallBackURL("vk");
+        $vkAccessTokenURL      = "https://id.vk.ru/oauth2/auth";
+        $accessTokenArgs       = ["grant_type"    => "authorization_code",
+                                  "client_id"     => $this->generalOptions->social["vkAppID"],
+                                  "code_verifier" => $codeVerifier,
+                                  "redirect_uri"  => $vkCallBack,
+                                  "code"          => $code,
+                                  "device_id"     => $deviceId];
+        $vkAccessTokenResponse = wp_remote_post($vkAccessTokenURL, ["body" => $accessTokenArgs]);
 
-        if (is_wp_error($vkAccesTokenResponse)) {
-            $this->redirect($postID, $vkAccesTokenResponse->get_error_message());
+        if (is_wp_error($vkAccessTokenResponse)) {
+            $this->redirect($postID, $vkAccessTokenResponse->get_error_message());
         }
-        $vkAccesTokenData = json_decode(wp_remote_retrieve_body($vkAccesTokenResponse), true);
-        if (isset($vkAccesTokenData["error"])) {
-            $this->redirect($postID, $vkAccesTokenData["error_description"]);
+        $vkAccessTokenData = json_decode(wp_remote_retrieve_body($vkAccessTokenResponse), true);
+        if (isset($vkAccessTokenData["error"])) {
+            $this->redirect($postID, $vkAccessTokenData["error_description"]);
+
         }
-        if (!isset($vkAccesTokenData["user_id"])) {
+        if (!isset($vkAccessTokenData["user_id"])) {
             $this->redirect($postID, esc_html__("VK authentication failed (user_id does not exist).", "wpdiscuz"));
         }
-        $userID            = $vkAccesTokenData["user_id"];
-        $email             = isset($vkAccesTokenData["email"]) ? $vkAccesTokenData["email"] : $userID . "@vk.com";
-        $vkGetUserDataURL  = "https://api.vk.com/method/users.get";
-        $vkGetUserDataAttr = ["user_ids"     => $userID,
-                              "access_token" => $vkAccesTokenData["access_token"],
-                              "fields"       => "first_name,last_name,screen_name,photo_100",
-                              "v"            => "5.89"];
+
+        $userID            = $vkAccessTokenData["user_id"];
+        $accessToken       = $vkAccessTokenData["access_token"];
+        $vkGetUserDataURL  = "https://id.vk.ru/oauth2/user_info";
+        $vkGetUserDataAttr = ["access_token" => $accessToken,
+                              "client_id"    => $this->generalOptions->social["vkAppID"],];
         $getVkUserResponse = wp_remote_post($vkGetUserDataURL, ["body" => $vkGetUserDataAttr]);
+
         if (is_wp_error($getVkUserResponse)) {
             $this->redirect($postID, $getVkUserResponse->get_error_message());
         }
@@ -862,87 +888,11 @@ class SocialLogin {
         if (isset($vkUserData["error"])) {
             $this->redirect($postID, $vkUserData["error_msg"]);
         }
-        $vkUser          = $vkUserData["response"][0];
+
+        $vkUser          = $vkUserData["user"];
+        $email           = $vkUser["email"] && $vkUser["verified"] ? $vkUser["email"] : "id" . $userID . "@vk.com";
         $vkUser["email"] = $email;
         $uID             = Utils::addUser($vkUser, "vk");
-        if (is_wp_error($uID)) {
-            $this->redirect($postID, $uID->get_error_message());
-        }
-        $this->setCurrentUser($uID);
-        $this->redirect($postID);
-    }
-
-    //https://apiok.ru/dev/app/create
-    public function okLogin($postID, $response) {
-        if (!$this->generalOptions->social["okAppID"] || !$this->generalOptions->social["okAppSecret"] || !$this->generalOptions->social["okAppKey"]) {
-            $response["message"] = esc_html__("OK Application ID, Application Key  and Application Secret  required.", "wpdiscuz");
-            return $response;
-        }
-        $okAuthorizeURL = "https://connect.ok.ru/oauth/authorize";
-        $okCallBack     = $this->createCallBackURL("ok");
-        $state          = Utils::generateOAuthState($this->generalOptions->social["okAppID"]);
-        Utils::addOAuthState("ok", $state, $postID);
-        $oautAttributs       = ["client_id"     => $this->generalOptions->social["okAppID"],
-                                "redirect_uri"  => urlencode($okCallBack),
-                                "response_type" => "code",
-                                "scope"         => "VALUABLE_ACCESS;GET_EMAIL",
-                                "state"         => $state];
-        $oautURL             = add_query_arg($oautAttributs, $okAuthorizeURL);
-        $response["code"]    = 200;
-        $response["message"] = "";
-        $response["url"]     = $oautURL;
-        return $response;
-    }
-
-    public function okLoginCallBack() {
-        $code         = Sanitizer::sanitize(INPUT_GET, "code", "FILTER_SANITIZE_STRING");
-        $state        = Sanitizer::sanitize(INPUT_GET, "state", "FILTER_SANITIZE_STRING");
-        $providerData = Utils::getProviderByState($state);
-        $provider     = $providerData[wpdFormConst::WPDISCUZ_OAUTH_STATE_PROVIDER];
-        $postID       = $providerData[wpdFormConst::WPDISCUZ_OAUTH_CURRENT_POSTID];
-        if (!$state || ($provider !== "ok")) {
-            $this->redirect($postID, esc_html__("OK authentication failed (OAuth state does not exist).", "wpdiscuz"));
-        }
-        if (!$code) {
-            $this->redirect($postID, esc_html__("OK authentication failed (code does not exist).", "wpdiscuz"));
-        }
-        $okCallBack           = $this->createCallBackURL("ok");
-        $okAccessTokenURL     = "https://api.ok.ru/oauth/token.do";
-        $accessTokenArgs      = ["client_id"     => $this->generalOptions->social["okAppID"],
-                                 "client_secret" => $this->generalOptions->social["okAppSecret"],
-                                 "redirect_uri"  => $okCallBack,
-                                 "grant_type"    => "authorization_code",
-                                 "code"          => $code];
-        $okAccesTokenResponse = wp_remote_post($okAccessTokenURL, ["body" => $accessTokenArgs]);
-
-        if (is_wp_error($okAccesTokenResponse)) {
-            $this->redirect($postID, $okAccesTokenResponse->get_error_message());
-        }
-        $okAccesTokenData = json_decode(wp_remote_retrieve_body($okAccesTokenResponse), true);
-        if (isset($okAccesTokenData["error_code"])) {
-            $this->redirect($postID, $okAccesTokenData["error_msg"]);
-        }
-        if (!isset($okAccesTokenData["access_token"])) {
-            $this->redirect($postID, esc_html__("OK authentication failed (access_token does not exist).", "wpdiscuz"));
-        }
-        $accessToken       = $okAccesTokenData["access_token"];
-        $secretKey         = md5($accessToken . $this->generalOptions->social["okAppSecret"]);
-        $sig               = md5("application_key={$this->generalOptions->social["okAppKey"]}format=jsonmethod=users.getCurrentUser$secretKey");
-        $okGetUserDataURL  = "https://api.ok.ru/fb.do";
-        $okGetUserDataAttr = ["application_key" => $this->generalOptions->social["okAppKey"],
-                              "format"          => "json",
-                              "method"          => "users.getCurrentUser",
-                              "sig"             => $sig,
-                              "access_token"    => $accessToken];
-        $getOkUserResponse = wp_remote_post($okGetUserDataURL, ["body" => $okGetUserDataAttr]);
-        if (is_wp_error($getOkUserResponse)) {
-            $this->redirect($postID, $getOkUserResponse->get_error_message());
-        }
-        $okUserData = json_decode(wp_remote_retrieve_body($getOkUserResponse), true);
-        if (isset($okUserData["error_code"])) {
-            $this->redirect($postID, $okUserData["error_msg"]);
-        }
-        $uID = Utils::addUser($okUserData, "ok");
         if (is_wp_error($uID)) {
             $this->redirect($postID, $uID->get_error_message());
         }
@@ -1036,96 +986,6 @@ class SocialLogin {
         $this->redirect($postID);
     }
 
-    //https://o2.mail.ru/docs/
-    public function mailruLogin($postID, $response) {
-        if (!$this->generalOptions->social["mailruClientID"] || !$this->generalOptions->social["mailruClientSecret"]) {
-            $response["message"] = esc_html__("Mail.ru  Client ID  and Client Secret  required.", "wpdiscuz");
-            return $response;
-        }
-        $mailruAuthorizeURL = "https://oauth.mail.ru/login";
-        $mailruCallBack     = $this->createCallBackURL("mailru");
-        $state              = Utils::generateOAuthState($this->generalOptions->social["mailruClientID"]);
-        Utils::addOAuthState("mailru", $state, $postID);
-        $oautAttributs       = [
-            "client_id"     => $this->generalOptions->social["mailruClientID"],
-            "response_type" => "code",
-            "scope"         => "userinfo",
-            "redirect_uri"  => urlencode($mailruCallBack),
-            "state"         => $state
-        ];
-        $oautURL             = add_query_arg($oautAttributs, $mailruAuthorizeURL);
-        $response["code"]    = 200;
-        $response["message"] = "";
-        $response["url"]     = $oautURL;
-        return $response;
-    }
-
-    public function mailruLoginCallBack() {
-        $error        = Sanitizer::sanitize(INPUT_GET, "error", "FILTER_SANITIZE_STRING");
-        $errorDesc    = Sanitizer::sanitize(INPUT_GET, "error_description", "FILTER_SANITIZE_STRING");
-        $code         = Sanitizer::sanitize(INPUT_GET, "code", "FILTER_SANITIZE_STRING");
-        $state        = Sanitizer::sanitize(INPUT_GET, "state", "FILTER_SANITIZE_STRING");
-        $providerData = Utils::getProviderByState($state);
-        $provider     = $providerData[wpdFormConst::WPDISCUZ_OAUTH_STATE_PROVIDER];
-        $postID       = $providerData[wpdFormConst::WPDISCUZ_OAUTH_CURRENT_POSTID];
-
-        if ($error) {
-            $this->redirect($postID, esc_html($errorDesc));
-        }
-        if (!$state || ($provider !== "mailru")) {
-            $this->redirect($postID, esc_html__("Mail.ru authentication failed (OAuth state does not exist).", "wpdiscuz"));
-        }
-        if (!$code) {
-            $this->redirect($postID, esc_html__("Mail.ru authentication failed (code does not exist).", "wpdiscuz"));
-        }
-        $mailruCallBack       = $this->createCallBackURL("mailru");
-        $mailruAccessTokenURL = "https://oauth.mail.ru/token";
-        $accessTokenArgs      = [
-            'grant_type'   => 'authorization_code',
-            'code'         => $code,
-            'redirect_uri' => urlencode($mailruCallBack)
-        ];
-
-        $userAgent = $_SERVER['HTTP_USER_AGENT'];
-        $curl      = curl_init();
-        $header[]  = 'Host: oauth.mail.ru';
-        $header[]  = 'Authorization: Basic ' . base64_encode($this->generalOptions->social["mailruClientID"] . ':' . $this->generalOptions->social["mailruClientSecret"]);
-        $header[]  = 'Content-Type: application/x-www-form-urlencoded';
-
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
-        curl_setopt($curl, CURLOPT_USERAGENT, $userAgent);
-        curl_setopt($curl, CURLOPT_URL, $mailruAccessTokenURL);
-        curl_setopt($curl, CURLOPT_POST, 1);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, urldecode(http_build_query($accessTokenArgs)));
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
-        $mailruAccesTokenResponse = curl_exec($curl);
-        curl_close($curl);
-
-        $mailruAccesTokenData = json_decode($mailruAccesTokenResponse, true);
-
-        if (isset($mailruAccesTokenData["error"])) {
-            $this->redirect($postID, $mailruAccesTokenData["error_description"]);
-        }
-        if (!isset($mailruAccesTokenData["access_token"])) {
-            $this->redirect($postID, esc_html__("Mail.ru authentication failed (access_token does not exist).", "wpdiscuz"));
-        }
-        $accessToken = $mailruAccesTokenData["access_token"];
-
-        $mailruGetUserDataURL = 'https://oauth.mail.ru/userinfo' . '?access_token=' . $accessToken;
-        $mailruUserData       = json_decode(file_get_contents($mailruGetUserDataURL), true);
-
-        if (isset($mailruUserData["error"])) {
-            $this->redirect($postID, $mailruUserData["error_description"]);
-        }
-
-        $uID = Utils::addUser($mailruUserData, "mailru");
-        if (is_wp_error($uID)) {
-            $this->redirect($postID, $uID->get_error_message());
-        }
-        $this->setCurrentUser($uID);
-        $this->redirect($postID);
-    }
 
     //https://developers.weixin.qq.com/doc/oplatform/en/Website_App/WeChat_Login/Wechat_Login.html
     public function wechatLogin($postID, $response) {
@@ -1527,8 +1387,6 @@ class SocialLogin {
             $this->linkedinButton();
             $this->yandexButton();
             $this->vkButton();
-            $this->okButton();
-            $this->mailruButton();
             $this->wechatButton();
             $this->weiboButton();
             $this->qqButton();
@@ -1611,14 +1469,8 @@ class SocialLogin {
         }
     }
 
-    private function okButton() {
-        if ($this->generalOptions->social["enableOkLogin"] && $this->generalOptions->social["okAppID"] && $this->generalOptions->social["okAppSecret"]) {
-            echo "<span class='wpdsn wpdsn-ok wpdiscuz-login-button' wpd-tooltip='Odnoklassniki'><i><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 512'><path d='M275.1 334c-27.4 17.4-65.1 24.3-90 26.9l20.9 20.6 76.3 76.3c27.9 28.6-17.5 73.3-45.7 45.7-19.1-19.4-47.1-47.4-76.3-76.6L84 503.4c-28.2 27.5-73.6-17.6-45.4-45.7 19.4-19.4 47.1-47.4 76.3-76.3l20.6-20.6c-24.6-2.6-62.9-9.1-90.6-26.9-32.6-21-46.9-33.3-34.3-59 7.4-14.6 27.7-26.9 54.6-5.7 0 0 36.3 28.9 94.9 28.9s94.9-28.9 94.9-28.9c26.9-21.1 47.1-8.9 54.6 5.7 12.4 25.7-1.9 38-34.5 59.1zM30.3 129.7C30.3 58 88.6 0 160 0s129.7 58 129.7 129.7c0 71.4-58.3 129.4-129.7 129.4s-129.7-58-129.7-129.4zm66 0c0 35.1 28.6 63.7 63.7 63.7s63.7-28.6 63.7-63.7c0-35.4-28.6-64-63.7-64s-63.7 28.6-63.7 64z'/></svg></i></span>";
-        }
-    }
-
     private function vkButton() {
-        if ($this->generalOptions->social["enableVkLogin"] && $this->generalOptions->social["vkAppID"] && $this->generalOptions->social["vkAppSecret"]) {
+        if ($this->generalOptions->social["enableVkLogin"] && $this->generalOptions->social["vkAppID"]) {
             echo "<span class='wpdsn wpdsn-vk wpdiscuz-login-button' wpd-tooltip='VKontakte'><i><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 448 512'><path d='M31.5 63.5C0 95 0 145.7 0 247V265C0 366.3 0 417 31.5 448.5C63 480 113.7 480 215 480H233C334.3 480 385 480 416.5 448.5C448 417 448 366.3 448 265V247C448 145.7 448 95 416.5 63.5C385 32 334.3 32 233 32H215C113.7 32 63 32 31.5 63.5zM75.6 168.3H126.7C128.4 253.8 166.1 290 196 297.4V168.3H244.2V242C273.7 238.8 304.6 205.2 315.1 168.3H363.3C359.3 187.4 351.5 205.6 340.2 221.6C328.9 237.6 314.5 251.1 297.7 261.2C316.4 270.5 332.9 283.6 346.1 299.8C359.4 315.9 369 334.6 374.5 354.7H321.4C316.6 337.3 306.6 321.6 292.9 309.8C279.1 297.9 262.2 290.4 244.2 288.1V354.7H238.4C136.3 354.7 78 284.7 75.6 168.3z'/></svg></i></span>";
         }
     }
@@ -1626,12 +1478,6 @@ class SocialLogin {
     private function yandexButton() {
         if ($this->generalOptions->social["enableYandexLogin"] && $this->generalOptions->social["yandexID"] && $this->generalOptions->social["yandexPassword"]) {
             echo "<span class='wpdsn wpdsn-yandex wpdiscuz-login-button' wpd-tooltip='Yandex'><i><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 512'><path d='M129.5 512V345.9L18.5 48h55.8l81.8 229.7L250.2 0h51.3L180.8 347.8V512h-51.3z'/></svg></i></span>";
-        }
-    }
-
-    private function mailruButton() {
-        if ($this->generalOptions->social["enableMailruLogin"] && $this->generalOptions->social["mailruClientID"] && $this->generalOptions->social["mailruClientSecret"]) {
-            echo "<span class='wpdsn wpdsn-mailru wpdiscuz-login-button' wpd-tooltip='Mail.ru'><i><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path d='M256 64C150 64 64 150 64 256s86 192 192 192c17.7 0 32 14.3 32 32s-14.3 32-32 32C114.6 512 0 397.4 0 256S114.6 0 256 0S512 114.6 512 256l0 32c0 53-43 96-96 96c-29.3 0-55.6-13.2-73.2-33.9C320 371.1 289.5 384 256 384c-70.7 0-128-57.3-128-128s57.3-128 128-128c27.9 0 53.7 8.9 74.7 24.1c5.7-5 13.1-8.1 21.3-8.1c17.7 0 32 14.3 32 32l0 80 0 32c0 17.7 14.3 32 32 32s32-14.3 32-32l0-32c0-106-86-192-192-192zm64 192a64 64 0 1 0 -128 0 64 64 0 1 0 128 0z'/></svg></i></span>";
         }
     }
 

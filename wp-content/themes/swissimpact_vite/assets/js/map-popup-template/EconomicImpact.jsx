@@ -765,7 +765,7 @@ const EconomicImpact = ({ name = "", stateId = "", preloadedData = null }) => {
                             href={company.link_to_company}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="hover:text-swissred underline-offset-2 hover:underline"
+                            className="underline underline-offset-2 hover:text-swissred"
                           >
                             {company.company_name}
                           </a>

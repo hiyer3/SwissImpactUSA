@@ -73,7 +73,7 @@ class Crowdsignal_Forms_Settings {
 	 * Enqueues scripts for setup page.
 	 */
 	public function admin_enqueue_scripts() {
-		wp_enqueue_style( 'admin-styles', plugin_dir_url( __FILE__ ) . '/admin-styles.css', array(), '1.7.2' );
+		wp_enqueue_style( 'admin-styles', plugin_dir_url( __FILE__ ) . '/admin-styles.css', array(), '1.8.0' );
 		wp_enqueue_script( 'videopress', 'https://videopress.com/videopress-iframe.js', array(), '1.0', false );
 	}
 
@@ -160,7 +160,11 @@ class Crowdsignal_Forms_Settings {
 				if ( isset( $option['std'] ) ) {
 					add_option( $option['name'], $option['std'] );
 				}
-				register_setting( $this->settings_group, $option['name'] );
+				register_setting(
+					$this->settings_group,
+					$option['name'],
+					array( 'sanitize_callback' => 'sanitize_text_field' )
+				);
 			}
 		}
 	}

@@ -462,6 +462,8 @@ class WpdiscuzHelperUpload implements WpDiscuzConstants {
         $attachment   = get_post($attachmentId);
         $commentId    = get_post_meta($attachmentId, self::METAKEY_ATTCHMENT_COMMENT_ID, true);
         $comment      = get_comment($commentId);
+        $post         = get_post($comment->comment_post_ID);
+        WpdiscuzHelper::validatePostAccess($post);
         if ($attachment && $comment) {
             if (empty($this->currentUser->ID)) {
                 $this->setCurrentUser(WpdiscuzHelper::getCurrentUser());

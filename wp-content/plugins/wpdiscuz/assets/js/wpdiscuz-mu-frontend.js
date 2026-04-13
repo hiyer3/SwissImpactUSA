@@ -53,7 +53,6 @@ jQuery(document).ready(function ($) {
      * @param args
      */
     function initPreview(form, args = {}) {
-        console.log('init: ' + JSON.stringify(args));
         let previewTemplate = wpdiscuzAjaxObj.previewTemplate;
         previewTemplate = previewTemplate.replace('[PREVIEW_TYPE_CLASS]', 'wmu-preview-' + args.type);
         previewTemplate = previewTemplate.replace('[PREVIEW_TITLE]', args.fullname);

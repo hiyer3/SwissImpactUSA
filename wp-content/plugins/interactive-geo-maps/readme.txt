@@ -2,9 +2,9 @@
 Contributors: interactivegeomaps, freemius
 Tags: map, interactive map, world map, travel map, us map
 Requires at least: 5.0
-Tested up to: 6.8
+Tested up to: 6.9
 Requires PHP: 7.0
-Stable tag: 1.6.26
+Stable tag: 1.6.27
 Donate link: https://interactivegeomaps.com
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -98,6 +98,9 @@ You can visit this [article on how to use the plugin together with WP Rocket](ht
 10. Administration 04
 
 == Changelog ==
+
+= 1.6.27 =
+Fix script loading bug with wordpress version 6.9
 
 = 1.6.26 =
 Update Freemius SDK to v2.12.0

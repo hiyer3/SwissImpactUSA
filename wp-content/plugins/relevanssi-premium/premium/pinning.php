@@ -89,7 +89,7 @@ function relevanssi_pinning( $hits ) {
 
 	$pin_weights = array();
 	foreach ( $pin_weights_sql as $row ) {
-		$pin_weights[ $row->post_id ] = $row->meta_value;
+		$pin_weights[ $row->post_id ] = strtolower( $row->meta_value );
 	}
 	unset( $pin_weights_sql );
 

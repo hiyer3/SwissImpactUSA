@@ -7,7 +7,7 @@
  * Plugin Name:       MapGeo - Interactive Geo Maps
  * Plugin URI:        https://interactivegeomaps.com/
  * Description:       Create interactive geographic vector maps of the world, continents or any country in the world. Color full regions or create markers on specific locations that will have information on hover and can also have actions on click. This plugin uses the online amcharts library to generate the maps.
- * Version:           1.6.26
+ * Version:           1.6.27
  * Requires PHP:      7.0
  * Author:            MapGeo
  * Author URI:        https://interactivegeomaps.com
@@ -120,7 +120,7 @@ if ( function_exists( __NAMESPACE__ . '\\igmfreemiusinit' ) ) {
         add_action( 'plugins_loaded', function () use($framework) {
             $plugin = new Core(
                 'interactive-geo-maps',
-                '1.6.26',
+                '1.6.27',
                 __FILE__,
                 $framework
             );

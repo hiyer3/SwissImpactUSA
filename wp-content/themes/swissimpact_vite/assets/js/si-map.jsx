@@ -65,40 +65,27 @@ const normId = (id) =>
     .replace(/\s+/g, "-");
 
 // ---------- Canonical URL resolver ----------
-// Given an array of state-specific links for the same company (e.g. "acme.com/kentucky",
-// "acme.com/texas"), returns the deepest path prefix common to all of them.
-// This gives us the main site URL when the US aggregate is shown.
+// For the US aggregate view, always return the root domain (origin only),
+// stripping any state-specific paths like /kentucky or /texas.
 const getCanonicalUrl = (urls) => {
   const valid = urls.map((u) => String(u || "").trim()).filter(Boolean);
   if (valid.length === 0) return "";
-  if (valid.length === 1) return valid[0];
 
   const toAbsolute = (u) => (u.startsWith("http") ? u : "https://" + u);
   try {
     const parsed = valid.map((u) => new URL(toAbsolute(u)));
     const origins = [...new Set(parsed.map((p) => p.origin))];
-    // Different domains — can't reconcile, return the shortest (most likely root)
+    // Different domains — return the shortest URL
     if (origins.length > 1) {
       return valid.reduce((a, b) => (a.length <= b.length ? a : b));
     }
-    // Same domain — find the deepest common path prefix
-    const segments = parsed.map((p) =>
-      p.pathname.split("/").filter(Boolean)
-    );
-    const minLen = Math.min(...segments.map((s) => s.length));
-    const common = [];
-    for (let i = 0; i < minLen; i++) {
-      if (segments.every((s) => s[i] === segments[0][i])) {
-        common.push(segments[0][i]);
-      } else {
-        break;
-      }
-    }
-    return parsed[0].origin + (common.length ? "/" + common.join("/") : "");
+    // Same domain — return just the root domain
+    return parsed[0].origin;
   } catch {
     return valid[0];
   }
 };
+
 
 // ---------- Consulate-based fill colors (by state slug) ----------
 const CONSULATE_STATE_COLOR = (() => {

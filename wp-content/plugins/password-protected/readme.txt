@@ -1,21 +1,21 @@
-=== Password Protected – Password Protect your WordPress Site, Pages, & WooCommerce Products - Restrict Content, Protect WooCommerce Category and more ===
+=== Password Protected — Lock Entire Site, Pages, Posts, Categories, and Partial Content ===
 Contributors: wpexpertsio
-Tags: password, maintenance mode, password protect page, password protect, restrict content
+Tags: password protection, maintenance mode, password protect page, password protect, restrict content
 Requires at least: 4.6
-Tested up to: 6.8
+Tested up to: 6.9
 Requires PHP: 5.6
-Stable tag: 2.7.9
+Stable tag: 2.7.12
 License: GPLv2 or later
 
 Protect your WordPress site, pages, posts, WooCommerce products, and categories with single or multiple passwords.
 
 == Description ==
 
-[Live Demo](https://tastewp.com/new/?pre-installed-plugin-slug=password-protected)
+[👑 Get Pro](https://passwordprotectedwp.com/pricing/?utm_source=wp_org&utm_medium=readme) | [Live Demo](https://tastewp.com/new/?pre-installed-plugin-slug=password-protected) | [Documentation](https://passwordprotectedwp.com/documentation/?utm_source=wp_org&utm_medium=readme) | [Support](https://objectsws.atlassian.net/servicedesk/customer/portal/18)
 
 Do you want to secure your WordPress site, to password protect pages, posts, WooCommerce categories, etc.❓ If so, then you need to install ✨**the Password Protected plugin**✨.
 
-Password Protected is a robust password protection plugin for WordPress that empowers you to password protect posts, WordPress categories, WooCommerce products, and even WordPress login (wp-admin) page with unparalleled ease.
+Password Protected is a robust password protection plugin for WordPress that empowers you to password protect entire posts, pages, WordPress categories, WooCommerce products, the WordPress login (wp-admin) page, and even partial content with ease.
 
 Additionally, you can secure the password protected screen from WordPress attacks such as a WordPress brute force attack with the limit login feature.
 
@@ -26,10 +26,10 @@ Therefore, the [Password Protected WordPress plugin](https://passwordprotectedwp
 
 With the rapidly rising number of cyber threats, having an effective WordPress security system for your website is essential.
 
-Whether you're a blogger, a business owner, or a developer, protecting sensitive information and controlling who can access the content you have created is essential. This is where the Password Protected plugin comes in.
+Whether you’re a blogger, a business owner, or a developer, protecting sensitive information and controlling who can access the content you have created is essential. This is where the Password Protected plugin comes in.
 
-**For example**, imagine you're a photographer showcasing your portfolio. By using the Password Protect WordPress plugin, you can share your work securely with potential clients. Simply password protect your portfolio page, and only those with the password can view it. It's an easy way to keep your photos private until you're ready to share them publicly.
-
+**For example**, imagine you’re a photographer showcasing your portfolio. By using the Password Protect WordPress plugin, you can share your work securely with potential clients.
+You can either password protect your entire portfolio page or use partial content protection to lock only certain sections, such as high-resolution images or download links. This way, you can display teasers publicly while keeping your premium work private until you’re ready to share it.
 
 ### What Makes the Password Protected Plugin Stand Out! 😎
 
@@ -52,11 +52,17 @@ As an admin, you probably don't want the hassle of entering additional passwords
 
 Don't worry. With the Password Protected plugin, you can simplify the login process for administrators with Passwordless Admin Access. This time-saving functionality enhances efficiency and security by eliminating the need for administrators to manage passwords or risk exposure to unauthorized access attempts.
 
-**✅ Add Google Recaptcha**
+**✅ Google reCAPTCHA**
 
-Make your password protected screen more secure by integrating Google reCaptcha. The plugin supports both Google reCAPTCHA v2 and v3.
+Add an extra layer of protection to your password screen with Google reCAPTCHA (v2 & v3). It blocks automated bots and spam by requiring human verification through simple challenges like image selection or puzzle solving.
 
-Google reCAPTCHA prevents automated bots and spam by presenting users with challenges that only humans can solve, such as identifying objects in images or solving puzzles.
+**✅ hCaptcha [Pro]**
+
+Secure your password form with hCaptcha, a privacy-focused alternative to Google reCAPTCHA. It verifies human users while keeping data collection minimal, helping you block bots effectively without sacrificing user privacy.
+
+**✅ Cloudflare Turnstile [Pro]**
+
+Protect your password entry with Cloudflare Turnstile, a lightweight, user-friendly CAPTCHA solution. Unlike traditional captchas, Turnstile verifies visitors in the background, offering strong bot protection without interrupting the user experience.
 
 **✅ IP Address Whitelisting**
 
@@ -73,6 +79,13 @@ Check out our guide on how to [password protect WordPress page](https://password
 **✅ User Role Whitelisting [Pro]**
 
 If you are looking for simplified access control based on user roles. The User Role Whitelisting is the solution you need. By whitelisting certain user roles for your WordPress site, such as administrators, editors, or subscribers, you can ensure that authorized users can view protected content without entering a password.
+
+**✅ Partial Content Protection [Pro]**
+
+Easily protect specific sections of your WordPress pages or posts with shortcodes. Show free previews while locking premium text, media, or downloads behind a password. Fully compatible with Elementor, Gutenberg, and Beaver Builder, letting you restrict content blocks, widgets, or sections without breaking your design. Perfect for membership sites, gated resources, and premium WordPress content protection.
+
+**✅ Page Builder Support: Elementor, Gutenberg & Beaver Builder [Pro]**
+Protect content directly inside Elementor, Gutenberg, or Beaver Builder. Restrict sections, blocks, or widgets without breaking layouts—ideal for WordPress content protection within page builders.
 
 **✅ WP-Admin Protection [Pro]**
 
@@ -255,6 +268,15 @@ Yes, the Password Protected plugin allows you to secure individual pages or post
 = Can I whitelist certain user roles for passwordless access? =
 Yes, the User Role Whitelisting feature allows you to give open (passwordless) access to specific user roles without requiring a password.
 
+= What is Partial Content Protection in WordPress? =
+Partial Content Protection lets you lock only specific sections of a page or post while keeping the rest publicly visible. You can use shortcodes to hide premium text, images, or downloads behind a password.
+
+= How can I password protect a section of a WordPress page or post? =
+Simply wrap the content you want to lock with the shortcode that you generate using the Password Protected plugin. Only visitors with the correct password will be able to see it.
+
+= Can I use Partial Content Protection with Elementor or Gutenberg? =
+Yes! It works seamlessly with Elementor, Gutenberg, and Beaver Builder. You can protect individual blocks, sections, or widgets without breaking your page design.
+
 = Does the plugin password protect wp-admin (WordPress admin login page)? =
 Yes, the WP-Admin Protection feature adds an extra layer of security to the WordPress admin dashboard. It prevents unauthorized access to your wp-admin.
 
@@ -305,6 +327,19 @@ If you want to translate this plugin you can easily contribute to the [Translati
 
 
 == Changelog ==
+
+= 2.7.12 =
+- Fixed - Fix the Vulnerability issued by WordFence.
+- Fixed - Translation issue.
+
+= 2.7.11 =
+- Fixed: Translation issue
+- Improved code optimization.
+
+= 2.7.10 =
+- Optimized code for better performance.
+- Feedback SDK update.
+
 = 2.7.9 =
 - Improved code optimization.
 

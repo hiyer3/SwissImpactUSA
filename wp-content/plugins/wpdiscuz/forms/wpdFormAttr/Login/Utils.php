@@ -23,16 +23,12 @@ class Utils {
             $userData = self::sanitizeDisqusUser($socialUser);
         } else if ($provider === "wordpress") {
             $userData = self::sanitizeWordpressUser($socialUser);
-        } else if ($provider === "ok") {
-            $userData = self::sanitizeOkUser($socialUser);
         } else if ($provider === "vk") {
             $userData = self::sanitizeVkUser($socialUser);
         } else if ($provider === "linkedin") {
             $userData = self::sanitizeLinkedinUser($socialUser);
         } else if ($provider === "yandex") {
             $userData = self::sanitizeYandexUser($socialUser);
-        } else if ($provider === "mailru") {
-            $userData = self::sanitizeMailruUser($socialUser);
         } else if ($provider === "wechat") {
             $userData = self::sanitizeWeChatUser($socialUser);
         } else if ($provider === "qq") {
@@ -157,7 +153,7 @@ class Utils {
             "last_name"      => "",
             "display_name"   => $disqusUser["name"],
             "user_url"       => $disqusUser["profileUrl"],
-            "user_email"     => $disqusUser["email"],
+            "user_email"     => $disqusUser["user_id"] . "@disqus.com",
             "provider"       => "disqus",
             "social_user_id" => $disqusUser["user_id"],
             "avatar"         => isset($disqusUser["avatar"]["permalink"]) ? $disqusUser["avatar"]["permalink"] : "",
@@ -201,11 +197,11 @@ class Utils {
             "first_name"     => $socialUser["first_name"],
             "last_name"      => $socialUser["last_name"],
             "display_name"   => $socialUser["first_name"] . " " . $socialUser["last_name"],
-            "user_url"       => "https://vk.com/" . (!empty($socialUser["screen_name"]) ? $socialUser["screen_name"] : "id" . $socialUser["id"]),
+            "user_url"       => "https://vk.com/id" . $socialUser["id"],
             "user_email"     => $socialUser["email"],
             "provider"       => "vk",
             "social_user_id" => $socialUser["id"],
-            "avatar"         => isset($socialUser["photo_100"]) ? $socialUser["photo_100"] : "",
+            "avatar"         => isset($socialUser["avatar"]) ? $socialUser["avatar"] : "",
         ];
         return $userData;
     }
@@ -270,22 +266,6 @@ class Utils {
         return $userData;
     }
 
-    private static function sanitizeOkUser($socialUser) {
-        $email    = !empty($socialUser['email']) ? $socialUser['email'] : $socialUser['uid'] . '_anonymous@ok.ru';
-        $userData = [
-            "user_login"     => self::generateLogin($email),
-            "first_name"     => $socialUser["first_name"],
-            "last_name"      => $socialUser["last_name"],
-            "display_name"   => $socialUser["name"],
-            "user_url"       => "https://ok.ru/profile/" . $socialUser["uid"],
-            "user_email"     => $email,
-            "provider"       => "ok",
-            "social_user_id" => $socialUser["uid"],
-            "avatar"         => $socialUser["pic_2"],
-        ];
-        return $userData;
-    }
-
     private static function sanitizeYandexUser($socialUser) {
         $userData = [
             "user_login"     => self::saitizeUsername($socialUser["login"]),
@@ -297,21 +277,6 @@ class Utils {
             "provider"       => "yandex",
             "social_user_id" => $socialUser["id"],
             "avatar"         => "//avatars.mds.yandex.net/get-yapic/" . $socialUser["default_avatar_id"] . "/islands-200"
-        ];
-        return $userData;
-    }
-
-    private static function sanitizeMailruUser($socialUser) {
-        $userData = [
-            "user_login"     => self::generateLogin($socialUser["email"]),
-            "first_name"     => $socialUser["first_name"],
-            "last_name"      => $socialUser["last_name"],
-            "display_name"   => $socialUser["nickname"],
-            "user_url"       => "",
-            "user_email"     => $socialUser["email"],
-            "provider"       => "mailru",
-            "social_user_id" => $socialUser["id"],
-            "avatar"         => $socialUser["image"]
         ];
         return $userData;
     }
@@ -405,3 +370,4 @@ class Utils {
     }
 
 }
+

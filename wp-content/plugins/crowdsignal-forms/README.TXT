@@ -3,8 +3,8 @@ Contributors: automattic
 Tags: polls, forms, surveys, gutenberg, block
 Requires at least: 6.0
 Requires PHP: 5.6.20
-Tested up to: 6.5
-Stable tag: 1.7.2
+Tested up to: 6.9
+Stable tag: 1.8.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -66,6 +66,22 @@ Compare our [simple and affordable plans](https://crowdsignal.com/pricing/) or t
 4. Use the poll block inside of other blocks
 
 == Changelog ==
+
+= 1.8.0 =
+* Harden survey and poll data handling (#302)
+* Tests: Fix typo in `@covers` annotation (#301)
+* Fix feedback popover background color on frontend (#300)
+* Docker: Add phpMyAdmin and pcov (#299)
+* Fix development infrastructure and add documentation (#298)
+* Fix PHPUnit and PHPCS by Updating Dependencies (#297)
+* Build tools: Fix and update (#296)
+* Bump tested to version to 6.8 (#295)
+
+= 1.7.2 =
+* Fix: Made string translatable in html-admin-setup-step-1.php file (#281)
+* Fix dynamic property (#282)
+* Load blockObserver on DOM ready instead of window load (#268)
+* i18n: Fix omitted dollar signs in printf placeholders (#283)
 
 = 1.7.1 =
 * bump "Tested up to" to 6.5

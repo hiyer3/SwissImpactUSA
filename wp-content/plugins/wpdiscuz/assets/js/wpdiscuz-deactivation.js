@@ -30,6 +30,7 @@ jQuery(document).ready(function ($) {
                 var receiverEmail = $('[name=deactivation_feedback_email]', parentItem);
                 var isValid = true;
 
+
                 if (reasonDesc.length && reasonDesc.is(':visible')) {
                     var attr = reasonDesc.prop('required');
                     if (typeof attr !== 'undefined' && attr !== false) {
@@ -49,14 +50,15 @@ jQuery(document).ready(function ($) {
                     }
                     $('.wpd-loading', this).toggleClass('wpdiscuz-hidden');
                 } else {
-                    alert(deactivationObj.msgReasonDescRequired);
+                    alert(wpdDeactivationObj.msgReasonDescRequired);
                     return false;
                 }
             } else {
                 formData = 'never_show=1';
             }
-            
+
             if (formData) {
+                formData += '&_wpnonce=' + wpdDeactivationObj.deactivationNonce;
                 $.ajax({
                     type: 'POST',
                     url: ajaxurl,
@@ -67,7 +69,7 @@ jQuery(document).ready(function ($) {
                 }).done(function (response) {
                     try {
                         var r = $.parseJSON(response);
-                        var locHref = deactivateUrl ? deactivationObj.adminUrl + deactivateUrl : location.href;
+                        var locHref = deactivateUrl ? wpdDeactivationObj.adminUrl + deactivateUrl : location.href;
                         if (r.code == 'dismiss_and_deactivate') {
                             setTimeout(function () {
                                 location.href = locHref;
@@ -85,7 +87,7 @@ jQuery(document).ready(function ($) {
                 });
             }
         } else {
-            alert(deactivationObj.msgReasonRequired);
+            alert(wpdDeactivationObj.msgReasonRequired);
         }
     });
 

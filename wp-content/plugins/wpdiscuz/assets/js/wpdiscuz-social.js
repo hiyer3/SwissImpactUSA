@@ -21,12 +21,14 @@ if (((!parseInt(wpdiscuzAjaxObj.fbUseOAuth2) && parseInt(wpdiscuzAjaxObj.enableF
         });
     };
 }
+
 function wpcShareCommentFB(url, quote) {
     FB.ui({
         method: 'share',
         href: url,
         quote: quote,
-    }, function (response) {});
+    }, function (response) {
+    });
 }
 
 //============================== GOOGLE API INIT  ========================== //
@@ -171,17 +173,11 @@ jQuery(document).ready(function ($) {
         if ($obj.hasClass('wpdsn-vk')) {
             provider = 'vk';
         }
-        if ($obj.hasClass('wpdsn-ok')) {
-            provider = 'ok';
-        }
         if ($obj.hasClass('wpdsn-linked')) {
             provider = 'linkedin';
         }
         if ($obj.hasClass('wpdsn-yandex')) {
             provider = 'yandex';
-        }
-        if ($obj.hasClass('wpdsn-mailru')) {
-            provider = 'mailru';
         }
         if ($obj.hasClass('wpdsn-weixin')) {
             provider = 'wechat';
@@ -232,7 +228,7 @@ jQuery(document).ready(function ($) {
 
     var telegramUser = haveTgAuthResult();
     if (telegramUser) {
-        
+
         $('#wpdiscuz-loading-bar').show();
         $.ajax({
             type: 'POST',
@@ -246,7 +242,7 @@ jQuery(document).ready(function ($) {
             console.log(response);
             if (response.success) {
                 location.reload();
-            }else{
+            } else {
                 wpdiscuzAjaxObj.setCommentMessage(response.data, 'error');
                 $('#wpdiscuz-loading-bar').fadeOut(250);
             }

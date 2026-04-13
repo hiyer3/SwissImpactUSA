@@ -3,7 +3,7 @@
 Plugin Name: Password Protected
 Plugin URI: https://wordpress.org/plugins/password-protected/
 Description: A very simple way to quickly password protect your WordPress site with a single password. Please note: This plugin does not restrict access to uploaded files and images and does not work with some caching setups.
-Version: 2.7.9
+Version: 2.7.12
 Author: Password Protected
 Text Domain: password-protected
 Author URI: https://passwordprotectedwp.com/
@@ -41,7 +41,7 @@ $Password_Protected = new Password_Protected();
 
 class Password_Protected {
 
-	var $version 	   = '2.7.9';
+	var $version 	   = '2.7.12';
 	var $admin   	   = null;
 	var $errors  	   = null;
 	var $admin_caching = null;
@@ -77,6 +77,8 @@ class Password_Protected {
 		add_action('password_protected_below_password_field', array( $this, 'password_protected_below_password_field' ));
 
 
+		
+
 		// Available from WordPress 4.3+
 		if ( function_exists( 'wp_site_icon' ) ) {
 			add_action( 'password_protected_login_head', 'wp_site_icon' );
@@ -101,8 +103,12 @@ class Password_Protected {
 
 		include_once dirname( __FILE__ ) . '/includes/transient-functions.php';
 		include_once dirname( __FILE__ ) . '/includes/activity-report-email/class-password-protected-activity-report-settings.php';
-	}
 
+		include_once dirname( __FILE__ ) . '/admin/class-pp-all-captcha-tabs.php';
+		new Password_Protected_Free_allCaptchas();
+
+	}
+	
 	/**
 	 * I18n
 	 */
@@ -508,9 +514,11 @@ class Password_Protected {
             global $wp;
 
 			$redirect_to = add_query_arg( 'password-protected', 'login', home_url( $wp->request . '?' . $_SERVER['QUERY_STRING'] ) );
+			$redirect_to = pp__add_dynamic_arg( $redirect_to );
 
 			// URL to redirect back to after login
 			$redirect_to_url = apply_filters( 'password_protected_login_redirect_url', ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
+			$redirect_to_url = pp__add_dynamic_arg( $redirect_to_url );
 			if ( ! empty( $redirect_to_url ) ) {
 				$redirect_to = add_query_arg( 'redirect_to', urlencode( $redirect_to_url ), $redirect_to );
 			}

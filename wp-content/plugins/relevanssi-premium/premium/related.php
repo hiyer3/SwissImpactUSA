@@ -308,6 +308,8 @@ function relevanssi_get_related_post_ids( $post_id, $use_cache = true ) {
 			if ( $date_query ) {
 				$args['date_query'] = $date_query;
 			}
+			remove_filter( 'relevanssi_hits_filter', 'relevanssi_record_positions', PHP_INT_MAX );
+			remove_filter( 'relevanssi_hits_to_show', 'relevanssi_current_page_hits', PHP_INT_MAX );
 			$related_posts_query = new WP_Query();
 			$related_posts_query->parse_query(
 				/**
@@ -397,6 +399,8 @@ function relevanssi_get_related_post_ids( $post_id, $use_cache = true ) {
 		if ( 'random_cat' === $settings['notenough'] ) {
 			$args['tax_query'] = $tax_query;
 		}
+		remove_filter( 'relevanssi_hits_filter', 'relevanssi_record_positions', PHP_INT_MAX );
+		remove_filter( 'relevanssi_hits_to_show', 'relevanssi_current_page_hits', PHP_INT_MAX );
 		/** Documented in premium/related.php */
 		$more_related_posts = new WP_Query(
 			apply_filters(

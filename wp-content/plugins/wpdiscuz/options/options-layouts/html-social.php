@@ -818,10 +818,10 @@ if (!defined("ABSPATH")) {
 <div class="wpd-social-label wpd-vk" style="padding: 25px 0px 10px 0px;">
     <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/vk-m.png")); ?>"
          style="vertical-align:bottom; height: 24px; margin-bottom: -2px; position: relative; border-radius: 50%;">&nbsp;
-    VK
+    VK ID
 </div>
 <p style="font-size: 14px; font-style: italic; margin-top: 5px;">
-    <?php esc_html_e("To start using VK Login Button you should get Application ID and Secure Key. Please follow to this ", "wpdiscuz"); ?>
+    <?php esc_html_e("To start using VK ID you should get App ID. Please follow to this ", "wpdiscuz"); ?>
     <a href="https://wpdiscuz.com/docs/wpdiscuz-7/plugin-settings/social-login-and-share/vk-app-configuration/"
        target="_blank" style="font-weight: 600;"><?php esc_html_e("instruction &raquo;", "wpdiscuz"); ?></a> &nbsp;
     <?php echo esc_html__("Redirect URI", "wpdiscuz") . " : <code>" . esc_url_raw(admin_url("admin-ajax.php")) . "</code>"; ?>
@@ -848,25 +848,6 @@ if (!defined("ABSPATH")) {
 <!-- Option end -->
 
 <!-- Option start -->
-<div class="wpd-opt-row wpd-opt-row-tight" data-wpd-opt="enableVkShare">
-    <div class="wpd-opt-name">
-        <label for="enableVkShare"><?php echo esc_html($setting["options"]["enableVkShare"]["label"]) ?></label>
-        <p class="wpd-desc"><?php echo esc_html($setting["options"]["enableVkShare"]["description"]) ?></p>
-    </div>
-    <div class="wpd-opt-input">
-        <div class="wpd-switcher">
-            <input type="checkbox" <?php checked($this->social["enableVkShare"] == 1); ?> value="1"
-                   name="<?php echo esc_attr(WpdiscuzCore::TAB_SOCIAL); ?>[enableVkShare]" id="enableVkShare">
-            <label for="enableVkShare"></label>
-        </div>
-    </div>
-    <div class="wpd-opt-doc">
-        <?php $this->printDocLink($setting["options"]["enableVkShare"]["docurl"]) ?>
-    </div>
-</div>
-<!-- Option end -->
-
-<!-- Option start -->
 <div class="wpd-opt-row wpd-opt-row-tight" data-wpd-opt="vkAppID">
     <div class="wpd-opt-name">
         <label for="vkAppID"><?php echo esc_html($setting["options"]["vkAppID"]["label"]) ?></label>
@@ -883,190 +864,6 @@ if (!defined("ABSPATH")) {
 </div>
 <!-- Option end -->
 
-<!-- Option start -->
-<div class="wpd-opt-row wpd-opt-row-tight" data-wpd-opt="vkAppSecret">
-    <div class="wpd-opt-name">
-        <label for="vkAppSecret"><?php echo esc_html($setting["options"]["vkAppSecret"]["label"]) ?></label>
-        <p class="wpd-desc"><?php echo esc_html($setting["options"]["vkAppSecret"]["description"]) ?></p>
-    </div>
-    <div class="wpd-opt-input">
-        <input placeholder="<?php esc_attr_e("Secure Key", "wpdiscuz"); ?>" type="text"
-               value="<?php echo esc_attr($this->social["vkAppSecret"]); ?>"
-               name="<?php echo esc_attr(WpdiscuzCore::TAB_SOCIAL); ?>[vkAppSecret]" id="wpd-vk-app-secret"/>
-    </div>
-    <div class="wpd-opt-doc">
-        <?php $this->printDocLink($setting["options"]["vkAppSecret"]["docurl"]) ?>
-    </div>
-</div>
-<!-- Option end -->
-
-<div class="wpd-social-label wpd-mailru" style="padding: 25px 0px 10px 0px;">
-    <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/mr-m.png")); ?>"
-         style="vertical-align:bottom; height: 24px; margin-bottom: -2px; position: relative; border-radius: 50%;">&nbsp;
-    Mail.ru
-</div>
-<p style="font-size: 14px; font-style: italic; margin-top: 5px;">
-    <?php esc_html_e("To start using Mail.ru Login Button you should get Client ID and Client Secret. Please follow to this ", "wpdiscuz"); ?>
-    <a href="https://wpdiscuz.com/docs/wpdiscuz-7/plugin-settings/social-login-and-share/mail-ru-app-configuration/"
-       target="_blank" style="font-weight: 600;"><?php esc_html_e("instruction &raquo;", "wpdiscuz"); ?></a> &nbsp;
-    <?php echo esc_html__("Redirect URI", "wpdiscuz") . " : <code>" . esc_url_raw(admin_url("admin-ajax.php?action=wpd_login_callback&provider=mailru")) . "</code>"; ?>
-</p>
-
-<!-- Option start -->
-<div class="wpd-opt-row wpd-opt-row-tight" data-wpd-opt="enableMailruLogin">
-    <div class="wpd-opt-name">
-        <label for="enableMailruLogin"><?php echo esc_html($setting["options"]["enableMailruLogin"]["label"]) ?></label>
-        <p class="wpd-desc"><?php echo esc_html($setting["options"]["enableMailruLogin"]["description"]) ?></p>
-    </div>
-    <div class="wpd-opt-input">
-        <div class="wpd-switcher">
-            <input type="checkbox"<?php checked($this->social["enableMailruLogin"] == 1); ?> value="1"
-                   name="<?php echo esc_attr(WpdiscuzCore::TAB_SOCIAL); ?>[enableMailruLogin]" id="enableMailruLogin">
-            <label for="enableMailruLogin"></label>
-        </div>
-    </div>
-    <div class="wpd-opt-doc">
-        <?php $this->printDocLink($setting["options"]["enableMailruLogin"]["docurl"]) ?>
-    </div>
-</div>
-<!-- Option end -->
-
-<!-- Option start -->
-<div class="wpd-opt-row wpd-opt-row-tight" data-wpd-opt="mailruClientID">
-    <div class="wpd-opt-name">
-        <label for="mailruClientID"><?php echo esc_html($setting["options"]["mailruClientID"]["label"]) ?></label>
-        <p class="wpd-desc"><?php echo esc_html($setting["options"]["mailruClientID"]["description"]) ?></p>
-    </div>
-    <div class="wpd-opt-input">
-        <input placeholder="<?php esc_attr_e("ID", "wpdiscuz"); ?>" type="text"
-               value="<?php echo esc_attr($this->social["mailruClientID"]); ?>"
-               name="<?php echo esc_attr(WpdiscuzCore::TAB_SOCIAL); ?>[mailruClientID]" id="mailruClientID"/>
-    </div>
-    <div class="wpd-opt-doc">
-        <?php $this->printDocLink($setting["options"]["mailruClientID"]["docurl"]) ?>
-    </div>
-</div>
-<!-- Option end -->
-
-<!-- Option start -->
-<div class="wpd-opt-row wpd-opt-row-tight" data-wpd-opt="mailruClientSecret">
-    <div class="wpd-opt-name">
-        <label for="mailruClientSecret"><?php echo esc_html($setting["options"]["mailruClientSecret"]["label"]) ?></label>
-        <p class="wpd-desc"><?php echo esc_html($setting["options"]["mailruClientSecret"]["description"]) ?></p>
-    </div>
-    <div class="wpd-opt-input">
-        <input placeholder="<?php esc_attr_e("Secret Key", "wpdiscuz"); ?>" type="text"
-               value="<?php echo esc_attr($this->social["mailruClientSecret"]); ?>"
-               name="<?php echo esc_attr(WpdiscuzCore::TAB_SOCIAL); ?>[mailruClientSecret]" id="mailruClientSecret"/>
-    </div>
-    <div class="wpd-opt-doc">
-        <?php $this->printDocLink($setting["options"]["mailruClientSecret"]["docurl"]) ?>
-    </div>
-</div>
-<!-- Option end -->
-
-<div class="wpd-social-label wpd-ok" style="padding: 25px 0px 10px 0px;">
-    <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/ok-m.png")); ?>"
-         style="vertical-align:bottom; height: 24px; margin-bottom: -2px; position: relative; border-radius: 50%;">&nbsp;
-    OK
-</div>
-<p style="font-size: 14px; font-style: italic; margin-top: 5px;">
-    <?php esc_html_e("Getting started with", "wpdiscuz"); ?> <a href="https://apiok.ru/en/ext/oauth/">OK API</a><br>
-    <?php esc_html_e("To get the Application ID, Key and Secret, you should create an app using one of the supported types (external, Android, iOS), use this", "wpdiscuz"); ?>
-    <a href="https://apiok.ru/en/dev/app/create" target="_blank"
-       style="font-weight: 600;"><?php esc_html_e("instruction &raquo;", "wpdiscuz"); ?></a> &nbsp;
-    <?php echo esc_html__("Redirect URI", "wpdiscuz") . " : <code>" . esc_url_raw(admin_url("admin-ajax.php")) . "</code>"; ?>
-</p>
-
-
-<!-- Option start -->
-<div class="wpd-opt-row wpd-opt-row-tight" data-wpd-opt="enableOkLogin">
-    <div class="wpd-opt-name">
-        <label for="enableOkLogin"><?php echo esc_html($setting["options"]["enableOkLogin"]["label"]) ?></label>
-        <p class="wpd-desc"><?php echo esc_html($setting["options"]["enableOkLogin"]["description"]) ?></p>
-    </div>
-    <div class="wpd-opt-input">
-        <div class="wpd-switcher">
-            <input type="checkbox" <?php checked($this->social["enableOkLogin"] == 1); ?> value="1"
-                   name="<?php echo esc_attr(WpdiscuzCore::TAB_SOCIAL); ?>[enableOkLogin]" id="enableOkLogin">
-            <label for="enableOkLogin"></label>
-        </div>
-    </div>
-    <div class="wpd-opt-doc">
-        <?php $this->printDocLink($setting["options"]["enableOkLogin"]["docurl"]) ?>
-    </div>
-</div>
-<!-- Option end -->
-
-<!-- Option start -->
-<div class="wpd-opt-row wpd-opt-row-tight" data-wpd-opt="enableOkShare">
-    <div class="wpd-opt-name">
-        <label for="enableOkShare"><?php echo esc_html($setting["options"]["enableOkShare"]["label"]) ?></label>
-        <p class="wpd-desc"><?php echo esc_html($setting["options"]["enableOkShare"]["description"]) ?></p>
-    </div>
-    <div class="wpd-opt-input">
-        <div class="wpd-switcher">
-            <input type="checkbox" <?php checked($this->social["enableOkShare"] == 1); ?> value="1"
-                   name="<?php echo esc_attr(WpdiscuzCore::TAB_SOCIAL); ?>[enableOkShare]" id="enableOkShare">
-            <label for="enableOkShare"></label>
-        </div>
-    </div>
-    <div class="wpd-opt-doc">
-        <?php $this->printDocLink($setting["options"]["enableOkShare"]["docurl"]) ?>
-    </div>
-</div>
-<!-- Option end -->
-
-<!-- Option start -->
-<div class="wpd-opt-row wpd-opt-row-tight" data-wpd-opt="okAppID">
-    <div class="wpd-opt-name">
-        <label for="okAppID"><?php echo esc_html($setting["options"]["okAppID"]["label"]) ?></label>
-        <p class="wpd-desc"><?php echo esc_html($setting["options"]["okAppID"]["description"]) ?></p>
-    </div>
-    <div class="wpd-opt-input">
-        <input placeholder="<?php esc_attr_e("Application ID", "wpdiscuz"); ?>" type="text"
-               value="<?php echo esc_attr($this->social["okAppID"]); ?>"
-               name="<?php echo esc_attr(WpdiscuzCore::TAB_SOCIAL); ?>[okAppID]" id="wpd-ok-app-id"/>
-    </div>
-    <div class="wpd-opt-doc">
-        <?php $this->printDocLink($setting["options"]["okAppID"]["docurl"]) ?>
-    </div>
-</div>
-<!-- Option end -->
-
-<!-- Option start -->
-<div class="wpd-opt-row wpd-opt-row-tight" data-wpd-opt="okAppKey">
-    <div class="wpd-opt-name">
-        <label for="okAppKey"><?php echo esc_html($setting["options"]["okAppKey"]["label"]) ?></label>
-        <p class="wpd-desc"><?php echo esc_html($setting["options"]["okAppKey"]["description"]) ?></p>
-    </div>
-    <div class="wpd-opt-input">
-        <input placeholder="<?php esc_attr_e("Application Key", "wpdiscuz"); ?>" type="text"
-               value="<?php echo esc_attr($this->social["okAppKey"]); ?>"
-               name="<?php echo esc_attr(WpdiscuzCore::TAB_SOCIAL); ?>[okAppKey]" id="wpd-ok-app-key"/>
-    </div>
-    <div class="wpd-opt-doc">
-        <?php $this->printDocLink($setting["options"]["okAppKey"]["docurl"]) ?>
-    </div>
-</div>
-<!-- Option end -->
-
-<!-- Option start -->
-<div class="wpd-opt-row wpd-opt-row-tight" data-wpd-opt="okAppSecret">
-    <div class="wpd-opt-name">
-        <label for="okAppSecret"><?php echo esc_html($setting["options"]["okAppSecret"]["label"]) ?></label>
-        <p class="wpd-desc"><?php echo esc_html($setting["options"]["okAppSecret"]["description"]) ?></p>
-    </div>
-    <div class="wpd-opt-input">
-        <input placeholder="<?php esc_attr_e("Application Secret", "wpdiscuz"); ?>" type="text"
-               value="<?php echo esc_attr($this->social["okAppSecret"]); ?>"
-               name="<?php echo esc_attr(WpdiscuzCore::TAB_SOCIAL); ?>[okAppSecret]" id="wpd-ok-app-secret"/>
-    </div>
-    <div class="wpd-opt-doc">
-        <?php $this->printDocLink($setting["options"]["okAppSecret"]["docurl"]) ?>
-    </div>
-</div>
-<!-- Option end -->
 <div class="wpd-social-label wpd-wechat" style="padding: 25px 0px 10px 0px;">
     <img src="<?php echo esc_url_raw(plugins_url(WPDISCUZ_DIR_NAME . "/assets/img/social-icons/wechat.png")); ?>"
          style="vertical-align:bottom; height: 24px; margin-bottom: -2px; position: relative; border-radius: 50%;">&nbsp;

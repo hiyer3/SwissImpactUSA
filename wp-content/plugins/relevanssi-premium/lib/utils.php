@@ -598,6 +598,9 @@ function relevanssi_get_post_meta_for_all_posts( array $post_ids, string $field 
  */
 function relevanssi_get_post_object( $post_id ) {
 	$object = null;
+	if ( ! $post_id ) {
+		return new WP_Error( 'null_value', 'Null post ID' );
+	}
 	if ( '*' === substr( $post_id, 0, 1 ) ) {
 		// Convert from **type**id to a user or a term object.
 		$parts = explode( '**', $post_id );
@@ -998,6 +1001,57 @@ function relevanssi_off_or_on( array $request, string $option ) {
 }
 
 /**
+ * Post password checker.
+ * 
+ * Determines whether the post requires password and whether a correct password
+ * has been provided.
+ * 
+ * This is the same function as core post_password_required(), except this uses
+ * relevanssi_get_post() instead of get_post().
+ * 
+ * @param int|WP_Post|null $post The post to check.
+ *
+ * @return bool false if a password is not required or the correct password
+ * cookie is present, true otherwise.
+ */
+function relevanssi_post_password_required( $post ) : bool {
+	$post = relevanssi_get_post( $post );
+
+	if ( empty( $post->post_password ) ) {
+		/** This filter is documented in wp-includes/post-template.php */
+		return apply_filters( 'post_password_required', false, $post );
+	}
+
+	if ( ! isset( $_COOKIE[ 'wp-postpass_' . COOKIEHASH ] ) ) {
+		/** This filter is documented in wp-includes/post-template.php */
+		return apply_filters( 'post_password_required', true, $post );
+	}
+
+	require_once ABSPATH . WPINC . '/class-phpass.php';
+	$hasher = new PasswordHash( 8, true );
+
+	$hash = wp_unslash( $_COOKIE[ 'wp-postpass_' . COOKIEHASH ] );
+	if ( ! str_starts_with( $hash, '$P$B' ) ) {
+		$required = true;
+	} else {
+		$required = ! $hasher->CheckPassword( $post->post_password, $hash );
+	}
+
+	/**
+	 * Filters whether a post requires the user to supply a password.
+	 *
+	 * @since 4.7.0
+	 *
+	 * @param bool    $required Whether the user needs to supply a password.
+	 * 							True if password has not been provided or is
+	 * 							incorrect, false if password has been supplied
+	 * 							or is not required.
+	 * @param WP_Post $post     Post object.
+	 */
+	return apply_filters( 'post_password_required', $required, $post );
+}
+
+/**
  * Removes quotes (", ”, “) from a string.
  *
  * @param string $str The string to clean.
@@ -1202,7 +1256,7 @@ function relevanssi_strip_all_tags( $content ): string {
  * Strips invisible elements from text.
  *
  * Strips <style>, <script>, <object>, <embed>, <applet>, <noscript>, <noembed>,
- * <iframe> and <del> tags and their contents and comments from the text.
+ * <iframe>, <del> and <svg> tags and their contents and comments from the text.
  *
  * @param string $text The source text.
  *
@@ -1223,6 +1277,7 @@ function relevanssi_strip_invisibles( $text ) {
 			'@<noembed[^>]*?.*?</noembed>@siu',
 			'@<iframe[^>]*?.*?</iframe>@siu',
 			'@<del[^>]*?.*?</del>@siu',
+			'@<svg[^>]*?.*?</svg>@siu',
 			'@<!--.*?-->@siu',
 		),
 		' ',

@@ -421,8 +421,19 @@ function relevanssi_premium_generate_suggestion( $query ) {
 			if ( true === $c ) {
 				++$exact_matches;
 			} elseif ( ! empty( $c ) && strval( $token ) !== $c ) {
-				array_push( $correct, $c );
+				$old_query = $query;
 				$query = str_ireplace( $token, $c, $query ); // Replace misspelled word in query with suggestion.
+				if ( $old_query !== $query ) {
+					/**
+					 * Sometimes a correction is found, but the replacement fails.
+					 * For example, when a search with accents is made but Relevanssi
+					 * removes the accents, and then cannot replace the accents-stripped
+					 * version of the search term to the query (this needs fixing).
+					 * 
+					 * Only push to correct answers if a replacement can be made.
+					 */
+					array_push( $correct, $c );
+				}
 			}
 		}
 		if ( count( $tokens ) === $exact_matches ) {
@@ -510,7 +521,7 @@ function relevanssi_premium_init() {
 
 	global $pagenow, $relevanssi_variables;
 	$on_relevanssi_page = false;
-	if ( isset( $_GET['page'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+	if ( isset( $_GET['page'] ) && is_string( $_GET['page'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 		$page = sanitize_file_name( wp_unslash( $_GET['page'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
 		$base = sanitize_file_name( wp_unslash( plugin_basename( $relevanssi_variables['file'] ) ) );
 		if ( $base === $page ) {
@@ -710,13 +721,14 @@ function relevanssi_default_server_location(): string {
 	$server = 'us';
 	$locale = get_locale();
 
+	$country = '';
 	if ( strpos( $locale, '_' ) === false ) {
 		$language = $locale;
 	} else {
 		list( $language, $country ) = explode( '_', $locale );
 	}
 
-	$eu_languages = array( 'ast', 'bel', 'ca', 'cy', 'el', 'et', 'eu', 'fi', 'fur', 'gd', 'hr', 'hsb', 'lv', 'oci', 'roh', 'sq', 'uk' );
+	$eu_languages = array( 'ast', 'bel', 'ca', 'cy', 'de', 'el', 'et', 'eu', 'fi', 'fur', 'gd', 'hr', 'hsb', 'lv', 'oci', 'roh', 'sq', 'uk' );
 	$eu_countries = array( 'AL', 'AT', 'BA', 'BE', 'BG', 'CH', 'CY', 'DE', 'EE', 'ES', 'FR', 'GB', 'GR', 'HR', 'HU', 'IE', 'IL', 'IS', 'IT', 'LI', 'LT', 'LU', 'LV', 'MC', 'MD', 'ME', 'MT', 'NL', 'NO', 'PL', 'PT', 'RO', 'RS', 'SE', 'SI', 'SK', 'UA' );
 
 	if ( in_array( strtolower( $language ), $eu_languages, true ) ||
@@ -846,7 +858,7 @@ function relevanssi_target_matches( $match_object ) {
 				$no_matches = false;
 				break;
 			}
-			if ( ! is_object( $match_object->taxonomy_detail ) ) {
+			if ( ! is_object( $match_object->taxonomy_detail ) && ! empty( $match_object->taxonomy_detail ) ) {
 				$match_object->taxonomy_detail = json_decode( $match_object->taxonomy_detail );
 			}
 			if (
@@ -857,7 +869,7 @@ function relevanssi_target_matches( $match_object ) {
 				$no_matches = false;
 				break;
 			}
-			if ( ! is_object( $match_object->mysqlcolumn_detail ) ) {
+			if ( ! is_object( $match_object->mysqlcolumn_detail ) && ! empty( $match_object->mysqlcolumn_detail ) ) {
 				$match_object->mysqlcolumn_detail = json_decode( $match_object->mysqlcolumn_detail );
 			}
 			if (

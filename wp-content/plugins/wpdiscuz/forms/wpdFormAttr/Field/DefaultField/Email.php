@@ -100,17 +100,12 @@ class Email extends Field {
 
     public function validateFieldData($fieldName, $args, $options, $currentUser) {
         $email = isset($_POST[$fieldName]) ? urlencode(sanitize_email(trim($_POST[$fieldName]))) : "";
-        if (!$args["required"]) {
-            if (!$email) {
-                $email             = uniqid() . "@example.com";
-                $this->isAnonymous = true;
-            }
-        }
-
-        if ($email !== "" && filter_var(urldecode($email), FILTER_VALIDATE_EMAIL) === false) {
+        if ($args["required"] && !$email) {
             wp_send_json_error("wc_error_email_text");
         }
-
+        if (!$email && !$args["required"]) {
+            $this->isAnonymous = true;
+        }
         return $email;
     }
 

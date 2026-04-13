@@ -194,9 +194,9 @@ function relevanssi_form_hide_post_controls() {
 		<td>
 			<label for='relevanssi_hide_post_controls'>
 				<input type='checkbox' name='relevanssi_hide_post_controls' id='relevanssi_hide_post_controls' <?php echo esc_attr( $hide_post_controls ); ?> />
-				<?php esc_html_e( 'Hide Relevanssi on edit pages', 'relevanssi' ); ?>
+				<?php esc_html_e( 'Hide Relevanssi on edit pages and quick edit', 'relevanssi' ); ?>
 			</label>
-			<p class="description"><?php esc_html_e( 'Enabling this option hides Relevanssi on all post edit pages.', 'relevanssi' ); ?></p>
+			<p class="description"><?php esc_html_e( 'Enabling this option hides Relevanssi on all post edit pages and quick edit.', 'relevanssi' ); ?></p>
 		</td>
 	</tr>
 	<tr id="show_post_controls" class="<?php echo esc_attr( $show_post_controls_class ); ?>">
@@ -205,10 +205,10 @@ function relevanssi_form_hide_post_controls() {
 		</th>
 		<td>
 		<fieldset>
-			<legend class="screen-reader-text"><?php esc_html_e( 'Show Relevanssi for admins on edit pages', 'relevanssi' ); ?></legend>
+			<legend class="screen-reader-text"><?php esc_html_e( 'Show Relevanssi for admins on edit pages and quick edit', 'relevanssi' ); ?></legend>
 			<label for='relevanssi_show_post_controls'>
 				<input type='checkbox' name='relevanssi_show_post_controls' id='relevanssi_show_post_controls' <?php echo esc_attr( $show_post_controls ); ?> />
-				<?php esc_html_e( 'Show Relevanssi on edit pages for admins', 'relevanssi' ); ?>
+				<?php esc_html_e( 'Show Relevanssi on edit pages and quick edit for admins', 'relevanssi' ); ?>
 			</label>
 		</fieldset>
 		<?php /* translators: first placeholder has the capability used for determining admins, second has the filter hook name to change that */ ?>
@@ -632,7 +632,7 @@ function relevanssi_form_index_synonyms() {
 		</fieldset>
 		<p class="description">
 		<?php
-			_e( 'If checked, Relevanssi will use the synonyms in indexing. If you add <code>dog = hound</code> to the synonym list and enable this feature, every time the indexer sees <code>hound</code> in post content or post title, it will index it as <code>hound dog</code>. Thus, the post will be found when searching with either word. This makes it possible to use synonyms with AND searches, but will slow down indexing, especially with large databases and large lists of synonyms. You can use multi-word values, but phrases do not work.', 'relevanssi' ); // phpcs:ignore WordPress.Security.EscapeOutput.UnsafePrintingFunction
+			_e( 'If checked, Relevanssi will use the synonyms in indexing. If you add <code>dog = hound</code> to the synonym list and enable this feature, every time the indexer sees <code>hound</code> in post content or post title, it will index it as <code>hound dog</code>. Thus, the post will be found when searching with either word. This makes it possible to use synonyms with AND searches, but will slow down indexing, especially with large databases and large lists of synonyms. You can use multi-word values on the left side of the synonym, but not on the right side. <code>canine dog = hound</code> will make both <code>canine</code> and <code>dog</code> synonyms of <code>hound</code>. <code>dog = hound canine</code> does not do anything. Phrases do not work, either.', 'relevanssi' ); // phpcs:ignore WordPress.Security.EscapeOutput.UnsafePrintingFunction
 		?>
 		</p>
 		</td>
@@ -1386,6 +1386,7 @@ function relevanssi_manage_columns( $columns, $post_type = 'page' ) {
 		return $columns;
 	}
 
+	$columns['relevanssi']        = 'Relevanssi';
 	$columns['pinned_keywords']   = __( 'Pinned keywords', 'relevanssi' );
 	$columns['unpinned_keywords'] = __( 'Excluded keywords', 'relevanssi' );
 	$columns['pin_for_all']       = __( 'Pin for all searches', 'relevanssi' );
@@ -1401,6 +1402,34 @@ function relevanssi_manage_columns( $columns, $post_type = 'page' ) {
  * @param int   $post_id The post ID.
  */
 function relevanssi_manage_custom_column( $column, $post_id ) {
+	if ( 'relevanssi' === $column ) {
+			$pin_for_all    = get_post_meta( $post_id, '_relevanssi_pin_for_all', true );
+			$hide_post      = get_post_meta( $post_id, '_relevanssi_hide_post', true );
+			$hide_content   = get_post_meta( $post_id, '_relevanssi_hide_content', true );
+			$pin_keywords   = get_post_meta( $post_id, '_relevanssi_pin_keywords', true );
+			$unpin_keywords = get_post_meta( $post_id, '_relevanssi_unpin_keywords', true );
+			
+			if ( ! empty( $pin_keywords ) ) {
+				echo __( 'Pinned keywords', 'relevanssi' ) . ': <em>' . esc_html( $pin_keywords ) . '</em><br />';
+			}
+
+			if ( ! empty( $unpin_keywords ) ) {
+				echo __( 'Excluded keywords', 'relevanssi' ) . ': <em>' . esc_html( $unpin_keywords ) . '</em><br />';
+			}
+
+			if ( ! empty( $pin_for_all ) ) {
+				echo __( 'Pinned for all searches', 'relevanssi' ) . '<br />';
+			}
+
+			if ( ! empty( $hide_post ) ) {
+				echo __( 'Excluded from search', 'relevanssi' ) . '<br />';
+			}
+
+			if ( ! empty( $hide_content ) ) {
+				echo __( 'Post content ignored', 'relevanssi' );
+			}
+
+	}
 	switch ( $column ) {
 		case 'pinned_keywords':
 			$keywords = get_post_meta( $post_id, '_relevanssi_pin_keywords', true );
@@ -1447,6 +1476,14 @@ function relevanssi_manage_custom_column( $column, $post_id ) {
  * @param string $column    The column name.
  */
 function relevanssi_quick_edit_custom_box( $column ) {
+	$hide_post_controls = get_option( 'relevanssi_hide_post_controls' );
+	$show_post_controls = get_option( 'relevanssi_show_post_controls' );
+
+	if ( 'on' === $hide_post_controls && 'on' !== $show_post_controls ) {
+		// Don't show quick edit if Relevanssi is hidden in post edit pages.
+		return;
+	}
+
 	switch ( $column ) {
 		case 'pinned_keywords':
 			?>
@@ -1485,7 +1522,6 @@ function relevanssi_quick_edit_custom_box( $column ) {
 						</label>
 					</div>
 				</fieldset>
-			</div>
 			<?php
 			break;
 		case 'pin_for_all':
@@ -1514,6 +1550,7 @@ function relevanssi_quick_edit_custom_box( $column ) {
 						</label>
 					</div>
 				</fieldset>
+			</div>
 			<?php
 			break;
 	}
@@ -1616,5 +1653,6 @@ function relevanssi_hide_columns( $columns ) {
 	$columns[] = 'pin_for_all';
 	$columns[] = 'exclude_post';
 	$columns[] = 'ignore_content';
+	$columns[] = 'relevanssi';
 	return $columns;
 }

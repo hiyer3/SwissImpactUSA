@@ -52,6 +52,7 @@ $allowedActions       = [
     "wpdGetInlineCommentForm"    => ["object" => $helperAjax, "callback" => "getInlineCommentForm", "for" => "all"],
     "wpdUnsubscribe"             => ["object" => $helperAjax, "callback" => "unsubscribe", "for" => "all"],
     "wpdUserRate"                => ["object" => $helperAjax, "callback" => "userRate", "for" => "all"],
+    "wpdGetNonce"                => ["object" => $helperAjax, "callback" => "getNonce", "for" => "all"],
     "wpdEmailDeleteLinks"        => ["object" => $helperEmail, "callback" => "emailDeleteLinksAction", "for" => "user"],
     "wpdAddSubscription"         => ["object" => $helperEmail, "callback" => "addSubscription", "for" => "all"],
     "wpdCheckNotificationType"   => ["object" => $helperEmail, "callback" => "checkNotificationType", "for" => "all"],
@@ -59,6 +60,8 @@ $allowedActions       = [
     "wmuRemoveAttachmentPreview" => ["object" => $helperUpload, "callback" => "removeAttachmentPreview", "for" => "all"],
     "wmuDeleteAttachment"        => ["object" => $helperUpload, "callback" => "deleteAttachment", "for" => "all"],
 ];
+
+$allowedActions = apply_filters("wpdiscuz_custom_ajax_allowed_actions", $allowedActions);
 
 foreach ($allowedActions as $action => $data) {
     if ($data["for"] === "user") {
