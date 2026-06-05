@@ -4,6 +4,7 @@ import PopupSearchInput from "./components/popupSearchInput";
 import DataTable from "./components/dataTable";
 import { useEffect, useState, useMemo } from "preact/hooks";
 import RecommendedPosts from "./RecomendedPosts";
+import constructLink from "./components/constructLink";
 import {
   LoadingState,
   ErrorState,
@@ -63,7 +64,11 @@ const ApprenticeshipCompanies = ({ name, stateId, preloadedData }) => {
       apprenticeshipData.map((item, index) => ({
         id: index + 1,
         location: item?.location || item?.city_state || item?.address || "",
-        company: item?.company || item?.company_name || item?.name || "",
+        company:
+          constructLink(
+            item?.company || item?.company_name || item?.name || "",
+            item?.company_link?.url
+          ) || "",
         field: item?.field || item?.industry || item?.sector || "",
         program:
           item?.program ||
@@ -88,7 +93,7 @@ const ApprenticeshipCompanies = ({ name, stateId, preloadedData }) => {
   const columns = useMemo(
     () => [
       { key: "location", label: "City, State", hideOnMobile: true },
-      { key: "company", label: "Company" },
+      { key: "company", label: "Company", allowHTML: true },
       { key: "field", label: "Field" },
       { key: "program", label: "Program (Duration)" },
     ],
