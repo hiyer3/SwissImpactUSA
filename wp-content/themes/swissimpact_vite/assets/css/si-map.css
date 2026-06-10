@@ -36,14 +36,16 @@
   transition-property: left, top;
 }
 
-/* On mobile: raise button and dropdown above the site header,
-   and neutralise the position:relative that .post-content a injects —
-   otherwise top-20 (which has no lg: prefix) shifts the button 5rem
-   into the map on the shortcode/embedded page. */
+/* On mobile the state selector + list are position:fixed, so they overlay the
+   whole viewport — including the page hero <header> (z-index 99). Raise them
+   above it (100) or the hero clips the top of the open state list on embedded
+   pages (e.g. category pages with the map shortcode). Also neutralise the
+   position:relative that .post-content a injects — otherwise top-20 (no lg:
+   prefix) shifts the button 5rem into the map on the embedded page. */
 @media (max-width: 1023px) {
   .si-map-wrapper .state-selector,
   .si-map-wrapper .state-list-container {
-    z-index: 98;
+    z-index: 100;
   }
 
   .post-content .map-page-wrapper a {
