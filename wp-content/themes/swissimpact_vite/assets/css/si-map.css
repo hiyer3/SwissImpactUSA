@@ -104,6 +104,18 @@
   @apply bg-swissred;
 }
 
+/* Single-tab embed: [si_impact_map tab="..."] with a specific (non see-all) tab.
+   Only the locked tab's pill shows in the map filter and the popup filter.
+   Selectors are scoped to the .locked-single-tab modifier so they out-specify
+   the default show rules above. */
+.si-map-wrapper #si-map-filter.locked-single-tab .single-filter-item:not(.locked-tab) {
+  @apply hidden;
+}
+
+#si-map-popup-filter.locked-single-tab .single-popup-filter:not(.locked-tab) {
+  @apply hidden;
+}
+
 .data-popup .data-popup-filter-wrapper {
   @apply bg-white grid grid-cols-1 xl:grid-cols-[80px_1fr] gap-4 transition-all duration-200 ease-in-out;
 }

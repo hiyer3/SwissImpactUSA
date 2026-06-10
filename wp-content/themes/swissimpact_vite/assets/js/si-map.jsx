@@ -59,6 +59,19 @@ const ALL_TABS_TRUE = {
   [FILTERS.SWISS_REPRESENTATIVES]: true,
 };
 
+// Single-tab embed lock: only the given popup-filter id is active. Used when the
+// [si_impact_map tab="..."] shortcode locks the UI to one category so the popup
+// never falls back to another tab.
+const singleTabActive = (popupFilterId) => ({
+  [FILTERS.SEE_ALL]: false,
+  [FILTERS.ECON]: false,
+  [FILTERS.SCIENCE]: false,
+  [FILTERS.APPRENTICESHIP]: false,
+  [FILTERS.INDUSTRY]: false,
+  [FILTERS.SWISS_REPRESENTATIVES]: false,
+  [popupFilterId]: true,
+});
+
 const normId = (id) =>
   String(id || "")
     .toLowerCase()
@@ -385,6 +398,8 @@ export default function SIMapControl() {
 
   // ---- map filter + popup state
   const currentMapFilterRef = useRef("si-filter-see-all");
+  // Popup-filter id this embed is locked to (from the shortcode's tab attr), or null.
+  const lockedPopupTabRef = useRef(null);
   const popupOpenRef = useRef(false);
   const userTabOverrideRef = useRef(null);
 
@@ -602,7 +617,15 @@ export default function SIMapControl() {
   ]);
 
   // Initialize currentMapFilterRef from DOM 'active' (if present)
+  // and pick up the single-tab lock the shortcode may have set.
   useEffect(() => {
+    const lockedSlug = document
+      .querySelector("#si-map-filter")
+      ?.getAttribute("data-locked-tab");
+    if (lockedSlug && lockedSlug !== "see-all") {
+      lockedPopupTabRef.current = `si-popup-filter-${lockedSlug}`;
+    }
+
     const domActive = document.querySelector(
       "#si-map-filter .single-filter-item.active"
     )?.id;
@@ -766,6 +789,18 @@ export default function SIMapControl() {
       return;
     }
 
+    // Single-tab embed: keep the popup pinned to the locked category.
+    if (lockedPopupTabRef.current) {
+      const locked = lockedPopupTabRef.current;
+      setSingleStateData((prev) => ({
+        ...prev,
+        activeTabs: singleTabActive(locked),
+        selectedFilter: locked,
+        isLoadingTabs: false,
+      }));
+      return;
+    }
+
     if (stateId === "united-states") {
       const nextSel = pickSelectedFilter(
         preferredFilter,
@@ -918,10 +953,11 @@ export default function SIMapControl() {
           ? lastSelectedFilterRef.current
           : preferredFromMap;
 
-      const activeTabs =
-        normId(id) === "united-states"
-          ? ALL_TABS_TRUE
-          : computeActiveTabsForAcf(rawStateCacheRef.current[normId(id)]);
+      const activeTabs = lockedPopupTabRef.current
+        ? singleTabActive(lockedPopupTabRef.current)
+        : normId(id) === "united-states"
+        ? ALL_TABS_TRUE
+        : computeActiveTabsForAcf(rawStateCacheRef.current[normId(id)]);
 
       const nextSelected = pickSelectedFilter(
         requestedTab,
@@ -1053,6 +1089,17 @@ export default function SIMapControl() {
 
       svgEl.addEventListener("click", onSvgClick, { signal });
 
+      // Show only the given filter's marker icons on the map (see-all shows all).
+      const applyMarkerVisibility = (filterId) => {
+        for (const child of svgEl.querySelectorAll("[class*='si-']")) {
+          if (filterId === "si-filter-see-all") {
+            child.style.opacity = "1";
+            continue;
+          }
+          child.style.opacity = child.classList.contains(filterId) ? "1" : "0";
+        }
+      };
+
       // Map filter buttons
       const mapFilters = document.querySelectorAll(
         "#si-map-filter .single-filter-item"
@@ -1064,15 +1111,8 @@ export default function SIMapControl() {
             const filterId = e.currentTarget.getAttribute("id");
             currentMapFilterRef.current = filterId;
 
-            // marker visibility
-            for (const child of svgEl.querySelectorAll("[class*='si-']")) {
-              if (filterId === "si-filter-see-all") {
-                child.style.opacity = "1";
-                continue;
-              }
-              const imageFilterId = child.classList.contains(filterId);
-              child.style.opacity = imageFilterId ? "1" : "0";
-            }
+            applyMarkerVisibility(filterId);
+
             mapFilters.forEach((f) => f.classList.remove("active"));
             e.currentTarget.classList.add("active");
 
@@ -1083,7 +1123,10 @@ export default function SIMapControl() {
         );
       });
 
-      // After listeners are bound, apply current overlay once
+      // After listeners are bound, apply the current filter's markers + overlay once.
+      // Covers shortcode embeds that pre-select a tab (e.g. [si_impact_map tab="science-academia"]),
+      // where no click fires but only that category's icons should show.
+      applyMarkerVisibility(currentMapFilterRef.current);
       applyCurrentOverlay();
     });
 

@@ -11,8 +11,20 @@
 
 $active_tab = get_query_var('si_map_active_tab', 'see-all') ?: 'see-all';
 
+// When the shortcode is embedded with a specific tab (anything but see-all),
+// lock the UI to that single category: only that tab's pill shows in the map
+// filter and the popup filter, and the popup content can't switch tabs.
+$is_locked = $active_tab !== 'see-all';
+
 // Helper to output 'active' class on the matching filter button
 $tab_class = fn($tab_slug) => $active_tab === $tab_slug ? ' active' : '';
+
+// Helper to flag the locked tab's pill so CSS keeps it visible while hiding the rest
+$lock_class = fn($tab_slug) => $is_locked && $active_tab === $tab_slug ? ' locked-tab' : '';
+
+// Modifier + data attribute applied to both filter bars when locked
+$locked_mod  = $is_locked ? ' locked-single-tab' : '';
+$locked_data = $is_locked ? ' data-locked-tab="' . esc_attr($active_tab) . '"' : '';
 ?>
 <div class="relative map-page-wrapper mb-20">
     <section class="si-map-wrapper">
@@ -30,23 +42,23 @@ $tab_class = fn($tab_slug) => $active_tab === $tab_slug ? ' active' : '';
         </div>
         <div class="flex flex-col min-w-0 relative">
             <div class="mb-4 si-map-filter-wrapper min-w-0 overflow-x-auto scroll-smooth no-scrollbar overscroll-x-contain [-webkit-overflow-scrolling:touch]">
-                <div id="si-map-filter" class="flex gap-4 px-4 py-2 min-w-max">
-                    <div class="single-filter-item<?php echo $tab_class('see-all'); ?>" id="si-filter-see-all" title="See All">
+                <div id="si-map-filter" class="flex gap-4 px-4 py-2 min-w-max<?php echo $locked_mod; ?>"<?php echo $locked_data; ?>>
+                    <div class="single-filter-item<?php echo $tab_class('see-all') . $lock_class('see-all'); ?>" id="si-filter-see-all" title="See All">
                         <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/si-map-tab-see-all-2x-2.png" alt="See All Icon" class="w-full" />
                     </div>
-                    <div class="single-filter-item<?php echo $tab_class('economic-impact'); ?>" id="si-filter-economic-impact" title="Economic Impact">
+                    <div class="single-filter-item<?php echo $tab_class('economic-impact') . $lock_class('economic-impact'); ?>" id="si-filter-economic-impact" title="Economic Impact">
                         <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/si-map-tab-ei-2x-2.png" alt="Economic Impact Icon" class="w-full" />
                     </div>
-                    <div class="single-filter-item<?php echo $tab_class('science-academia'); ?>" id="si-filter-science-academia" title="Science & Academia">
+                    <div class="single-filter-item<?php echo $tab_class('science-academia') . $lock_class('science-academia'); ?>" id="si-filter-science-academia" title="Science & Academia">
                         <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/si-map-tab-sa-2x-2.png" alt="Science & Academia Icon" class="w-full" />
                     </div>
-                    <div class="single-filter-item<?php echo $tab_class('apprenticeship-companies'); ?>" id="si-filter-apprenticeship-companies" title="Apprenticeship Companies">
+                    <div class="single-filter-item<?php echo $tab_class('apprenticeship-companies') . $lock_class('apprenticeship-companies'); ?>" id="si-filter-apprenticeship-companies" title="Apprenticeship Companies">
                         <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/si-map-tab-ac-2x-2.png" alt="Apprenticeship Companies Icon" class="w-full" />
                     </div>
-                    <div class="single-filter-item<?php echo $tab_class('industry-clusters'); ?>" id="si-filter-industry-clusters" title="Industry Clusters">
+                    <div class="single-filter-item<?php echo $tab_class('industry-clusters') . $lock_class('industry-clusters'); ?>" id="si-filter-industry-clusters" title="Industry Clusters">
                         <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/si-map-tab-ic-2x-2.png" alt="Industry Clusters Icon" class="w-full" />
                     </div>
-                    <div class="single-filter-item<?php echo $tab_class('swiss-representatives'); ?>" id="si-filter-swiss-representatives" title="Swiss Representatives">
+                    <div class="single-filter-item<?php echo $tab_class('swiss-representatives') . $lock_class('swiss-representatives'); ?>" id="si-filter-swiss-representatives" title="Swiss Representatives">
                         <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/si-map-tab-sr-2x-2.png" alt="Swiss Representatives Icon" class="w-full" />
                     </div>
                 </div>
@@ -100,23 +112,23 @@ $tab_class = fn($tab_slug) => $active_tab === $tab_slug ? ' active' : '';
             <div class="overflow-hidden">
                 <div class="popup-filter-wrapper flex flex-col min-w-0 relative bg-white">
                     <div class="min-w-0 overflow-x-auto scroll-smooth no-scrollbar overscroll-x-contain [-webkit-overflow-scrolling:touch]">
-                        <div id="si-map-popup-filter" class="flex gap-4 px-2 md:px-4 min-w-max">
-                            <div class="single-popup-filter active" id="si-popup-filter-see-all" title="See All">
+                        <div id="si-map-popup-filter" class="flex gap-4 px-2 md:px-4 min-w-max<?php echo $locked_mod; ?>"<?php echo $locked_data; ?>>
+                            <div class="single-popup-filter active<?php echo $lock_class('see-all'); ?>" id="si-popup-filter-see-all" title="See All">
                                 <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/si-bp-tab-see-all-2x.png" alt="See All Icon" class="w-full" />
                             </div>
-                            <div class="single-popup-filter" id="si-popup-filter-economic-impact" title="Economic Impact">
+                            <div class="single-popup-filter<?php echo $lock_class('economic-impact'); ?>" id="si-popup-filter-economic-impact" title="Economic Impact">
                                 <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/si-bp-tab-ei-2x.png" alt="Economic Impact Icon" class="w-full" />
                             </div>
-                            <div class="single-popup-filter" id="si-popup-filter-science-academia" title="Science & Academia">
+                            <div class="single-popup-filter<?php echo $lock_class('science-academia'); ?>" id="si-popup-filter-science-academia" title="Science & Academia">
                                 <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/si-bp-tab-sa-2x.png" alt="Science & Academia Icon" class="w-full" />
                             </div>
-                            <div class="single-popup-filter" id="si-popup-filter-apprenticeship-companies" title="Apprenticeship Companies">
+                            <div class="single-popup-filter<?php echo $lock_class('apprenticeship-companies'); ?>" id="si-popup-filter-apprenticeship-companies" title="Apprenticeship Companies">
                                 <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/si-bp-tab-ac-2x.png" alt="Apprenticeship Companies Icon" class="w-full" />
                             </div>
-                            <div class="single-popup-filter" id="si-popup-filter-industry-clusters" title="Industry Clusters">
+                            <div class="single-popup-filter<?php echo $lock_class('industry-clusters'); ?>" id="si-popup-filter-industry-clusters" title="Industry Clusters">
                                 <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/si-bp-tab-ic-2x.png" alt="Industry Clusters Icon" class="w-full" />
                             </div>
-                            <div class="single-popup-filter" id="si-popup-filter-swiss-representatives" title="Swiss Representatives">
+                            <div class="single-popup-filter<?php echo $lock_class('swiss-representatives'); ?>" id="si-popup-filter-swiss-representatives" title="Swiss Representatives">
                                 <img src="<?php echo get_template_directory_uri(); ?>/assets/img/si-number-map/si-bp-tab-sr-2x.png" alt="Swiss Representatives Icon" class="w-full" />
                             </div>
                         </div>
