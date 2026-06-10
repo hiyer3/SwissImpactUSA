@@ -309,6 +309,10 @@ header .share-icon-wrapper.active {
     height: 100%;
     margin-top: 0;
     width: 1px;
+    /* Collapsed to 1px on mobile, but the flex share icons still overflow to
+       the right, inflating the page past the viewport. The fixed <nav> then
+       stretches to match, causing horizontal scroll / a white gutter. Clip it. */
+    overflow: hidden;
   }
 
   .nav-share-icon.active {
@@ -318,6 +322,7 @@ header .share-icon-wrapper.active {
 
   header .share-icon-wrapper.active {
     width: 100%;
+    overflow: visible;
   }
 }
  
