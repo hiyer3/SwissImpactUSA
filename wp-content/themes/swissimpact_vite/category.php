@@ -12,6 +12,16 @@ $category = get_category(get_query_var('cat'))
     </div>
 <?php endif; ?>
 
+<?php
+// Optional full-width map embed for the term (e.g. [si_impact_map tab="..."]).
+// Rendered outside the constrained .post-content container so the map spans
+// the full page width. Output raw so the shortcode runs unmodified.
+$taxonomy_map_shortcode = types_render_termmeta('taxonomy-map-shortcode', array('output' => 'raw'));
+if (!empty(trim((string) $taxonomy_map_shortcode))) :
+?>
+    <?php echo do_shortcode($taxonomy_map_shortcode); ?>
+<?php endif; ?>
+
 <main data-category-page="true" class="flex-grow py-20 bg-cover bg-pos-strips" style="background-image: url(<?php echo get_template_directory_uri(); ?>/assets/img/backpages/stripes.png);">
     <?php echo get_template_part('template-parts/featured-posts/featured', 'posts'); ?>
 
