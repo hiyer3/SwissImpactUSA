@@ -110,8 +110,8 @@ const ScienceAcademia = ({ name, stateId, preloadedData }) => {
         <BackToMapButton />
       </div>
 
-      <div className="bg-white mt-5 rounded-3xl popup-table-content">
-        <div className="p-8 w-full flex justify-between gap-6 sm:gap-9 sm:items-center flex-col sm:flex-row popup-table-header rounded-t-3xl bg-white">
+      <div className="bg-white mt-5 rounded-3xl popup-table-content popup-table-card flex flex-col overflow-hidden">
+        <div className="mt-2 p-8 w-full flex justify-between gap-6 sm:gap-9 sm:items-center flex-col sm:flex-row shrink-0">
           <p className="text-xl font-black pb-0">
             Creating Positive Impact in U.S. Academia and Science
           </p>

@@ -48,9 +48,10 @@ const DataTable = ({
   };
 
   return (
-    <div className="mt-4 pb-8 min-w-0 min-h-[350px] popup-table-content">
-      {/* Desktop Table View */}
-      <div className="hidden md:block w-full overflow-x-auto">
+    <div className="mt-4 pb-8 min-w-0 min-h-[350px] popup-table-content popup-data-scroll flex-1 lg:min-h-0 lg:overflow-auto">
+      {/* Desktop Table View — horizontal scroll is handled by the parent
+          .popup-data-scroll so the sticky <thead> shares one scroll context. */}
+      <div className="hidden md:block w-full">
         <table className="border-separate data-table border-spacing-y-1 table-fixed w-full sa-table-data">
           <thead>
             <tr>

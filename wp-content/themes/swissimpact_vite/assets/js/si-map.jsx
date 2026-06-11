@@ -1344,25 +1344,48 @@ export default function SIMapControl() {
     document.querySelector(".popup-width-wrapper")?.scrollTo({ top: 0 });
   }, [singleStateData.selectedFilter]);
 
-  // Keep the table tabs' sticky title+search row offset in sync with the live
-  // (sticky) tab-header height so the two stack instead of overlapping.
+  // Desktop: size each table tab's card to fill the popup so the card is a
+  // stable, screen-adaptive height and only its rows scroll (headers stay).
+  // No hardcoded pixel height — recomputed from the live popup/card geometry.
   useEffect(() => {
     const wrapper = document.querySelector(".popup-width-wrapper");
     if (!wrapper) return;
-    const measure = () => {
-      const th = document.querySelector(".popup-tab-header");
-      if (th) {
-        wrapper.style.setProperty("--popup-tab-header-h", `${th.offsetHeight}px`);
+
+    let raf = 0;
+    const fit = () => {
+      raf = 0;
+      const card = document.querySelector(".popup-table-card");
+      if (!card) return;
+      if (window.innerWidth < 1024) {
+        card.style.removeProperty("--popup-table-card-h");
+        return;
+      }
+      const wRect = wrapper.getBoundingClientRect();
+      const cRect = card.getBoundingClientRect();
+      // card's offset from the top of the scroll content (scroll-independent):
+      // everything above it = the sticky tab header + the card's top margin.
+      const offsetInContent = cRect.top - wRect.top + wrapper.scrollTop;
+      const reserve = 16; // small gap before the recommended-posts block
+      const avail = wrapper.clientHeight - offsetInContent - reserve;
+      const next = `${Math.max(280, Math.round(avail))}px`;
+      if (card.style.getPropertyValue("--popup-table-card-h") !== next) {
+        card.style.setProperty("--popup-table-card-h", next);
       }
     };
-    measure();
-    const th = document.querySelector(".popup-tab-header");
-    const ro = th ? new ResizeObserver(measure) : null;
-    if (th && ro) ro.observe(th);
-    window.addEventListener("resize", measure);
+    const schedule = () => {
+      if (!raf) raf = requestAnimationFrame(fit);
+    };
+
+    schedule();
+    const ro = new ResizeObserver(schedule);
+    ro.observe(wrapper);
+    const content = document.querySelector(".popup-content-wrapper");
+    if (content) ro.observe(content);
+    window.addEventListener("resize", schedule);
     return () => {
-      ro?.disconnect();
-      window.removeEventListener("resize", measure);
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
     };
   }, [singleStateData.selectedFilter, singleStateData.name, isAllLoaded]);
 

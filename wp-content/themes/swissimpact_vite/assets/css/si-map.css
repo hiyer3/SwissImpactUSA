@@ -336,16 +336,19 @@
   padding-top: 3rem;
 }
 
-/* Desktop: pin each table tab's title + search row just below the sticky tab
-   header so only the rows scroll. The offset is the live tab-header height,
-   written to --popup-tab-header-h on .popup-width-wrapper by the map JS.
-   (The card must NOT be overflow:hidden/clip or it becomes the sticky scroll
-   container and this stops working — see the table popup components.) */
+/* Desktop: each table tab's card is sized to fill the popup (height set
+   adaptively by the map JS via --popup-table-card-h) so only the rows scroll
+   inside it. Keep the column headers visible while the rows scroll. */
 @media (min-width: 1024px) {
-  .popup-width-wrapper .popup-table-header {
+  .popup-table-card {
+    max-height: var(--popup-table-card-h, none);
+  }
+
+  .data-popup .popup-table-content .sa-table-data thead th {
     position: sticky;
-    top: var(--popup-tab-header-h, 9rem);
-    z-index: 4;
+    top: 0;
+    z-index: 2;
+    background-color: #fff;
   }
 }
 
