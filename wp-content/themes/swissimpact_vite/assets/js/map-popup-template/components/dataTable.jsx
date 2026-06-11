@@ -48,7 +48,7 @@ const DataTable = ({
   };
 
   return (
-    <div className="mt-4 pb-8 min-w-0 xl:h-full min-h-[350px] max-h-[650px] overflow-y-auto popup-table-content">
+    <div className="mt-4 pb-8 min-w-0 min-h-[350px] popup-table-content">
       {/* Desktop Table View */}
       <div className="hidden md:block w-full overflow-x-auto">
         <table className="border-separate data-table border-spacing-y-1 table-fixed w-full sa-table-data">

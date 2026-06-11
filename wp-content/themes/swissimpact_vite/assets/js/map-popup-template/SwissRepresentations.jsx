@@ -114,8 +114,8 @@ const SwissRepresentations = ({ name, stateId, preloadedData }) => {
         <BackToMapButton />
       </div>
 
-      <div className="bg-white mt-5 rounded-3xl popup-table-content overflow-hidden">
-        <div className="mt-4 p-8 w-full flex justify-between gap-6 sm:gap-9 sm:items-center flex-col sm:flex-row">
+      <div className="bg-white mt-5 rounded-3xl popup-table-content">
+        <div className="p-8 w-full flex justify-between gap-6 sm:gap-9 sm:items-center flex-col sm:flex-row popup-table-header rounded-t-3xl bg-white">
           <p className="text-xl font-black pb-0">
             Representing Switzerland in Your Area
           </p>

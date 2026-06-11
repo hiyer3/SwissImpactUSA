@@ -336,3 +336,16 @@
   padding-top: 3rem;
 }
 
+/* Desktop: pin each table tab's title + search row just below the sticky tab
+   header so only the rows scroll. The offset is the live tab-header height,
+   written to --popup-tab-header-h on .popup-width-wrapper by the map JS.
+   (The card must NOT be overflow:hidden/clip or it becomes the sticky scroll
+   container and this stops working — see the table popup components.) */
+@media (min-width: 1024px) {
+  .popup-width-wrapper .popup-table-header {
+    position: sticky;
+    top: var(--popup-tab-header-h, 9rem);
+    z-index: 4;
+  }
+}
+

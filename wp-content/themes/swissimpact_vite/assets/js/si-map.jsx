@@ -1344,6 +1344,28 @@ export default function SIMapControl() {
     document.querySelector(".popup-width-wrapper")?.scrollTo({ top: 0 });
   }, [singleStateData.selectedFilter]);
 
+  // Keep the table tabs' sticky title+search row offset in sync with the live
+  // (sticky) tab-header height so the two stack instead of overlapping.
+  useEffect(() => {
+    const wrapper = document.querySelector(".popup-width-wrapper");
+    if (!wrapper) return;
+    const measure = () => {
+      const th = document.querySelector(".popup-tab-header");
+      if (th) {
+        wrapper.style.setProperty("--popup-tab-header-h", `${th.offsetHeight}px`);
+      }
+    };
+    measure();
+    const th = document.querySelector(".popup-tab-header");
+    const ro = th ? new ResizeObserver(measure) : null;
+    if (th && ro) ro.observe(th);
+    window.addEventListener("resize", measure);
+    return () => {
+      ro?.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, [singleStateData.selectedFilter, singleStateData.name, isAllLoaded]);
+
   // toggle tab availability + loading indicator
   useEffect(() => {
     const items = document.querySelectorAll(
